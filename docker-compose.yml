@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:8.3
+    restart: always
+    env_file: .env
+    volumes:
+      - ./db/ParcAuto.sql:/docker-entrypoint-initdb.d/ParcAuto.sql:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file: .env
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_AUTH_TYPE: config
+    ports:
+      - "8080:80"
+
+  app:
+    build: .
+    env_file: .env
+    depends_on:
+      db:
+        condition: service_healthy
