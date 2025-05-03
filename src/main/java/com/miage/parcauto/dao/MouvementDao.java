@@ -10,9 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -263,7 +261,43 @@ public class MouvementDao {
             dbUtil.releaseConnection(conn);
         }
     }
+    public List<Mouvement> findBySocieteCompteAndType(int idSocietaire, Mouvement.TypeMouvement type) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<Mouvement> mouvements = new ArrayList<>();
 
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT m.*, sc.nom, sc.numero " +
+                    "FROM MOUVEMENT m " +
+                    "JOIN SOCIETAIRE_COMPTE sc ON m.id_societaire = sc.id_societaire " +
+                    "WHERE m.id_societaire = ? AND m.type = ? " +
+                    "ORDER BY m.date DESC";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, idSocietaire);
+            pstmt.setString(2, type.name());
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                mouvements.add(extractMouvementFromResultSet(rs));
+            }
+
+            return mouvements;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des mouvements pour le sociétaire ID: " +
+                    idSocietaire + " et type: " + type, ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
     /**
      * Récupère les mouvements par période.
      *
