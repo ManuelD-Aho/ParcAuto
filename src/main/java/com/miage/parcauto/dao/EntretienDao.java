@@ -1,6 +1,7 @@
 package com.miage.parcauto.dao;
 
 import com.miage.parcauto.model.entretien.Entretien;
+import com.miage.parcauto.model.vehicule.EtatVoiture;
 import com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.math.BigDecimal;
@@ -406,7 +407,7 @@ public class EntretienDao {
 
             // Si demandé, mettre à jour l'état du véhicule à "En entretien" (id = 4)
             if (updateVehiculeEtat) {
-                vehiculeDao.updateEtat(entretien.getIdVehicule(), 4); // 4 = En entretien
+                vehiculeDao.updateEtat(entretien.getIdVehicule(), EtatVoiture.EN_ENTRETIEN);
             }
 
             conn.commit();  // Valider transaction
@@ -583,9 +584,9 @@ public class EntretienDao {
 
                 // Déterminer le nouvel état du véhicule selon le statut de l'entretien
                 if (statut == Entretien.StatutOT.Cloture) {
-                    nouvelEtatVehicule = 1;  // 1 = Disponible
+                    nouvelEtatVehicule = EtatVoiture.DISPONIBLE;  // 1 = Disponible
                 } else if (statut == Entretien.StatutOT.EnCours) {
-                    nouvelEtatVehicule = 4;  // 4 = En entretien
+                    nouvelEtatVehicule = EtatVoiture.EN_ENTRETIEN;  // 4 = En entretien
                 } else {
                     // Pour les autres statuts, laisser l'état actuel
                     conn.commit();
@@ -750,13 +751,59 @@ public class EntretienDao {
     }
 
     /**
+     * Calcule le coût moyen des entretiens par type.
+     *
+     * @param type Type d'entretien (null pour tous les types)
+     * @return Coût moyen des entretiens
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public BigDecimal calculateAverageCost(Entretien.TypeEntretien type) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT AVG(cout_entr) AS avg_cost FROM ENTRETIEN";
+
+            if (type != null) {
+                sql += " WHERE type = ?";
+            }
+
+            pstmt = conn.prepareStatement(sql);
+
+            if (type != null) {
+                pstmt.setString(1, type.name());
+            }
+
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                BigDecimal avgCost = rs.getBigDecimal("avg_cost");
+                return avgCost != null ? avgCost : BigDecimal.ZERO;
+            }
+
+            return BigDecimal.ZERO;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du calcul du coût moyen des entretiens", ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
      * Calcule les statistiques d'entretien.
      *
      * @param year Année pour les statistiques (0 pour toutes les années)
      * @return Les statistiques d'entretien
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public Entretien.EntretienStats calculateStats(int year) throws SQLException {
+    public EntretienStats calculateStats(int year) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -801,7 +848,7 @@ public class EntretienDao {
                 coutTotal = coutTotal != null ? coutTotal : BigDecimal.ZERO;
                 coutMoyen = coutMoyen != null ? coutMoyen : BigDecimal.ZERO;
 
-                Entretien.EntretienStats stats = new Entretien.EntretienStats(
+                EntretienStats stats = new EntretienStats(
                         totalEntretiens, planifies, enCours, termines,
                         preventifs, correctifs, coutTotal, coutMoyen
                 );
@@ -810,12 +857,55 @@ public class EntretienDao {
             }
 
             // Par défaut, retourner des stats vides
-            return new Entretien.EntretienStats(
+            return new EntretienStats(
                     0, 0, 0, 0, 0, 0, BigDecimal.ZERO, BigDecimal.ZERO
             );
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Erreur lors du calcul des statistiques d'entretien", ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Récupère les entretiens à venir (planifiés) pour un véhicule.
+     *
+     * @param idVehicule ID du véhicule
+     * @return Liste des entretiens planifiés pour ce véhicule
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public List<Entretien> findEntretiensAVenir(int idVehicule) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<Entretien> entretiens = new ArrayList<>();
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT e.*, v.immatriculation, v.marque, v.modele " +
+                    "FROM ENTRETIEN e " +
+                    "JOIN VEHICULES v ON e.id_vehicule = v.id_vehicule " +
+                    "WHERE e.id_vehicule = ? AND e.statut_ot = 'Ouvert' " +
+                    "ORDER BY e.date_entree_entr ASC";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, idVehicule);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                entretiens.add(extractEntretienFromResultSet(rs));
+            }
+
+            return entretiens;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des entretiens à venir pour le véhicule ID: " + idVehicule, ex);
             throw ex;
         } finally {
             dbUtil.closeResultSet(rs);
@@ -867,36 +957,144 @@ public class EntretienDao {
         }
 
         // Informations véhicule (si disponibles)
+        // Stockons les informations du véhicule dans des variables liées à l'entretien
+        // mais sans utiliser setVehicule (qui n'existe pas)
         try {
             String immatriculation = rs.getString("immatriculation");
             String marque = rs.getString("marque");
             String modele = rs.getString("modele");
 
-            if (immatriculation != null && marque != null && modele != null) {
-                // Créer un objet Vehicule partiel pour l'affichage
-                Vehicule vehicule = new Vehicule();
-                vehicule.setIdVehicule(entretien.getIdVehicule());
-                vehicule.setImmatriculation(immatriculation);
-                vehicule.setMarque(marque);
-                vehicule.setModele(modele);
-
-                entretien.setVehicule(vehicule);
-            }
+            // Au lieu d'utiliser setVehicule, on peut stocker ces informations
+            // dans des attributs transitoires ou les utiliser directement où nécessaire
+            entretien.setInfoVehicule(immatriculation + " - " + marque + " " + modele);
         } catch (SQLException ex) {
             // Ignorer les colonnes non disponibles (cas où on ne joint pas avec VEHICULES)
+        } catch (NoSuchMethodError e) {
+            // Si la méthode setInfoVehicule n'existe pas, on peut l'ignorer
+            LOGGER.log(Level.WARNING, "Méthode setInfoVehicule non disponible dans la classe Entretien", e);
         }
 
         return entretien;
     }
 
-    // Classes statiques internes ajoutées pour répondre aux besoins spécifiques
-    // et complétées dans la classe Entretien
-    static {
-        // Ajout de la classe EntretienStats à la classe Entretien
-        try {
-            Class.forName("com.miage.parcauto.model.entretien.Entretien");
-        } catch (ClassNotFoundException e) {
-            // Ignorer, car la classe Entretien devrait déjà être chargée
+    /**
+     * Classe interne représentant les statistiques d'entretien.
+     */
+    public static class EntretienStats {
+        private final int totalEntretiens;
+        private final int planifies;
+        private final int enCours;
+        private final int termines;
+        private final int preventifs;
+        private final int correctifs;
+        private final BigDecimal coutTotal;
+        private final BigDecimal coutMoyen;
+
+        /**
+         * Constructeur pour les statistiques d'entretien.
+         *
+         * @param totalEntretiens Nombre total d'entretiens
+         * @param planifies Nombre d'entretiens planifiés
+         * @param enCours Nombre d'entretiens en cours
+         * @param termines Nombre d'entretiens terminés
+         * @param preventifs Nombre d'entretiens préventifs
+         * @param correctifs Nombre d'entretiens correctifs
+         * @param coutTotal Coût total des entretiens
+         * @param coutMoyen Coût moyen par entretien
+         */
+        public EntretienStats(int totalEntretiens, int planifies, int enCours, int termines,
+                              int preventifs, int correctifs,
+                              BigDecimal coutTotal, BigDecimal coutMoyen) {
+            this.totalEntretiens = totalEntretiens;
+            this.planifies = planifies;
+            this.enCours = enCours;
+            this.termines = termines;
+            this.preventifs = preventifs;
+            this.correctifs = correctifs;
+            this.coutTotal = coutTotal;
+            this.coutMoyen = coutMoyen;
+        }
+
+        // Getters
+
+        /**
+         * @return Nombre total d'entretiens
+         */
+        public int getTotalEntretiens() {
+            return totalEntretiens;
+        }
+
+        /**
+         * @return Nombre d'entretiens planifiés
+         */
+        public int getPlanifies() {
+            return planifies;
+        }
+
+        /**
+         * @return Nombre d'entretiens en cours
+         */
+        public int getEnCours() {
+            return enCours;
+        }
+
+        /**
+         * @return Nombre d'entretiens terminés
+         */
+        public int getTermines() {
+            return termines;
+        }
+
+        /**
+         * @return Nombre d'entretiens préventifs
+         */
+        public int getPreventifs() {
+            return preventifs;
+        }
+
+        /**
+         * @return Nombre d'entretiens correctifs
+         */
+        public int getCorrectifs() {
+            return correctifs;
+        }
+
+        /**
+         * @return Coût total des entretiens
+         */
+        public BigDecimal getCoutTotal() {
+            return coutTotal;
+        }
+
+        /**
+         * @return Coût moyen par entretien
+         */
+        public BigDecimal getCoutMoyen() {
+            return coutMoyen;
+        }
+
+        /**
+         * @return Pourcentage d'entretiens préventifs
+         */
+        public double getPourcentagePreventifs() {
+            if (totalEntretiens == 0) return 0;
+            return (preventifs * 100.0) / totalEntretiens;
+        }
+
+        /**
+         * @return Pourcentage d'entretiens correctifs
+         */
+        public double getPourcentageCorrectifs() {
+            if (totalEntretiens == 0) return 0;
+            return (correctifs * 100.0) / totalEntretiens;
+        }
+
+        /**
+         * @return Ratio entre entretiens préventifs et correctifs
+         */
+        public double getRatioPreventifCorrectif() {
+            if (correctifs == 0) return Double.POSITIVE_INFINITY;
+            return (preventifs * 1.0) / correctifs;
         }
     }
 }

@@ -3,7 +3,6 @@ package com.miage.parcauto.dao;
 import com.miage.parcauto.model.finance.SocieteCompte;
 import com.miage.parcauto.model.finance.Mouvement;
 import com.miage.parcauto.model.rh.Personnel;
-import com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -11,7 +10,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +19,46 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Classe DAO pour la gestion des comptes sociétaires dans la base de données.
- * Gère les opérations CRUD et les interactions spécifiques aux comptes financiers.
+ * Classe d'accès aux données pour les comptes sociétaires.
+ * Gère les opérations CRUD et les requêtes spécifiques liées aux comptes sociétaires.
  *
- * @author MIAGE Holding - ParcAuto
+ * @author MIAGE Holding
  * @version 1.0
  */
 public class SocieteCompteDao {
 
     private static final Logger LOGGER = Logger.getLogger(SocieteCompteDao.class.getName());
 
+    // Instance de DbUtil pour la gestion des connexions
+    private final DbUtil dbUtil;
+
+    // Instance de MouvementDao pour les opérations financières
+    private MouvementDao mouvementDao;
+
+    /**
+     * Constructeur par défaut. Initialise l'instance de DbUtil.
+     */
+    public SocieteCompteDao() {
+        this.dbUtil = DbUtil.getInstance();
+        this.mouvementDao = new MouvementDao();
+    }
+
+    /**
+     * Constructeur avec injection de dépendance pour les tests.
+     *
+     * @param dbUtil Instance de DbUtil à utiliser
+     * @param mouvementDao Instance de MouvementDao à utiliser
+     */
+    public SocieteCompteDao(DbUtil dbUtil, MouvementDao mouvementDao) {
+        this.dbUtil = dbUtil;
+        this.mouvementDao = mouvementDao;
+    }
+
     /**
      * Récupère tous les comptes sociétaires de la base de données.
      *
-     * @return liste de tous les comptes sociétaires
-     * @throws SQLException si une erreur de base de données survient
+     * @return Liste des comptes sociétaires
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
     public List<SocieteCompte> findAll() throws SQLException {
         Connection conn = null;
@@ -43,76 +67,79 @@ public class SocieteCompteDao {
         List<SocieteCompte> comptes = new ArrayList<>();
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
 
-            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel, p.matricule " +
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
                     "FROM SOCIETAIRE_COMPTE sc " +
                     "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
                     "ORDER BY sc.nom";
-            pstmt = conn.prepareStatement(sql);
 
+            pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                comptes.add(buildSocieteCompteFromResultSet(rs));
+                comptes.add(extractSocieteCompteFromResultSet(rs));
             }
 
             return comptes;
 
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les comptes sociétaires", e);
-            throw e;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les comptes sociétaires", ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
-     * Récupère un compte sociétaire par son identifiant.
+     * Récupère un compte sociétaire par son ID.
      *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @return un Optional contenant le compte sociétaire ou un Optional vide si non trouvé
-     * @throws SQLException si une erreur de base de données survient
+     * @param id ID du compte sociétaire à récupérer
+     * @return Optional contenant le compte sociétaire s'il existe, vide sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public Optional<SocieteCompte> findById(int idSocietaire) throws SQLException {
+    public Optional<SocieteCompte> findById(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
 
-            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel, p.matricule " +
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
                     "FROM SOCIETAIRE_COMPTE sc " +
                     "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
                     "WHERE sc.id_societaire = ?";
+
             pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, idSocietaire);
+            pstmt.setInt(1, id);
 
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(buildSocieteCompteFromResultSet(rs));
+                return Optional.of(extractSocieteCompteFromResultSet(rs));
             }
 
             return Optional.empty();
 
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du compte sociétaire ID: " + idSocietaire, e);
-            throw e;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du compte sociétaire par ID: " + id, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
      * Récupère un compte sociétaire par son numéro.
      *
-     * @param numero numéro du compte sociétaire
-     * @return un Optional contenant le compte sociétaire ou un Optional vide si non trouvé
-     * @throws SQLException si une erreur de base de données survient
+     * @param numero Numéro du compte sociétaire à récupérer
+     * @return Optional contenant le compte sociétaire s'il existe, vide sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
     public Optional<SocieteCompte> findByNumero(String numero) throws SQLException {
         Connection conn = null;
@@ -120,143 +147,237 @@ public class SocieteCompteDao {
         ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
 
-            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel, p.matricule " +
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
                     "FROM SOCIETAIRE_COMPTE sc " +
                     "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
                     "WHERE sc.numero = ?";
+
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, numero);
 
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(buildSocieteCompteFromResultSet(rs));
+                return Optional.of(extractSocieteCompteFromResultSet(rs));
             }
 
             return Optional.empty();
 
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du compte sociétaire par numéro: " + numero, e);
-            throw e;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du compte sociétaire par numéro: " + numero, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
-     * Récupère un compte sociétaire associé à un personnel.
+     * Récupère un compte sociétaire associé à un membre du personnel.
      *
-     * @param idPersonnel identifiant du personnel
-     * @return un Optional contenant le compte sociétaire ou un Optional vide si non trouvé
-     * @throws SQLException si une erreur de base de données survient
+     * @param idPersonnel ID du personnel associé au compte sociétaire
+     * @return Optional contenant le compte sociétaire s'il existe, vide sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public Optional<SocieteCompte> findByPersonnel(int idPersonnel) throws SQLException {
+    public Optional<SocieteCompte> findByIdPersonnel(int idPersonnel) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
 
-            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel, p.matricule " +
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
                     "FROM SOCIETAIRE_COMPTE sc " +
                     "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
                     "WHERE sc.id_personnel = ?";
+
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, idPersonnel);
 
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return Optional.of(buildSocieteCompteFromResultSet(rs));
+                return Optional.of(extractSocieteCompteFromResultSet(rs));
             }
 
             return Optional.empty();
 
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du compte sociétaire pour personnel ID: " + idPersonnel, e);
-            throw e;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du compte sociétaire par ID personnel: " + idPersonnel, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
-     * Recherche des comptes sociétaires par nom ou numéro.
+     * Recherche des comptes sociétaires par nom.
      *
-     * @param searchTerm terme de recherche (nom ou numéro)
-     * @return liste des comptes sociétaires correspondant au terme de recherche
-     * @throws SQLException si une erreur de base de données survient
+     * @param nom Nom ou partie du nom à rechercher
+     * @return Liste des comptes sociétaires correspondants
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public List<SocieteCompte> searchByNomOrNumero(String searchTerm) throws SQLException {
+    public List<SocieteCompte> searchByNom(String nom) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         List<SocieteCompte> comptes = new ArrayList<>();
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
 
-            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel, p.matricule " +
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
                     "FROM SOCIETAIRE_COMPTE sc " +
                     "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
-                    "WHERE sc.nom LIKE ? OR sc.numero LIKE ? " +
+                    "WHERE sc.nom LIKE ? " +
                     "ORDER BY sc.nom";
+
             pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, "%" + searchTerm + "%");
-            pstmt.setString(2, "%" + searchTerm + "%");
+            pstmt.setString(1, "%" + nom + "%");
 
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                comptes.add(buildSocieteCompteFromResultSet(rs));
+                comptes.add(extractSocieteCompteFromResultSet(rs));
             }
 
             return comptes;
 
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de comptes sociétaires: " + searchTerm, e);
-            throw e;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des comptes sociétaires par nom: " + nom, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Récupère les comptes sociétaires avec un solde supérieur à un montant donné.
+     *
+     * @param montant Montant minimal du solde
+     * @return Liste des comptes sociétaires avec un solde supérieur au montant
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public List<SocieteCompte> findBySoldeSuperieurA(BigDecimal montant) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<SocieteCompte> comptes = new ArrayList<>();
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
+                    "FROM SOCIETAIRE_COMPTE sc " +
+                    "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
+                    "WHERE sc.solde >= ? " +
+                    "ORDER BY sc.solde DESC";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setBigDecimal(1, montant);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                comptes.add(extractSocieteCompteFromResultSet(rs));
+            }
+
+            return comptes;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des comptes sociétaires avec un solde supérieur à: " + montant, ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Récupère les comptes sociétaires avec un solde inférieur à un montant donné.
+     *
+     * @param montant Montant maximal du solde
+     * @return Liste des comptes sociétaires avec un solde inférieur au montant
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public List<SocieteCompte> findBySoldeInferieurA(BigDecimal montant) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        List<SocieteCompte> comptes = new ArrayList<>();
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT sc.*, p.nom_personnel, p.prenom_personnel " +
+                    "FROM SOCIETAIRE_COMPTE sc " +
+                    "LEFT JOIN PERSONNEL p ON sc.id_personnel = p.id_personnel " +
+                    "WHERE sc.solde <= ? " +
+                    "ORDER BY sc.solde ASC";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setBigDecimal(1, montant);
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                comptes.add(extractSocieteCompteFromResultSet(rs));
+            }
+
+            return comptes;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des comptes sociétaires avec un solde inférieur à: " + montant, ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
      * Crée un nouveau compte sociétaire dans la base de données.
      *
-     * @param compte compte sociétaire à créer
-     * @return identifiant du compte sociétaire créé
-     * @throws SQLException si une erreur de base de données survient
+     * @param compte Le compte sociétaire à créer
+     * @return Le compte sociétaire créé avec son ID généré
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public int save(SocieteCompte compte) throws SQLException {
+    public SocieteCompte create(SocieteCompte compte) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
+            conn.setAutoCommit(false);  // Début transaction
 
-            String sql = "INSERT INTO SOCIETAIRE_COMPTE (nom, numero, solde, email, telephone, id_personnel) " +
+            String sql = "INSERT INTO SOCIETAIRE_COMPTE (id_personnel, nom, numero, solde, email, telephone) " +
                     "VALUES (?, ?, ?, ?, ?, ?)";
+
             pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-            pstmt.setString(1, compte.getNom());
-            pstmt.setString(2, compte.getNumero());
-            pstmt.setBigDecimal(3, compte.getSolde() != null ? compte.getSolde() : BigDecimal.ZERO);
-            pstmt.setString(4, compte.getEmail());
-            pstmt.setString(5, compte.getTelephone());
-
-            if (compte.getPersonnel() != null && compte.getPersonnel().getIdPersonnel() != null) {
-                pstmt.setInt(6, compte.getPersonnel().getIdPersonnel());
+            // Paramètres
+            if (compte.getIdPersonnel() != null) {
+                pstmt.setInt(1, compte.getIdPersonnel());
             } else {
-                pstmt.setNull(6, java.sql.Types.INTEGER);
+                pstmt.setNull(1, Types.INTEGER);
             }
+
+            pstmt.setString(2, compte.getNom());
+            pstmt.setString(3, compte.getNumero());
+            pstmt.setBigDecimal(4, compte.getSolde() != null ? compte.getSolde() : BigDecimal.ZERO);
+            pstmt.setString(5, compte.getEmail());
+            pstmt.setString(6, compte.getTelephone());
 
             int affectedRows = pstmt.executeUpdate();
 
@@ -265,650 +386,774 @@ public class SocieteCompteDao {
             }
 
             rs = pstmt.getGeneratedKeys();
-
             if (rs.next()) {
-                int generatedId = rs.getInt(1);
-
-                // Création d'un enregistrement de la date de création dans la base de données
-                DbUtil.closePreparedStatement(pstmt);
-
-                String updateSql = "UPDATE SOCIETAIRE_COMPTE SET date_creation = ? WHERE id_societaire = ?";
-                pstmt = conn.prepareStatement(updateSql);
-                pstmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-                pstmt.setInt(2, generatedId);
-                pstmt.executeUpdate();
-
-                DbUtil.commitTransaction(conn);
-                return generatedId;
+                compte.setIdSocietaire(rs.getInt(1));
             } else {
-                throw new SQLException("La création du compte sociétaire a échoué, aucun ID obtenu.");
+                throw new SQLException("La création du compte sociétaire a échoué, aucun ID généré.");
             }
 
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors de la création du compte sociétaire: " + compte.getNumero(), e);
-            throw e;
+            conn.commit();  // Valider transaction
+            return compte;
+
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Annuler transaction en cas d'erreur
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
+                }
+            }
+            LOGGER.log(Level.SEVERE, "Erreur lors de la création du compte sociétaire", ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);  // Rétablir autocommit
+                } catch (SQLException e) {
+                    LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
+                }
+            }
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
-     * Met à jour un compte sociétaire existant dans la base de données.
+     * Met à jour un compte sociétaire dans la base de données.
      *
-     * @param compte compte sociétaire à mettre à jour
-     * @return true si la mise à jour a réussi
-     * @throws SQLException si une erreur de base de données survient
+     * @param compte Le compte sociétaire à mettre à jour
+     * @return true si la mise à jour a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
     public boolean update(SocieteCompte compte) throws SQLException {
+        if (compte.getIdSocietaire() == null) {
+            throw new IllegalArgumentException("L'ID du compte sociétaire ne peut pas être null pour une mise à jour");
+        }
+
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
+            conn.setAutoCommit(false);  // Début transaction
 
-            String sql = "UPDATE SOCIETAIRE_COMPTE SET nom = ?, numero = ?, solde = ?, " +
-                    "email = ?, telephone = ?, id_personnel = ? WHERE id_societaire = ?";
+            String sql = "UPDATE SOCIETAIRE_COMPTE SET id_personnel = ?, nom = ?, numero = ?, " +
+                    "solde = ?, email = ?, telephone = ? " +
+                    "WHERE id_societaire = ?";
+
             pstmt = conn.prepareStatement(sql);
 
-            pstmt.setString(1, compte.getNom());
-            pstmt.setString(2, compte.getNumero());
-            pstmt.setBigDecimal(3, compte.getSolde() != null ? compte.getSolde() : BigDecimal.ZERO);
-            pstmt.setString(4, compte.getEmail());
-            pstmt.setString(5, compte.getTelephone());
-
-            if (compte.getPersonnel() != null && compte.getPersonnel().getIdPersonnel() != null) {
-                pstmt.setInt(6, compte.getPersonnel().getIdPersonnel());
+            // Paramètres
+            if (compte.getIdPersonnel() != null) {
+                pstmt.setInt(1, compte.getIdPersonnel());
             } else {
-                pstmt.setNull(6, java.sql.Types.INTEGER);
+                pstmt.setNull(1, Types.INTEGER);
             }
 
+            pstmt.setString(2, compte.getNom());
+            pstmt.setString(3, compte.getNumero());
+            pstmt.setBigDecimal(4, compte.getSolde() != null ? compte.getSolde() : BigDecimal.ZERO);
+            pstmt.setString(5, compte.getEmail());
+            pstmt.setString(6, compte.getTelephone());
             pstmt.setInt(7, compte.getIdSocietaire());
 
             int affectedRows = pstmt.executeUpdate();
-            DbUtil.commitTransaction(conn);
 
+            conn.commit();  // Valider transaction
             return affectedRows > 0;
 
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du compte sociétaire ID: " + compte.getIdSocietaire(), e);
-            throw e;
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Annuler transaction en cas d'erreur
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
+                }
+            }
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du compte sociétaire ID: " + compte.getIdSocietaire(), ex);
+            throw ex;
         } finally {
-            DbUtil.closePreparedStatement(pstmt);
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);  // Rétablir autocommit
+                } catch (SQLException e) {
+                    LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
+                }
+            }
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
      * Met à jour le solde d'un compte sociétaire.
      *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @param solde nouveau solde
-     * @return true si la mise à jour a réussi
-     * @throws SQLException si une erreur de base de données survient
+     * @param idSocietaire ID du compte sociétaire
+     * @param nouveauSolde Nouveau solde
+     * @return true si la mise à jour a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public boolean updateSolde(int idSocietaire, BigDecimal solde) throws SQLException {
+    public boolean updateSolde(int idSocietaire, BigDecimal nouveauSolde) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
 
             String sql = "UPDATE SOCIETAIRE_COMPTE SET solde = ? WHERE id_societaire = ?";
+
             pstmt = conn.prepareStatement(sql);
-            pstmt.setBigDecimal(1, solde);
+            pstmt.setBigDecimal(1, nouveauSolde);
             pstmt.setInt(2, idSocietaire);
 
             int affectedRows = pstmt.executeUpdate();
-            DbUtil.commitTransaction(conn);
 
             return affectedRows > 0;
 
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du solde du compte sociétaire ID: " + idSocietaire, e);
-            throw e;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du solde du compte sociétaire ID: " + idSocietaire, ex);
+            throw ex;
         } finally {
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
      * Effectue un dépôt sur un compte sociétaire.
+     * Crée un mouvement et met à jour le solde.
      *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @param montant montant à déposer
-     * @param description description du dépôt
-     * @param idUtilisateur identifiant de l'utilisateur effectuant l'opération
-     * @return identifiant du mouvement créé
-     * @throws SQLException si une erreur de base de données survient
+     * @param idSocietaire ID du compte sociétaire
+     * @param montant Montant à déposer
+     * @param description Description du dépôt (optionnel)
+     * @return true si le dépôt a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     * @throws IllegalArgumentException Si le montant est négatif ou nul
      */
-    public int effectuerDepot(int idSocietaire, BigDecimal montant, String description, int idUtilisateur) throws SQLException {
+    public boolean effectuerDepot(int idSocietaire, BigDecimal montant, String description)
+            throws SQLException, IllegalArgumentException {
+        if (montant == null || montant.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Le montant du dépôt doit être positif");
+        }
+
         Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
+            conn.setAutoCommit(false);  // Début transaction
 
-            // Récupérer le solde actuel
-            String sqlSelect = "SELECT solde FROM SOCIETAIRE_COMPTE WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlSelect);
-            pstmt.setInt(1, idSocietaire);
-
-            rs = pstmt.executeQuery();
-
-            if (!rs.next()) {
-                throw new SQLException("Compte sociétaire non trouvé pour ID: " + idSocietaire);
+            // Récupérer le compte sociétaire
+            Optional<SocieteCompte> compteOpt = findById(idSocietaire);
+            if (!compteOpt.isPresent()) {
+                throw new SQLException("Compte sociétaire non trouvé avec ID: " + idSocietaire);
             }
 
-            BigDecimal soldeActuel = rs.getBigDecimal("solde");
-            BigDecimal nouveauSolde = soldeActuel.add(montant);
+            SocieteCompte compte = compteOpt.get();
 
-            DbUtil.closePreparedStatement(pstmt);
-            DbUtil.closeResultSet(rs);
+            // Calculer le nouveau solde
+            BigDecimal nouveauSolde = compte.getSolde().add(montant);
 
             // Mettre à jour le solde
-            String sqlUpdate = "UPDATE SOCIETAIRE_COMPTE SET solde = ? WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlUpdate);
-            pstmt.setBigDecimal(1, nouveauSolde);
-            pstmt.setInt(2, idSocietaire);
+            updateSolde(idSocietaire, nouveauSolde);
 
-            pstmt.executeUpdate();
+            // Créer un mouvement de dépôt
+            Mouvement mouvement = new Mouvement();
+            mouvement.setIdSocietaire(idSocietaire);
+            mouvement.setType(Mouvement.TypeMouvement.Depot);
+            mouvement.setMontant(montant);
+            mouvement.setDate(LocalDateTime.now());
+            mouvement.setDescription(description);
 
-            DbUtil.closePreparedStatement(pstmt);
+            mouvementDao.create(mouvement);
 
-            // Créer le mouvement
-            String sqlInsert = "INSERT INTO MOUVEMENT (id_societaire, date, type, montant, description, id_utilisateur) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-            pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            conn.commit();  // Valider transaction
+            return true;
 
-            pstmt.setInt(1, idSocietaire);
-            pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            pstmt.setString(3, "Depot");
-            pstmt.setBigDecimal(4, montant);
-            pstmt.setString(5, description);
-            pstmt.setInt(6, idUtilisateur);
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("La création du mouvement de dépôt a échoué, aucune ligne affectée.");
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Annuler transaction en cas d'erreur
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
+                }
             }
-
-            rs = pstmt.getGeneratedKeys();
-
-            if (rs.next()) {
-                int generatedId = rs.getInt(1);
-                DbUtil.commitTransaction(conn);
-                return generatedId;
-            } else {
-                throw new SQLException("La création du mouvement de dépôt a échoué, aucun ID obtenu.");
-            }
-
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors du dépôt sur le compte sociétaire ID: " + idSocietaire, e);
-            throw e;
+            LOGGER.log(Level.SEVERE, "Erreur lors du dépôt sur le compte sociétaire ID: " + idSocietaire, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);  // Rétablir autocommit
+                } catch (SQLException e) {
+                    LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
+                }
+            }
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
      * Effectue un retrait sur un compte sociétaire.
+     * Crée un mouvement et met à jour le solde.
      *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @param montant montant à retirer
-     * @param description description du retrait
-     * @param idUtilisateur identifiant de l'utilisateur effectuant l'opération
-     * @return identifiant du mouvement créé
-     * @throws SQLException si une erreur de base de données survient
-     * @throws IllegalArgumentException si le solde est insuffisant
+     * @param idSocietaire ID du compte sociétaire
+     * @param montant Montant à retirer
+     * @param description Description du retrait (optionnel)
+     * @return true si le retrait a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     * @throws IllegalArgumentException Si le montant est négatif ou nul
+     * @throws IllegalStateException Si le solde est insuffisant
      */
-    public int effectuerRetrait(int idSocietaire, BigDecimal montant, String description, int idUtilisateur)
-            throws SQLException, IllegalArgumentException {
+    public boolean effectuerRetrait(int idSocietaire, BigDecimal montant, String description)
+            throws SQLException, IllegalArgumentException, IllegalStateException {
+        if (montant == null || montant.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Le montant du retrait doit être positif");
+        }
+
         Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
+            conn.setAutoCommit(false);  // Début transaction
 
-            // Récupérer le solde actuel
-            String sqlSelect = "SELECT solde FROM SOCIETAIRE_COMPTE WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlSelect);
-            pstmt.setInt(1, idSocietaire);
-
-            rs = pstmt.executeQuery();
-
-            if (!rs.next()) {
-                throw new SQLException("Compte sociétaire non trouvé pour ID: " + idSocietaire);
+            // Récupérer le compte sociétaire
+            Optional<SocieteCompte> compteOpt = findById(idSocietaire);
+            if (!compteOpt.isPresent()) {
+                throw new SQLException("Compte sociétaire non trouvé avec ID: " + idSocietaire);
             }
 
-            BigDecimal soldeActuel = rs.getBigDecimal("solde");
+            SocieteCompte compte = compteOpt.get();
 
             // Vérifier si le solde est suffisant
-            if (soldeActuel.compareTo(montant) < 0) {
-                throw new IllegalArgumentException("Solde insuffisant pour effectuer le retrait");
+            if (compte.getSolde().compareTo(montant) < 0) {
+                throw new IllegalStateException("Solde insuffisant pour effectuer le retrait");
             }
 
-            BigDecimal nouveauSolde = soldeActuel.subtract(montant);
-
-            DbUtil.closePreparedStatement(pstmt);
-            DbUtil.closeResultSet(rs);
+            // Calculer le nouveau solde
+            BigDecimal nouveauSolde = compte.getSolde().subtract(montant);
 
             // Mettre à jour le solde
-            String sqlUpdate = "UPDATE SOCIETAIRE_COMPTE SET solde = ? WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlUpdate);
-            pstmt.setBigDecimal(1, nouveauSolde);
-            pstmt.setInt(2, idSocietaire);
+            updateSolde(idSocietaire, nouveauSolde);
 
-            pstmt.executeUpdate();
+            // Créer un mouvement de retrait
+            Mouvement mouvement = new Mouvement();
+            mouvement.setIdSocietaire(idSocietaire);
+            mouvement.setType(Mouvement.TypeMouvement.Retrait);
+            mouvement.setMontant(montant);
+            mouvement.setDate(LocalDateTime.now());
+            mouvement.setDescription(description);
 
-            DbUtil.closePreparedStatement(pstmt);
+            mouvementDao.create(mouvement);
 
-            // Créer le mouvement (montant négatif pour un retrait)
-            String sqlInsert = "INSERT INTO MOUVEMENT (id_societaire, date, type, montant, description, id_utilisateur) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-            pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
+            conn.commit();  // Valider transaction
+            return true;
 
-            pstmt.setInt(1, idSocietaire);
-            pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            pstmt.setString(3, "Retrait");
-            pstmt.setBigDecimal(4, montant.negate());  // Montant négatif pour un retrait
-            pstmt.setString(5, description);
-            pstmt.setInt(6, idUtilisateur);
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("La création du mouvement de retrait a échoué, aucune ligne affectée.");
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Annuler transaction en cas d'erreur
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
+                }
             }
-
-            rs = pstmt.getGeneratedKeys();
-
-            if (rs.next()) {
-                int generatedId = rs.getInt(1);
-                DbUtil.commitTransaction(conn);
-                return generatedId;
-            } else {
-                throw new SQLException("La création du mouvement de retrait a échoué, aucun ID obtenu.");
-            }
-
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors du retrait sur le compte sociétaire ID: " + idSocietaire, e);
-            throw e;
+            LOGGER.log(Level.SEVERE, "Erreur lors du retrait sur le compte sociétaire ID: " + idSocietaire, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);  // Rétablir autocommit
+                } catch (SQLException e) {
+                    LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
+                }
+            }
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
-     * Effectue un paiement de mensualité sur un compte sociétaire.
+     * Effectue un prélèvement mensuel sur un compte sociétaire.
+     * Crée un mouvement de type Mensualite et met à jour le solde.
      *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @param montant montant de la mensualité
-     * @param description description de la mensualité
-     * @param idUtilisateur identifiant de l'utilisateur effectuant l'opération
-     * @return identifiant du mouvement créé
-     * @throws SQLException si une erreur de base de données survient
-     * @throws IllegalArgumentException si le solde est insuffisant
+     * @param idSocietaire ID du compte sociétaire
+     * @param montant Montant à prélever
+     * @param description Description du prélèvement (optionnel)
+     * @return true si le prélèvement a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     * @throws IllegalArgumentException Si le montant est négatif ou nul
+     * @throws IllegalStateException Si le solde est insuffisant
      */
-    public int effectuerPaiementMensualite(int idSocietaire, BigDecimal montant, String description, int idUtilisateur)
-            throws SQLException, IllegalArgumentException {
+    public boolean effectuerPrelevementMensuel(int idSocietaire, BigDecimal montant, String description)
+            throws SQLException, IllegalArgumentException, IllegalStateException {
+        if (montant == null || montant.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Le montant du prélèvement doit être positif");
+        }
+
         Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
+            conn.setAutoCommit(false);  // Début transaction
 
-            // Récupérer le solde actuel et le nombre de mensualités payées
-            String sqlSelect = "SELECT sc.solde, sc.mensualites_payees, sc.total_mensualites " +
-                    "FROM SOCIETAIRE_COMPTE sc WHERE sc.id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlSelect);
-            pstmt.setInt(1, idSocietaire);
-
-            rs = pstmt.executeQuery();
-
-            if (!rs.next()) {
-                throw new SQLException("Compte sociétaire non trouvé pour ID: " + idSocietaire);
+            // Récupérer le compte sociétaire
+            Optional<SocieteCompte> compteOpt = findById(idSocietaire);
+            if (!compteOpt.isPresent()) {
+                throw new SQLException("Compte sociétaire non trouvé avec ID: " + idSocietaire);
             }
 
-            BigDecimal soldeActuel = rs.getBigDecimal("solde");
-            int mensualitesPayees = rs.getInt("mensualites_payees");
-            int totalMensualites = rs.getInt("total_mensualites");
+            SocieteCompte compte = compteOpt.get();
 
             // Vérifier si le solde est suffisant
-            if (soldeActuel.compareTo(montant) < 0) {
-                throw new IllegalArgumentException("Solde insuffisant pour effectuer le paiement de mensualité");
+            if (compte.getSolde().compareTo(montant) < 0) {
+                throw new IllegalStateException("Solde insuffisant pour effectuer le prélèvement mensuel");
             }
 
-            // Vérifier si toutes les mensualités sont déjà payées
-            if (mensualitesPayees >= totalMensualites) {
-                throw new IllegalArgumentException("Toutes les mensualités ont déjà été payées");
+            // Calculer le nouveau solde
+            BigDecimal nouveauSolde = compte.getSolde().subtract(montant);
+
+            // Mettre à jour le solde
+            updateSolde(idSocietaire, nouveauSolde);
+
+            // Créer un mouvement de mensualité
+            Mouvement mouvement = new Mouvement();
+            mouvement.setIdSocietaire(idSocietaire);
+            mouvement.setType(Mouvement.TypeMouvement.Mensualite);
+            mouvement.setMontant(montant);
+            mouvement.setDate(LocalDateTime.now());
+            mouvement.setDescription(description);
+
+            mouvementDao.create(mouvement);
+
+            conn.commit();  // Valider transaction
+            return true;
+
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Annuler transaction en cas d'erreur
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
+                }
             }
-
-            BigDecimal nouveauSolde = soldeActuel.subtract(montant);
-
-            DbUtil.closePreparedStatement(pstmt);
-            DbUtil.closeResultSet(rs);
-
-            // Mettre à jour le solde et le nombre de mensualités payées
-            String sqlUpdate = "UPDATE SOCIETAIRE_COMPTE SET solde = ?, mensualites_payees = ? WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlUpdate);
-            pstmt.setBigDecimal(1, nouveauSolde);
-            pstmt.setInt(2, mensualitesPayees + 1);
-            pstmt.setInt(3, idSocietaire);
-
-            pstmt.executeUpdate();
-
-            DbUtil.closePreparedStatement(pstmt);
-
-            // Créer le mouvement (montant négatif pour un paiement)
-            String sqlInsert = "INSERT INTO MOUVEMENT (id_societaire, date, type, montant, description, id_utilisateur) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
-            pstmt = conn.prepareStatement(sqlInsert, Statement.RETURN_GENERATED_KEYS);
-
-            pstmt.setInt(1, idSocietaire);
-            pstmt.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            pstmt.setString(3, "Mensualite");
-            pstmt.setBigDecimal(4, montant.negate());  // Montant négatif pour un paiement
-            pstmt.setString(5, description);
-            pstmt.setInt(6, idUtilisateur);
-
-            int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("La création du mouvement de mensualité a échoué, aucune ligne affectée.");
-            }
-
-            rs = pstmt.getGeneratedKeys();
-
-            if (rs.next()) {
-                int generatedId = rs.getInt(1);
-                DbUtil.commitTransaction(conn);
-                return generatedId;
-            } else {
-                throw new SQLException("La création du mouvement de mensualité a échoué, aucun ID obtenu.");
-            }
-
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors du paiement de mensualité sur le compte sociétaire ID: " + idSocietaire, e);
-            throw e;
+            LOGGER.log(Level.SEVERE, "Erreur lors du prélèvement mensuel sur le compte sociétaire ID: " + idSocietaire, ex);
+            throw ex;
         } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
-        }
-    }
-
-    /**
-     * Affecte un véhicule à un compte sociétaire.
-     *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @param idVehicule identifiant du véhicule
-     * @param dateAffectation date d'affectation
-     * @return true si l'affectation a réussi
-     * @throws SQLException si une erreur de base de données survient
-     */
-    public boolean affecterVehicule(int idSocietaire, int idVehicule, LocalDateTime dateAffectation) throws SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            conn = DbUtil.getConnection();
-
-            // Vérifier si le véhicule est déjà affecté à un autre compte
-            String sqlCheck = "SELECT COUNT(*) FROM SOCIETAIRE_COMPTE WHERE vehicule_attribue = ?";
-            pstmt = conn.prepareStatement(sqlCheck);
-            pstmt.setInt(1, idVehicule);
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                throw new SQLException("Le véhicule est déjà affecté à un autre compte sociétaire");
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);  // Rétablir autocommit
+                } catch (SQLException e) {
+                    LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
+                }
             }
-
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
-
-            // Affecter le véhicule au compte
-            String sqlUpdate = "UPDATE SOCIETAIRE_COMPTE SET vehicule_attribue = ?, date_affectation_vehicule = ? " +
-                    "WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlUpdate);
-            pstmt.setInt(1, idVehicule);
-            pstmt.setTimestamp(2, Timestamp.valueOf(dateAffectation));
-            pstmt.setInt(3, idSocietaire);
-
-            int affectedRows = pstmt.executeUpdate();
-            DbUtil.commitTransaction(conn);
-
-            return affectedRows > 0;
-
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'affectation du véhicule au compte sociétaire", e);
-            throw e;
-        } finally {
-            DbUtil.closePreparedStatement(pstmt);
-        }
-    }
-
-    /**
-     * Définit les paramètres de mensualité pour un compte sociétaire.
-     *
-     * @param idSocietaire identifiant du compte sociétaire
-     * @param mensualite montant de la mensualité
-     * @param totalMensualites nombre total de mensualités
-     * @return true si la mise à jour a réussi
-     * @throws SQLException si une erreur de base de données survient
-     */
-    public boolean definirMensualite(int idSocietaire, BigDecimal mensualite, int totalMensualites) throws SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-
-        try {
-            conn = DbUtil.getConnection();
-
-            String sql = "UPDATE SOCIETAIRE_COMPTE SET mensualite = ?, total_mensualites = ? WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setBigDecimal(1, mensualite);
-            pstmt.setInt(2, totalMensualites);
-            pstmt.setInt(3, idSocietaire);
-
-            int affectedRows = pstmt.executeUpdate();
-            DbUtil.commitTransaction(conn);
-
-            return affectedRows > 0;
-
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors de la définition des mensualités pour le compte sociétaire ID: " + idSocietaire, e);
-            throw e;
-        } finally {
-            DbUtil.closePreparedStatement(pstmt);
-        }
-    }
-
-    /**
-     * Récupère les statistiques sur les comptes sociétaires.
-     *
-     * @return tableau contenant [nombre de comptes, solde total, moyenne des soldes]
-     * @throws SQLException si une erreur de base de données survient
-     */
-    public Object[] getStatistiquesComptes() throws SQLException {
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DbUtil.getConnection();
-
-            String sql = "SELECT COUNT(*) as nombre, SUM(solde) as total, AVG(solde) as moyenne FROM SOCIETAIRE_COMPTE";
-            pstmt = conn.prepareStatement(sql);
-
-            rs = pstmt.executeQuery();
-
-            Object[] stats = new Object[3];
-
-            if (rs.next()) {
-                stats[0] = rs.getInt("nombre");
-                stats[1] = rs.getBigDecimal("total");
-                stats[2] = rs.getBigDecimal("moyenne");
-            }
-
-            return stats;
-
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des statistiques des comptes sociétaires", e);
-            throw e;
-        } finally {
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
      * Supprime un compte sociétaire de la base de données.
+     * Attention : cette opération supprimera également tous les mouvements associés.
      *
-     * @param idSocietaire identifiant du compte sociétaire à supprimer
-     * @return true si la suppression a réussi
-     * @throws SQLException si une erreur de base de données survient
+     * @param id ID du compte sociétaire à supprimer
+     * @return true si la suppression a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public boolean delete(int idSocietaire) throws SQLException {
+    public boolean delete(int id) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
-            conn = DbUtil.getConnection();
+            conn = dbUtil.getConnection();
+            conn.setAutoCommit(false);  // Début transaction
 
-            // Vérifier si le compte a des mouvements associés
-            String sqlCheck = "SELECT COUNT(*) FROM MOUVEMENT WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlCheck);
-            pstmt.setInt(1, idSocietaire);
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                throw new SQLException("Impossible de supprimer le compte sociétaire : des mouvements financiers sont associés");
+            // Vérifier s'il y a des affectations liées au compte
+            if (hasAffectations(conn, id)) {
+                LOGGER.log(Level.WARNING, "Impossible de supprimer le compte sociétaire ID: " + id +
+                        " car il est associé à des affectations");
+                return false;
             }
 
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
+            // Supprimer d'abord les mouvements associés
+            String sqlMouvements = "DELETE FROM MOUVEMENT WHERE id_societaire = ?";
+            pstmt = conn.prepareStatement(sqlMouvements);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
 
-            // Vérifier si le compte a des affectations
-            String sqlCheckAff = "SELECT COUNT(*) FROM AFFECTATION WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlCheckAff);
-            pstmt.setInt(1, idSocietaire);
+            // Supprimer ensuite les documents associés
+            dbUtil.closePreparedStatement(pstmt);
+            String sqlDocuments = "DELETE FROM DOCUMENT_SOCIETAIRE WHERE id_societaire = ?";
+            pstmt = conn.prepareStatement(sqlDocuments);
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
 
-            rs = pstmt.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                throw new SQLException("Impossible de supprimer le compte sociétaire : des affectations sont associées");
-            }
-
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
-
-            // Vérifier si le compte a des documents
-            String sqlCheckDoc = "SELECT COUNT(*) FROM DOCUMENT_SOCIETAIRE WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlCheckDoc);
-            pstmt.setInt(1, idSocietaire);
-
-            rs = pstmt.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                throw new SQLException("Impossible de supprimer le compte sociétaire : des documents sont associés");
-            }
-
-            DbUtil.closeResultSet(rs);
-            DbUtil.closePreparedStatement(pstmt);
-
-            // Supprimer le compte
-            String sqlDelete = "DELETE FROM SOCIETAIRE_COMPTE WHERE id_societaire = ?";
-            pstmt = conn.prepareStatement(sqlDelete);
-            pstmt.setInt(1, idSocietaire);
+            // Enfin, supprimer le compte sociétaire
+            dbUtil.closePreparedStatement(pstmt);
+            String sqlCompte = "DELETE FROM SOCIETAIRE_COMPTE WHERE id_societaire = ?";
+            pstmt = conn.prepareStatement(sqlCompte);
+            pstmt.setInt(1, id);
 
             int affectedRows = pstmt.executeUpdate();
-            DbUtil.commitTransaction(conn);
 
+            conn.commit();  // Valider transaction
             return affectedRows > 0;
 
-        } catch (SQLException e) {
-            DbUtil.rollbackTransaction(conn);
-            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression du compte sociétaire ID: " + idSocietaire, e);
-            throw e;
+        } catch (SQLException ex) {
+            if (conn != null) {
+                try {
+                    conn.rollback();  // Annuler transaction en cas d'erreur
+                } catch (SQLException e) {
+                    LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
+                }
+            }
+            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression du compte sociétaire ID: " + id, ex);
+            throw ex;
         } finally {
-            DbUtil.closePreparedStatement(pstmt);
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);  // Rétablir autocommit
+                } catch (SQLException e) {
+                    LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
+                }
+            }
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
         }
     }
 
     /**
-     * Construit un objet SocieteCompte à partir d'un ResultSet.
+     * Vérifie si un numéro de compte existe déjà.
+     *
+     * @param numero Numéro de compte à vérifier
+     * @return true si le numéro existe déjà, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public boolean numeroExiste(String numero) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT 1 FROM SOCIETAIRE_COMPTE WHERE numero = ?";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, numero);
+
+            rs = pstmt.executeQuery();
+
+            return rs.next();  // true si un résultat est trouvé
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification de l'existence du numéro de compte: " + numero, ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Récupère le solde total de tous les comptes sociétaires.
+     *
+     * @return Solde total
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public BigDecimal getSoldeTotal() throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT SUM(solde) AS total FROM SOCIETAIRE_COMPTE";
+
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                BigDecimal total = rs.getBigDecimal("total");
+                return total != null ? total : BigDecimal.ZERO;
+            }
+
+            return BigDecimal.ZERO;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du calcul du solde total des comptes sociétaires", ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Récupère le nombre total de comptes sociétaires.
+     *
+     * @return Nombre de comptes
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public int countComptes() throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT COUNT(*) AS count FROM SOCIETAIRE_COMPTE";
+
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+
+            return 0;
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des comptes sociétaires", ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Calcule les statistiques des comptes sociétaires.
+     *
+     * @return Objet contenant les statistiques
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public ComptesStats calculateStats() throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = dbUtil.getConnection();
+
+            String sql = "SELECT " +
+                    "COUNT(*) AS total, " +
+                    "SUM(solde) AS solde_total, " +
+                    "AVG(solde) AS solde_moyen, " +
+                    "MAX(solde) AS solde_max, " +
+                    "MIN(solde) AS solde_min, " +
+                    "SUM(CASE WHEN solde > 0 THEN 1 ELSE 0 END) AS comptes_crediteurs, " +
+                    "SUM(CASE WHEN solde < 0 THEN 1 ELSE 0 END) AS comptes_debiteurs, " +
+                    "SUM(CASE WHEN solde = 0 THEN 1 ELSE 0 END) AS comptes_zero " +
+                    "FROM SOCIETAIRE_COMPTE";
+
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                int total = rs.getInt("total");
+                BigDecimal soldeTotal = rs.getBigDecimal("solde_total");
+                BigDecimal soldeMoyen = rs.getBigDecimal("solde_moyen");
+                BigDecimal soldeMax = rs.getBigDecimal("solde_max");
+                BigDecimal soldeMin = rs.getBigDecimal("solde_min");
+                int comptesCredits = rs.getInt("comptes_crediteurs");
+                int comptesDebits = rs.getInt("comptes_debiteurs");
+                int comptesZero = rs.getInt("comptes_zero");
+
+                soldeTotal = soldeTotal != null ? soldeTotal : BigDecimal.ZERO;
+                soldeMoyen = soldeMoyen != null ? soldeMoyen : BigDecimal.ZERO;
+                soldeMax = soldeMax != null ? soldeMax : BigDecimal.ZERO;
+                soldeMin = soldeMin != null ? soldeMin : BigDecimal.ZERO;
+
+                return new ComptesStats(
+                        total, soldeTotal, soldeMoyen, soldeMax, soldeMin,
+                        comptesCredits, comptesDebits, comptesZero
+                );
+            }
+
+            // Par défaut, retourner des stats vides
+            return new ComptesStats(
+                    0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO,
+                    0, 0, 0
+            );
+
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du calcul des statistiques des comptes sociétaires", ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Vérifie si le compte sociétaire a des affectations.
+     *
+     * @param conn Connexion à la base de données
+     * @param idSocietaire ID du compte sociétaire
+     * @return true si des affectations existent, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    private boolean hasAffectations(Connection conn, int idSocietaire) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT 1 FROM AFFECTATION WHERE id_societaire = ? LIMIT 1";
+
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, idSocietaire);
+
+            rs = pstmt.executeQuery();
+
+            return rs.next();  // true si un résultat est trouvé
+
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+        }
+    }
+
+    /**
+     * Extrait un objet SocieteCompte à partir d'un ResultSet.
      *
      * @param rs ResultSet contenant les données du compte sociétaire
-     * @return objet SocieteCompte construit
-     * @throws SQLException si une erreur de base de données survient
+     * @return Objet SocieteCompte créé à partir des données
+     * @throws SQLException En cas d'erreur d'accès aux données du ResultSet
      */
-    private SocieteCompte buildSocieteCompteFromResultSet(ResultSet rs) throws SQLException {
+    private SocieteCompte extractSocieteCompteFromResultSet(ResultSet rs) throws SQLException {
         SocieteCompte compte = new SocieteCompte();
-        compte.setIdSocietaire(rs.getInt("id_societaire"));
+
+        compte.setIdSocietaire(rs.getInt("id_sociétaire"));
+
+        // ID personnel peut être null
+        Object idPersonnel = rs.getObject("id_personnel");
+        if (idPersonnel != null) {
+            compte.setIdPersonnel((Integer) idPersonnel);
+        }
+
         compte.setNom(rs.getString("nom"));
         compte.setNumero(rs.getString("numero"));
         compte.setSolde(rs.getBigDecimal("solde"));
         compte.setEmail(rs.getString("email"));
         compte.setTelephone(rs.getString("telephone"));
 
-        // Récupérer les informations de personnel si associé
-        if (rs.getObject("id_personnel") != null) {
-            Personnel personnel = new Personnel(rs.getInt("id_personnel"));
-
-            try {
-                personnel.setNomPersonnel(rs.getString("nom_personnel"));
-                personnel.setPrenomPersonnel(rs.getString("prenom_personnel"));
-                personnel.setMatricule(rs.getString("matricule"));
-            } catch (SQLException e) {
-                // Ces colonnes peuvent ne pas être présentes dans certaines requêtes
-                LOGGER.log(Level.FINE, "Certaines colonnes de personnel ne sont pas présentes dans le ResultSet");
-            }
-
-            compte.setPersonnel(personnel);
-        }
-
-        // Récupérer la date de création si présente
-        Timestamp dateCreation = rs.getTimestamp("date_creation");
-        if (dateCreation != null) {
-            compte.setDateCreation(dateCreation.toLocalDateTime());
-        }
-
-        // Récupérer les informations de véhicule si présent
-        if (rs.getObject("vehicule_attribue") != null) {
-            Vehicule vehicule = new Vehicule(rs.getInt("vehicule_attribue"));
-            compte.setVehiculeAttribue(vehicule);
-
-            // Date d'affectation du véhicule
-            Timestamp dateAffectation = rs.getTimestamp("date_affectation_vehicule");
-            if (dateAffectation != null) {
-                compte.setDateAffectationVehicule(dateAffectation.toLocalDateTime());
-            }
-        }
-
-        // Récupérer les informations de mensualité
+        // Essayer de récupérer les informations du personnel (si présentes)
         try {
-            compte.setMensualite(rs.getBigDecimal("mensualite"));
-            compte.setTotalMensualites(rs.getInt("total_mensualites"));
-            compte.setMensualitesPayees(rs.getInt("mensualites_payees"));
-        } catch (SQLException e) {
-            // Ces colonnes peuvent ne pas être présentes dans certaines versions de la base
-            LOGGER.log(Level.FINE, "Certaines colonnes de mensualité ne sont pas présentes dans le ResultSet");
+            String nomPersonnel = rs.getString("nom_personnel");
+            String prenomPersonnel = rs.getString("prenom_personnel");
+
+            if (nomPersonnel != null && prenomPersonnel != null) {
+                Personnel personnel = new Personnel();
+                personnel.setIdPersonnel(compte.getIdPersonnel());
+                personnel.setNomPersonnel(nomPersonnel);
+                personnel.setPrenomPersonnel(prenomPersonnel);
+
+                compte.setPersonnel(personnel);
+            }
+        } catch (SQLException ex) {
+            // Ignorer les colonnes non disponibles
         }
 
         return compte;
+    }
+
+    /**
+     * Classe interne représentant les statistiques des comptes sociétaires.
+     */
+    public static class ComptesStats {
+        private final int totalComptes;
+        private final BigDecimal soldeTotal;
+        private final BigDecimal soldeMoyen;
+        private final BigDecimal soldeMax;
+        private final BigDecimal soldeMin;
+        private final int comptesCredits;
+        private final int comptesDebits;
+        private final int comptesZero;
+
+        /**
+         * Constructeur pour les statistiques des comptes.
+         *
+         * @param totalComptes Nombre total de comptes
+         * @param soldeTotal Solde total de tous les comptes
+         * @param soldeMoyen Solde moyen des comptes
+         * @param soldeMax Solde maximum
+         * @param soldeMin Solde minimum
+         * @param comptesCredits Nombre de comptes créditeurs (solde > 0)
+         * @param comptesDebits Nombre de comptes débiteurs (solde < 0)
+         * @param comptesZero Nombre de comptes avec solde nul
+         */
+        public ComptesStats(int totalComptes, BigDecimal soldeTotal, BigDecimal soldeMoyen,
+                            BigDecimal soldeMax, BigDecimal soldeMin, int comptesCredits,
+                            int comptesDebits, int comptesZero) {
+            this.totalComptes = totalComptes;
+            this.soldeTotal = soldeTotal;
+            this.soldeMoyen = soldeMoyen;
+            this.soldeMax = soldeMax;
+            this.soldeMin = soldeMin;
+            this.comptesCredits = comptesCredits;
+            this.comptesDebits = comptesDebits;
+            this.comptesZero = comptesZero;
+        }
+
+        // Getters
+
+        public int getTotalComptes() {
+            return totalComptes;
+        }
+
+        public BigDecimal getSoldeTotal() {
+            return soldeTotal;
+        }
+
+        public BigDecimal getSoldeMoyen() {
+            return soldeMoyen;
+        }
+
+        public BigDecimal getSoldeMax() {
+            return soldeMax;
+        }
+
+        public BigDecimal getSoldeMin() {
+            return soldeMin;
+        }
+
+        public int getComptesCredits() {
+            return comptesCredits;
+        }
+
+        public int getComptesDebits() {
+            return comptesDebits;
+        }
+
+        public int getComptesZero() {
+            return comptesZero;
+        }
+
+        /**
+         * @return Pourcentage de comptes créditeurs
+         */
+        public double getPourcentageComptesCredits() {
+            if (totalComptes == 0) return 0;
+            return (comptesCredits * 100.0) / totalComptes;
+        }
+
+        /**
+         * @return Pourcentage de comptes débiteurs
+         */
+        public double getPourcentageComptesDebits() {
+            if (totalComptes == 0) return 0;
+            return (comptesDebits * 100.0) / totalComptes;
+        }
+
+        /**
+         * @return Pourcentage de comptes avec solde nul
+         */
+        public double getPourcentageComptesZero() {
+            if (totalComptes == 0) return 0;
+            return (comptesZero * 100.0) / totalComptes;
+        }
     }
 }

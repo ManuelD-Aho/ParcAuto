@@ -1,5 +1,7 @@
 package com.miage.parcauto.model.entretien;
 
+import com.miage.parcauto.model.vehicule.Vehicule;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -96,6 +98,8 @@ public class Entretien implements Serializable, Comparable<Entretien> {
     private String lieuEntr;
     private TypeEntretien type;
     private StatutOT statutOt;
+    private Vehicule vehicule;  // Ajouter ce champ
+    private String infoVehicule; // Information textuelle sur le véhicule
 
     /**
      * Constructeur par défaut
@@ -268,6 +272,47 @@ public class Entretien implements Serializable, Comparable<Entretien> {
             return true;
         }
         return false;
+    }
+    /**
+     * Obtient le véhicule associé à cet entretien.
+     * @return Le véhicule associé
+     */
+    public Vehicule getVehicule() {
+        return vehicule;
+    }
+
+    /**
+     * Définit le véhicule associé à cet entretien.
+     * @param vehicule Le véhicule à associer
+     */
+    public void setVehicule(Vehicule vehicule) {
+        this.vehicule = vehicule;
+        if (vehicule != null) {
+            this.idVehicule = vehicule.getIdVehicule();
+        }
+    }
+
+    /**
+     * Définit les informations textuelles sur le véhicule.
+     * Utile quand on n'a pas l'objet véhicule complet.
+     * @param infoVehicule Informations sur le véhicule (ex: "AA-123-BB - Renault Clio")
+     */
+    public void setInfoVehicule(String infoVehicule) {
+        this.infoVehicule = infoVehicule;
+    }
+
+    /**
+     * Obtient les informations textuelles sur le véhicule.
+     * @return Les informations sur le véhicule
+     */
+    public String getInfoVehicule() {
+        if (infoVehicule != null) {
+            return infoVehicule;
+        } else if (vehicule != null) {
+            return vehicule.getImmatriculation() + " - " + vehicule.getMarque() + " " + vehicule.getModele();
+        } else {
+            return "Véhicule ID: " + idVehicule;
+        }
     }
 
     /**

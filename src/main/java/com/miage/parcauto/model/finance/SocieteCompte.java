@@ -24,6 +24,7 @@ public class SocieteCompte implements Serializable {
     private BigDecimal solde;
     private String email;
     private String telephone;
+    private Integer idPersonnel;
 
     /**
      * Constructeur par défaut
@@ -84,11 +85,23 @@ public class SocieteCompte implements Serializable {
     public Personnel getPersonnel() {
         return personnel;
     }
+    /**
+     * Récupère l'ID du personnel associé au compte.
+     *
+     * @return ID du personnel
+     */
+    public Integer getIdPersonnel() {
+        return idPersonnel;
+    }
 
+
+    // Modifier la méthode setPersonnel pour mettre à jour idPersonnel
     public void setPersonnel(Personnel personnel) {
         this.personnel = personnel;
-        // Mise à jour des infos de contact si elles sont vides
+        // Mise à jour de l'ID et des infos de contact
         if (personnel != null) {
+            this.idPersonnel = personnel.getIdPersonnel();
+
             if (email == null || email.trim().isEmpty()) {
                 this.email = personnel.getEmail();
             }
@@ -124,6 +137,14 @@ public class SocieteCompte implements Serializable {
 
     public String getEmail() {
         return email;
+    }
+    /**
+     * Définit l'ID du personnel associé au compte.
+     *
+     * @param idPersonnel ID du personnel
+     */
+    public void setIdPersonnel(Integer idPersonnel) {
+        this.idPersonnel = idPersonnel;
     }
 
     public void setEmail(String email) {

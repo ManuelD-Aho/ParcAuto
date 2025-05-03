@@ -4,6 +4,7 @@ import com.miage.parcauto.model.vehicule.EtatVoiture;
 import com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -740,7 +741,7 @@ public class VehiculeDao {
      * @return Optional contenant le coût total et le kilométrage, vide en cas d'erreur
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public Optional<Vehicule.TCOInfo> getTCOInfo(int idVehicule) throws SQLException {
+    public Optional<TCOInfo> getTCOInfo(int idVehicule) throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -759,7 +760,7 @@ public class VehiculeDao {
                 BigDecimal coutsTotaux = rs.getBigDecimal("couts_totaux");
                 int kmActuels = rs.getInt("km_actuels");
 
-                Vehicule.TCOInfo tcoInfo = new Vehicule.TCOInfo(coutsTotaux, kmActuels);
+                TCOInfo tcoInfo = new TCOInfo(coutsTotaux, kmActuels);
                 return Optional.of(tcoInfo);
             }
 
@@ -781,7 +782,7 @@ public class VehiculeDao {
      * @return Les statistiques du parc
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public Vehicule.ParcStats calculateParcStats() throws SQLException {
+    public ParcStats calculateParcStats() throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -814,7 +815,7 @@ public class VehiculeDao {
                 int enPanne = rs.getInt("en_panne");
                 double kmMoyen = rs.getDouble("km_moyen");
 
-                Vehicule.ParcStats stats = new Vehicule.ParcStats(
+                ParcStats stats = new ParcStats(
                         totalVehicules, disponibles, enMission,
                         horsService, enEntretien, attribues,
                         enPanne, kmMoyen
@@ -824,7 +825,7 @@ public class VehiculeDao {
             }
 
             // Par défaut, retourner des stats vides
-            return new Vehicule.ParcStats(0, 0, 0, 0, 0, 0, 0, 0);
+            return new ParcStats(0, 0, 0, 0, 0, 0, 0, 0);
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Erreur lors du calcul des statistiques du parc", ex);
@@ -1058,14 +1059,83 @@ public class VehiculeDao {
         }
     }
 
-    // Classes statiques internes ajoutées pour répondre aux besoins spécifiques
-    // et complétées dans la classe Vehicule
-    static {
-        // Ajout des classes TCOInfo et ParcStats à la classe Vehicule
-        try {
-            Class.forName("com.miage.parcauto.model.vehicule.Vehicule");
-        } catch (ClassNotFoundException e) {
-            // Ignorer, car la classe Vehicule devrait déjà être chargée
+    /**
+     * Classe interne représentant les statistiques des véhicules.
+     */
+    public static class ParcStats {
+        private final int totalVehicules;
+        private final int disponibles;
+        private final int enMission;
+        private final int horsService;
+        private final int enEntretien;
+        private final int attribues;
+        private final int enPanne;
+        private final double kmMoyen;
+
+        public ParcStats(int totalVehicules, int disponibles, int enMission,
+                         int horsService, int enEntretien, int attribues, int enPanne, double kmMoyen) {
+            this.totalVehicules = totalVehicules;
+            this.disponibles = disponibles;
+            this.enMission = enMission;
+            this.horsService = horsService;
+            this.enEntretien = enEntretien;
+            this.attribues = attribues;
+            this.enPanne = enPanne;
+            this.kmMoyen = kmMoyen;
         }
+
+        // Getters
+        public int getTotalVehicules() { return totalVehicules; }
+        public int getDisponibles() { return disponibles; }
+        public int getEnMission() { return enMission; }
+        public int getHorsService() { return horsService; }
+        public int getEnEntretien() { return enEntretien; }
+        public int getAttribues() { return attribues; }
+        public int getEnPanne() { return enPanne; }
+        public double getKmMoyen() { return kmMoyen; }
+
+        public double getPourcentageDisponibilite() {
+            if (totalVehicules == 0) return 0;
+            return (double) disponibles / totalVehicules * 100;
+        }
+
+        public double getPourcentageUtilisation() {
+            if (totalVehicules == 0) return 0;
+            return (double) (enMission + attribues) / totalVehicules * 100;
+        }
+    }
+
+    /**
+     * Classe interne représentant les informations de coût total de possession.
+     */
+    public static class TCOInfo {
+        private final int idVehicule;
+        private final BigDecimal coutsTotaux;
+        private final int kmActuels;
+        private final BigDecimal coutParKm;
+
+        public TCOInfo(int idVehicule, BigDecimal coutsTotaux, int kmActuels) {
+            this.idVehicule = idVehicule;
+            this.coutsTotaux = coutsTotaux != null ? coutsTotaux : BigDecimal.ZERO;
+            this.kmActuels = kmActuels;
+
+            // Calcul du coût par km
+            if (kmActuels > 0) {
+                this.coutParKm = this.coutsTotaux.divide(BigDecimal.valueOf(kmActuels), 2, RoundingMode.HALF_UP);
+            } else {
+                this.coutParKm = BigDecimal.ZERO;
+            }
+        }
+
+        // Constructeur utilisé dans la méthode getTCOInfo
+        public TCOInfo(BigDecimal coutsTotaux, int kmActuels) {
+            this(0, coutsTotaux, kmActuels);
+        }
+
+        // Getters
+        public int getIdVehicule() { return idVehicule; }
+        public BigDecimal getCoutsTotaux() { return coutsTotaux; }
+        public int getKmActuels() { return kmActuels; }
+        public BigDecimal getCoutParKm() { return coutParKm; }
     }
 }
