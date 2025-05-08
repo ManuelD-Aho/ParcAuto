@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.miage.parcauto.controller.DashboardController"
+            stylesheets="/css/theme.css">
+    <!-- Barre supérieure : infos utilisateur et déconnexion -->
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+            <Label fx:id="lblUserName" styleClass="user-label" text="Utilisateur" />
+            <Label text="|" styleClass="sep-label" />
+            <Label fx:id="lblUserRole" styleClass="role-label" text="Rôle" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnDeconnexion" text="Déconnexion" onAction="#handleDeconnexion" styleClass="btn,btn-danger" />
+        </HBox>
+    </top>
+
+    <!-- Menu latéral gauche -->
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="220">
+            <padding>
+                <Insets top="24" right="0" bottom="24" left="0"/>
+            </padding>
+            <MenuButton fx:id="menuVehicules" text="Véhicules" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem fx:id="menuItemConsulterVehicules" text="Consulter" onAction="#handleConsulterVehicules" />
+                    <MenuItem fx:id="menuItemAjouterVehicule" text="Ajouter" onAction="#handleAjouterVehicule" />
+                    <MenuItem fx:id="menuItemModifierVehicule" text="Modifier" />
+                    <MenuItem fx:id="menuItemSupprimerVehicule" text="Supprimer" />
+                    <MenuItem fx:id="menuItemChangerEtatVehicule" text="Changer état" />
+                    <MenuItem fx:id="menuItemDeclarerPanne" text="Déclarer panne" />
+                </items>
+            </MenuButton>
+            <MenuButton fx:id="menuMissions" text="Missions" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem text="Gérer les missions" onAction="#handleGererMissions" />
+                </items>
+            </MenuButton>
+            <MenuButton fx:id="menuEntretien" text="Entretiens" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem text="Gérer les entretiens" onAction="#handleGererEntretiens" />
+                </items>
+            </MenuButton>
+            <MenuButton fx:id="menuFinances" text="Finances" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem text="Gérer les finances" onAction="#handleGererFinances" />
+                </items>
+            </MenuButton>
+            <MenuButton fx:id="menuDocuments" text="Documents" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem text="Gérer les documents" onAction="#handleGererDocuments" />
+                </items>
+            </MenuButton>
+            <MenuButton fx:id="menuRapports" text="Rapports" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem text="Accéder aux rapports" onAction="#handleRapports" />
+                </items>
+            </MenuButton>
+            <MenuButton fx:id="menuAdministration" text="Administration" styleClass="sidebar-menu">
+                <items>
+                    <MenuItem text="Administration" onAction="#handleAdministration" />
+                </items>
+            </MenuButton>
+        </VBox>
+    </left>
+
+    <!-- Centre : panneaux statistiques dynamiques -->
+    <center>
+        <VBox spacing="24" styleClass="dashboard-center">
+            <padding>
+                <Insets top="32" right="32" bottom="32" left="32"/>
+            </padding>
+            <HBox spacing="24">
+                <GridPane fx:id="gridStatsVehicules" styleClass="stat-card,stat-vehicules" hgap="12" vgap="8">
+                    <Label text="Véhicules" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label text="Total :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="lblNbVehicules" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+                <GridPane fx:id="gridStatsMissions" styleClass="stat-card,stat-missions" hgap="12" vgap="8">
+                    <Label text="Missions" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label text="En cours :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="lblNbMissionsEnCours" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+                <GridPane fx:id="gridStatsFinances" styleClass="stat-card,stat-finances" hgap="12" vgap="8">
+                    <Label text="Finances" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label text="Solde :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="lblSoldeGlobal" text="0 €" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+                <GridPane fx:id="gridStatsEntretien" styleClass="stat-card,stat-entretien" hgap="12" vgap="8">
+                    <Label text="Entretiens" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                    <Label text="À venir :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <Label fx:id="lblNbEntretiensAVenir" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                </GridPane>
+            </HBox>
+            <Pane fx:id="paneAlertes" styleClass="alertes-pane">
+                <Label text="Alertes" styleClass="alertes-title" />
+                <!-- Les alertes seront injectées dynamiquement -->
+            </Pane>
+        </VBox>
+    </center>
+</BorderPane>

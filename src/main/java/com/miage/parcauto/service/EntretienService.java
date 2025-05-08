@@ -486,4 +486,18 @@ public class EntretienService {
 
         return true;
     }
+
+    /**
+     * Retourne le nombre d'entretiens à venir (planifiés).
+     * @return nombre d'entretiens planifiés, ou 0 en cas d'erreur
+     */
+    public int getEntretiensAVenirCount() {
+        try {
+            List<Entretien> planifies = getEntretiensPlanifies();
+            return planifies != null ? planifies.size() : 0;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des entretiens à venir", e);
+            return 0;
+        }
+    }
 }

@@ -91,6 +91,16 @@ public class UtilisateurDao {
         public void setId(Integer id) {
             this.id = id;
         }
+        
+        /**
+         * Alias pour getId() afin d'assurer la compatibilité avec la convention
+         * de nommage utilisée dans d'autres classes.
+         * 
+         * @return L'identifiant unique de l'utilisateur
+         */
+        public Integer getIdUtilisateur() {
+            return id;
+        }
 
         public String getLogin() {
             return login;

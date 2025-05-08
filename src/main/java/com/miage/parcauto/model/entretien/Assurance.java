@@ -2,6 +2,7 @@ package com.miage.parcauto.model.entretien;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -246,7 +247,7 @@ public class Assurance implements Serializable {
             return BigDecimal.ZERO;
         }
 
-        return coutAssurance.divide(BigDecimal.valueOf(duree), 2, BigDecimal.ROUND_HALF_UP);
+        return coutAssurance.divide(BigDecimal.valueOf(duree), 2, RoundingMode.HALF_UP);
     }
 
     /**

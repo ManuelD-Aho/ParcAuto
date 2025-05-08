@@ -1,10 +1,17 @@
 package com.miage.parcauto.controller;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.miage.parcauto.dao.UtilisateurDao;
+import com.miage.parcauto.service.EntretienService;
+import com.miage.parcauto.service.FinanceService;
+import com.miage.parcauto.service.MissionService;
+import com.miage.parcauto.service.VehiculeService;
 import com.miage.parcauto.util.Permission;
 
 import javafx.application.Platform;
@@ -16,18 +23,27 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 /**
  * Contrôleur pour la vue du tableau de bord.
  * Affiche différentes informations et options en fonction du rôle de l'utilisateur connecté.
+ * 100% JavaFX : alertes dynamiques sans WebView/JS, stylées via theme.css.
  * 
  * @author MIAGE Holding
- * @version 1.0
+ * @version 1.1
  */
 public class DashboardController extends BaseController implements Initializable {
     
     private static final Logger LOGGER = Logger.getLogger(DashboardController.class.getName());
+    
+    // Services
+    private final VehiculeService vehiculeService;
+    private final MissionService missionService;
+    private final FinanceService financeService;
+    private final EntretienService entretienService;
     
     @FXML
     private Label lblUserName;
@@ -92,6 +108,46 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private Pane paneAlertes;
     
+    @FXML
+    private Label lblNbVehicules;
+    
+    @FXML
+    private Label lblNbMissionsEnCours;
+    
+    @FXML
+    private Label lblSoldeGlobal;
+    
+    @FXML
+    private Label lblNbEntretiensAVenir;
+    
+    /**
+     * Constructeur par défaut.
+     */
+    public DashboardController() {
+        this.vehiculeService = new VehiculeService();
+        this.missionService = new MissionService();
+        this.financeService = new FinanceService();
+        this.entretienService = new EntretienService();
+    }
+    
+    /**
+     * Constructeur pour l'injection de dépendances (tests).
+     * 
+     * @param vehiculeService Service de gestion des véhicules
+     * @param missionService Service de gestion des missions
+     * @param financeService Service de gestion des finances
+     * @param entretienService Service de gestion des entretiens
+     */
+    public DashboardController(VehiculeService vehiculeService, 
+                              MissionService missionService,
+                              FinanceService financeService,
+                              EntretienService entretienService) {
+        this.vehiculeService = vehiculeService;
+        this.missionService = missionService;
+        this.financeService = financeService;
+        this.entretienService = entretienService;
+    }
+    
     /**
      * Initialise le contrôleur.
      * 
@@ -113,6 +169,12 @@ public class DashboardController extends BaseController implements Initializable
         
         // Vérifier les permissions et configurer l'interface
         configureInterface();
+        
+        // Charger les statistiques
+        loadStatistics();
+        
+        // Charger les alertes
+        loadAlertesData();
     }
     
     /**
@@ -166,6 +228,113 @@ public class DashboardController extends BaseController implements Initializable
     }
     
     /**
+     * Affiche dynamiquement les alertes dans le panneau dédié (100% JavaFX).
+     * Les alertes sont issues des services FinanceService (assurances, entretiens).
+     */
+    private void loadAlertesData() {
+        try {
+            paneAlertes.getChildren().clear();
+            VBox vbox = new VBox(10);
+            vbox.getStyleClass().add("alertes-pane");
+            Label titre = new Label("Alertes");
+            titre.getStyleClass().add("alertes-title");
+            vbox.getChildren().add(titre);
+
+            List<AlerteDashboard> alertes = new ArrayList<>();
+
+            // Alertes d'assurance (ex: expiration dans 30 jours)
+            try {
+                List<com.miage.parcauto.dao.FinanceDao.AlerteAssurance> alertesAssurance = financeService.getAlertesAssurances(30);
+                for (com.miage.parcauto.dao.FinanceDao.AlerteAssurance a : alertesAssurance) {
+                    String titreA = "Assurance à renouveler";
+                    String msg = String.format("%s %s (%s) - expire le %s, coût: %.2f €", a.getMarque(), a.getModele(), a.getImmatriculation(), a.getDateFin().toLocalDate(), a.getCoutAssurance());
+                    alertes.add(new AlerteDashboard(titreA, msg, a.getDateFin().toLocalDate().toString(), "finance-alerte"));
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Erreur lors du chargement des alertes d'assurance", e);
+            }
+
+            // Alertes d'entretien (ex: entretien préventif à prévoir)
+            try {
+                List<com.miage.parcauto.dao.FinanceDao.AlerteEntretien> alertesEntretien = financeService.getAlertesEntretiens(10000);
+                for (com.miage.parcauto.dao.FinanceDao.AlerteEntretien e : alertesEntretien) {
+                    String titreE = "Entretien préventif à prévoir";
+                    String msg = String.format("%s %s (%s) - %d km depuis dernier entretien", e.getMarque(), e.getModele(), e.getImmatriculation(), e.getKmDepuisDernierEntretien());
+                    String dateDernier = e.getDateDernierEntretien() != null ? e.getDateDernierEntretien().toLocalDate().toString() : "?";
+                    alertes.add(new AlerteDashboard(titreE, msg, dateDernier, "entretien-alerte"));
+                }
+            } catch (Exception e) {
+                LOGGER.log(Level.WARNING, "Erreur lors du chargement des alertes d'entretien", e);
+            }
+
+            if (alertes.isEmpty()) {
+                Label info = new Label("Aucune alerte à afficher pour le moment.");
+                info.getStyleClass().add("alerte-text");
+                vbox.getChildren().add(info);
+            } else {
+                for (AlerteDashboard alerte : alertes) {
+                    HBox box = new HBox(10);
+                    box.getStyleClass().addAll("alerte-item", alerte.cssClass);
+                    Label titreAlerte = new Label(alerte.titre);
+                    titreAlerte.getStyleClass().add("alerte-date");
+                    Label texte = new Label(alerte.message);
+                    texte.getStyleClass().add("alerte-text");
+                    Label date = new Label(alerte.date);
+                    date.getStyleClass().add("alerte-date");
+                    box.getChildren().addAll(titreAlerte, texte, date);
+                    vbox.getChildren().add(box);
+                }
+            }
+            paneAlertes.getChildren().add(vbox);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'affichage des alertes", e);
+        }
+    }
+
+    /**
+     * Structure simple pour une alerte dashboard (100% JavaFX, pas de JSON).
+     * Permet d'afficher dynamiquement les alertes d'assurance et d'entretien.
+     */
+    private static class AlerteDashboard {
+        final String titre;
+        final String message;
+        final String date;
+        final String cssClass;
+        AlerteDashboard(String titre, String message, String date, String cssClass) {
+            this.titre = titre;
+            this.message = message;
+            this.date = date;
+            this.cssClass = cssClass;
+        }
+    }
+    
+    /**
+     * Charge les statistiques à afficher sur le dashboard.
+     */
+    private void loadStatistics() {
+        try {
+            // Véhicules
+            int vehiculesCount = vehiculeService.getVehiculesCount();
+            lblNbVehicules.setText(String.valueOf(vehiculesCount));
+            
+            // Missions en cours
+            int missionsEnCours = missionService.getMissionsEnCoursCount();
+            lblNbMissionsEnCours.setText(String.valueOf(missionsEnCours));
+            
+            // Solde global
+            java.math.BigDecimal soldeGlobal = financeService.getSoldeGlobal();
+            lblSoldeGlobal.setText(soldeGlobal.toString() + " €");
+            
+            // Entretiens à venir
+            int entretiensAVenir = entretienService.getEntretiensAVenirCount();
+            lblNbEntretiensAVenir.setText(String.valueOf(entretiensAVenir));
+            
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du chargement des statistiques", e);
+        }
+    }
+    
+    /**
      * Configure le menu Véhicules en fonction des permissions.
      */
     private void configureVehiculesMenu() {
@@ -199,6 +368,9 @@ public class DashboardController extends BaseController implements Initializable
         menuVehicules.setVisible(canConsult || canAdd || canModify || canDelete || canChangeState || canReportIssue);
     }
     
+    // Autres méthodes de configuration des menus restent inchangées...
+    // configureMissionsMenu(), configureEntretienMenu(), etc.
+
     /**
      * Configure le menu Missions en fonction des permissions.
      */
@@ -449,7 +621,6 @@ public class DashboardController extends BaseController implements Initializable
      */
     @FXML
     private void handleAdministration(ActionEvent event) {
-        // Le module d'administration n'est pas encore implémenté
         showInfoAlert("Information", "Le module d'administration est en cours de développement.");
     }
 }

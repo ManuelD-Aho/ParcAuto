@@ -1,0 +1,388 @@
+/* 
+ * ParcAuto - Thème moderne inspiré de Bootstrap 5 et Tailwind
+ * Système de design unifié pour l'application JavaFX
+ * 
+ * Variables CSS globales et styles de composants
+ */
+
+/* ======== VARIABLES ET COULEURS ======== */
+
+* {
+    -fx-primary: #4f46e5;
+    -fx-primary-dark: #4338ca; 
+    -fx-primary-light: #818cf8;
+    -fx-accent: #f97316;
+    -fx-warning: #f59e0b;
+    -fx-danger: #ef4444;
+    -fx-success: #10b981;
+    -fx-info: #06b6d4;
+
+    -fx-background-light: #f9fafb;
+    -fx-background: #f3f4f6;
+    -fx-background-dark: #e5e7eb;
+    
+    -fx-text-dark: #111827;
+    -fx-text-medium: #4b5563;
+    -fx-text-light: #9ca3af;
+    -fx-text-white: #ffffff;
+    
+    -fx-border-color: #d1d5db;
+    -fx-shadow-color: rgba(0, 0, 0, 0.12);
+    
+    -fx-font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+    -fx-focus-ring: -fx-primary;
+}
+
+/* ======== STYLES GÉNÉRAUX ======== */
+
+.root {
+    -fx-font-family: -fx-font-family;
+    -fx-font-size: 14px;
+    -fx-background-color: -fx-background;
+}
+
+.label {
+    -fx-text-fill: -fx-text-dark;
+}
+
+.button {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: white;
+    -fx-padding: 8 16;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-border-width: 0;
+    -fx-effect: dropshadow(gaussian, -fx-shadow-color, 4, 0, 0, 1);
+    -fx-transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    -fx-background-color: -fx-primary-dark;
+    -fx-effect: dropshadow(gaussian, -fx-shadow-color, 6, 0, 0, 2);
+}
+
+.button:pressed {
+    -fx-background-color: -fx-primary-dark;
+    -fx-effect: dropshadow(gaussian, -fx-shadow-color, 2, 0, 0, 0);
+    -fx-translate-y: 1px;
+}
+
+/* Variations de boutons */
+.btn-danger {
+    -fx-background-color: #dc3545;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+}
+
+.btn-danger:hover {
+    -fx-background-color: derive(-fx-danger, -10%);
+}
+
+.btn-success {
+    -fx-background-color: -fx-success;
+}
+
+.btn-success:hover {
+    -fx-background-color: derive(-fx-success, -10%);
+}
+
+.btn-warning {
+    -fx-background-color: -fx-warning;
+}
+
+.btn-warning:hover {
+    -fx-background-color: derive(-fx-warning, -10%);
+}
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2;
+    -fx-text-fill: -fx-primary;
+}
+
+.btn-outline:hover {
+    -fx-background-color: -fx-primary-light;
+    -fx-text-fill: white;
+}
+
+.text-field, .password-field, .text-area, .combo-box {
+    -fx-background-color: white;
+    -fx-background-radius: 4;
+    -fx-border-color: -fx-border-color;
+    -fx-border-radius: 4;
+    -fx-padding: 8;
+    -fx-effect: dropshadow(gaussian, -fx-shadow-color, 2, 0, 0, 0);
+    -fx-transition: border-color 0.2s;
+}
+
+.text-field:focused, .password-field:focused, .text-area:focused, .combo-box:focused {
+    -fx-border-color: -fx-primary;
+    -fx-border-width: 2;
+}
+
+.table-view {
+    -fx-background-color: white;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, -fx-shadow-color, 6, 0, 0, 2);
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: -fx-primary;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 5;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-alignment: center-left;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: -fx-background-light;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 2;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -fx-background-light;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: derive(-fx-primary, 90%);
+    -fx-text-fill: -fx-text-dark;
+}
+
+/* ======== STYLES POUR LE DASHBOARD ======== */
+
+/* Barre supérieure avec info utilisateur */
+.dashboard-topbar {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 12 24 12 24;
+    -fx-spacing: 16;
+    -fx-alignment: center-left;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 0 0 1 0;
+}
+
+.user-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 1.1em;
+    -fx-text-fill: #212529;
+}
+
+.role-label {
+    -fx-font-size: 1em;
+    -fx-text-fill: #495057;
+    -fx-padding: 0 0 0 8;
+}
+
+.sep-label {
+    -fx-text-fill: #adb5bd;
+    -fx-padding: 0 8 0 8;
+}
+
+/* Menu latéral */
+.dashboard-sidebar {
+    -fx-background-color: #343a40;
+    -fx-padding: 24 0 24 0;
+    -fx-spacing: 12;
+    -fx-pref-width: 220;
+}
+
+.sidebar-menu {
+    -fx-background-color: #495057;
+    -fx-text-fill: #f8f9fa;
+    -fx-font-size: 1.05em;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.sidebar-menu:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-menu .context-menu {
+    -fx-background-color: #2d3748;
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-padding: 8 0;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 5);
+}
+
+.sidebar-menu .menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f8f9fa;
+    -fx-font-size: 1em;
+}
+
+.sidebar-menu .menu-item:hover, .sidebar-menu .menu-item:focused {
+    -fx-background-color: #212529;
+}
+
+.sidebar-menu .menu-item .label {
+    -fx-text-fill: white;
+}
+
+/* Cartes statistiques */
+.dashboard-center {
+    -fx-background-color: -fx-background;
+    -fx-padding: 32 32 32 32;
+    -fx-spacing: 32;
+}
+
+.stat-card {
+    -fx-background-color: #fff;
+    -fx-border-color: #dee2e6;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 16 24 16 24;
+    -fx-effect: dropshadow(gaussian, #adb5bd, 4, 0.2, 0, 2);
+    -fx-min-width: 180;
+}
+
+.stat-vehicules {
+    -fx-border-color: #0d6efd;
+}
+
+.stat-missions {
+    -fx-border-color: #198754;
+}
+
+.stat-finances {
+    -fx-border-color: #fd7e14;
+}
+
+.stat-entretien {
+    -fx-border-color: #6f42c1;
+}
+
+.stat-title {
+    -fx-font-size: 1.1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #495057;
+}
+
+.stat-label {
+    -fx-font-size: 1em;
+    -fx-text-fill: #6c757d;
+}
+
+.stat-value {
+    -fx-font-size: 1.3em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #007bff;
+}
+
+/* Panneau des alertes */
+.alertes-pane {
+    -fx-background-color: #fff3cd;
+    -fx-border-color: #ffeeba;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 16 24 16 24;
+    -fx-spacing: 8;
+    -fx-effect: dropshadow(gaussian, #ffeeba, 2, 0.1, 0, 1);
+}
+
+.alertes-title {
+    -fx-font-size: 1.1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #856404;
+    -fx-padding: 0 0 8 0;
+}
+
+.alerte-item {
+    -fx-background-color: #fff;
+    -fx-border-color: #ffeeba;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12 8 12;
+    -fx-spacing: 12;
+    -fx-alignment: center-left;
+}
+
+.alerte-item:hover {
+    -fx-background-color: #fff4f4;
+    -fx-effect: dropshadow(gaussian, -fx-danger, 8, 0, 0, 2);
+}
+
+.alerte-close {
+    -fx-background-color: transparent;
+    -fx-text-fill: -fx-danger;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-position: absolute;
+    -fx-top: 6;
+    -fx-right: 10;
+}
+
+.alerte-close:hover {
+    -fx-text-fill: -fx-primary;
+}
+
+.alerte-text {
+    -fx-font-size: 1em;
+    -fx-text-fill: #856404;
+    -fx-padding: 0 8 0 8;
+}
+
+.alerte-date {
+    -fx-font-size: 0.95em;
+    -fx-text-fill: #856404;
+    -fx-font-weight: bold;
+}
+
+/* Animations et effets */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        -fx-translate-y: -10;
+    }
+    to {
+        opacity: 1;
+        -fx-translate-y: 0;
+    }
+}
+
+.dashboard-topbar, .dashboard-sidebar, .dashboard-center {
+    -fx-opacity: 0;
+    -fx-animation: fadeIn 0.5s ease-out forwards;
+}
+
+.dashboard-sidebar {
+    -fx-animation-delay: 0.1s;
+}
+
+.dashboard-center {
+    -fx-animation-delay: 0.2s;
+}
+
+/* Etat de la fenêtre - responsive */
+.window-maximized .dashboard-center {
+    -fx-padding: 40;
+}
+
+/* Styles pour les fenêtres de dialogs */
+.dialog-pane {
+    -fx-background-color: white;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: -fx-primary;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}

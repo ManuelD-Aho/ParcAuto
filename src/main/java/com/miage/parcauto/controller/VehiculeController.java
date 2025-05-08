@@ -135,16 +135,16 @@ public class VehiculeController extends BaseController implements Initializable 
         colImmatriculation.setCellValueFactory(new PropertyValueFactory<>("immatriculation"));
         colMarque.setCellValueFactory(new PropertyValueFactory<>("marque"));
         colModele.setCellValueFactory(new PropertyValueFactory<>("modele"));
-        colKilometrage.setCellValueFactory(new PropertyValueFactory<>("kilometrage"));
+        colKilometrage.setCellValueFactory(new PropertyValueFactory<>("kmActuels"));
         colEtat.setCellValueFactory(cellData -> {
             if (cellData.getValue().getEtatVoiture() != null) {
-                return new SimpleStringProperty(cellData.getValue().getEtatVoiture().getLibelle());
+                return new SimpleStringProperty(cellData.getValue().getEtatVoiture().getLibEtatVoiture());
             }
             return new SimpleStringProperty("Non défini");
         });
         colDateMiseEnCirculation.setCellValueFactory(cellData -> {
-            if (cellData.getValue().getDateMiseEnCirculation() != null) {
-                return new SimpleStringProperty(cellData.getValue().getDateMiseEnCirculation().toString());
+            if (cellData.getValue().getDateMiseEnService() != null) {
+                return new SimpleStringProperty(cellData.getValue().getDateMiseEnService().toString());
             }
             return new SimpleStringProperty("Non définie");
         });
@@ -224,7 +224,7 @@ public class VehiculeController extends BaseController implements Initializable 
      */
     private void loadEtatsVoiture() {
         try {
-            List<EtatVoiture> etats = vehiculeService.getAllEtatsVoiture();
+            List<EtatVoiture> etats = vehiculeService.getAllEtats();
             comboEtat.setItems(FXCollections.observableArrayList(etats));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du chargement des états de véhicule", e);
@@ -241,10 +241,10 @@ public class VehiculeController extends BaseController implements Initializable 
             txtImmatriculation.setText(vehicule.getImmatriculation());
             txtMarque.setText(vehicule.getMarque());
             txtModele.setText(vehicule.getModele());
-            txtKilometrage.setText(String.valueOf(vehicule.getKilometrage()));
+            txtKilometrage.setText(String.valueOf(vehicule.getKmActuels()));
             
-            if (vehicule.getDateMiseEnCirculation() != null) {
-                dateMiseEnCirculation.setValue(vehicule.getDateMiseEnCirculation());
+            if (vehicule.getDateMiseEnService() != null) {
+                dateMiseEnCirculation.setValue(vehicule.getDateMiseEnService().toLocalDate());
             }
             
             if (vehicule.getEtatVoiture() != null) {
@@ -289,8 +289,8 @@ public class VehiculeController extends BaseController implements Initializable 
             vehicule.setImmatriculation(txtImmatriculation.getText());
             vehicule.setMarque(txtMarque.getText());
             vehicule.setModele(txtModele.getText());
-            vehicule.setKilometrage(Integer.parseInt(txtKilometrage.getText()));
-            vehicule.setDateMiseEnCirculation(dateMiseEnCirculation.getValue());
+            vehicule.setKmActuels(Integer.parseInt(txtKilometrage.getText()));
+            vehicule.setDateMiseEnService(dateMiseEnCirculation.getValue().atStartOfDay());
             vehicule.setEtatVoiture(comboEtat.getValue());
             
             Vehicule added = vehiculeService.createVehicule(vehicule);
@@ -333,8 +333,8 @@ public class VehiculeController extends BaseController implements Initializable 
             selectedVehicule.setImmatriculation(txtImmatriculation.getText());
             selectedVehicule.setMarque(txtMarque.getText());
             selectedVehicule.setModele(txtModele.getText());
-            selectedVehicule.setKilometrage(Integer.parseInt(txtKilometrage.getText()));
-            selectedVehicule.setDateMiseEnCirculation(dateMiseEnCirculation.getValue());
+            selectedVehicule.setKmActuels(Integer.parseInt(txtKilometrage.getText()));
+            selectedVehicule.setDateMiseEnService(dateMiseEnCirculation.getValue().atStartOfDay());
             selectedVehicule.setEtatVoiture(comboEtat.getValue());
             
             boolean updated = vehiculeService.updateVehicule(selectedVehicule);

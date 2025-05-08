@@ -3,6 +3,7 @@ package com.miage.parcauto.model.finance;
 import com.miage.parcauto.model.rh.Personnel;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 /**
@@ -240,7 +241,7 @@ public class SocieteCompte implements Serializable {
 
         // Conversion du taux annuel en taux mensuel
         BigDecimal tauxMensuel = tauxAnnuel
-                .divide(BigDecimal.valueOf(12 * 100), 6, BigDecimal.ROUND_HALF_UP);
+                .divide(BigDecimal.valueOf(12 * 100), 6, RoundingMode.HALF_UP);
 
         // Calcul selon la formule de mensualité
         // M = P * r * (1 + r)^n / ((1 + r)^n - 1)
@@ -248,7 +249,7 @@ public class SocieteCompte implements Serializable {
         BigDecimal numerateur = prixTotal.multiply(tauxMensuel).multiply(puissance);
         BigDecimal denominateur = puissance.subtract(BigDecimal.ONE);
 
-        return numerateur.divide(denominateur, 2, BigDecimal.ROUND_HALF_UP);
+        return numerateur.divide(denominateur, 2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -274,13 +275,13 @@ public class SocieteCompte implements Serializable {
 
         // Calcul du capital restant dû après n mensualités
         BigDecimal tauxMensuel = tauxAnnuel
-                .divide(BigDecimal.valueOf(12 * 100), 6, BigDecimal.ROUND_HALF_UP);
+                .divide(BigDecimal.valueOf(12 * 100), 6, RoundingMode.HALF_UP);
 
         BigDecimal un = BigDecimal.ONE;
         BigDecimal facteur = un.add(tauxMensuel).pow(60 - mensualitePayees);
         BigDecimal capitalRestant = mensualite
                 .multiply(facteur.subtract(un))
-                .divide(tauxMensuel, 2, BigDecimal.ROUND_HALF_UP);
+                .divide(tauxMensuel, 2, RoundingMode.HALF_UP);
 
         return capitalRestant;
     }

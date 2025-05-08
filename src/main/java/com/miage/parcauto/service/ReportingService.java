@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.math.RoundingMode;
 
 /**
  * Service de génération de rapports.
@@ -357,7 +358,7 @@ public class ReportingService {
 
             // Coût moyen par mission
             BigDecimal coutMoyen = missions.size() > 0 ?
-                    coutTotal.divide(BigDecimal.valueOf(missions.size()), 2, BigDecimal.ROUND_HALF_UP) :
+                    coutTotal.divide(BigDecimal.valueOf(missions.size()), 2, RoundingMode.HALF_UP) :
                     BigDecimal.ZERO;
             rapport.put("coutMoyen", coutMoyen);
 
@@ -426,7 +427,7 @@ public class ReportingService {
 
             // Coût moyen par entretien
             BigDecimal coutMoyen = entretiens.size() > 0 ?
-                    coutTotal.divide(BigDecimal.valueOf(entretiens.size()), 2, BigDecimal.ROUND_HALF_UP) :
+                    coutTotal.divide(BigDecimal.valueOf(entretiens.size()), 2, RoundingMode.HALF_UP) :
                     BigDecimal.ZERO;
             rapport.put("coutMoyen", coutMoyen);
 

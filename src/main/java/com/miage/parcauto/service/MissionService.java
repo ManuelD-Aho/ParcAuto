@@ -553,6 +553,20 @@ public class MissionService {
     }
 
     /**
+     * Retourne le nombre de missions en cours.
+     * @return nombre de missions en cours, ou 0 en cas d'erreur
+     */
+    public int getMissionsEnCoursCount() {
+        try {
+            MissionDao.MissionStats stats = missionDao.calculateStats(0);
+            return stats != null ? stats.getEnCours() : 0;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des missions en cours", e);
+            return 0;
+        }
+    }
+
+    /**
      * Valide les données d'une mission.
      *
      * @param mission La mission à valider

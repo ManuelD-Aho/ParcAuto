@@ -6,6 +6,7 @@ import com.miage.parcauto.model.vehicule.Vehicule;
 import com.miage.parcauto.model.vehicule.EtatVoiture;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -1209,7 +1210,7 @@ public class MissionDao {
                 // Calculer les statistiques supplémentaires
                 BigDecimal coutMoyen = BigDecimal.ZERO;
                 if (cloturees > 0) {
-                    coutMoyen = coutTotal.divide(BigDecimal.valueOf(cloturees), 2, BigDecimal.ROUND_HALF_UP);
+                    coutMoyen = coutTotal.divide(BigDecimal.valueOf(cloturees), 2, RoundingMode.HALF_UP);
                 }
 
                 double kmMoyen = 0;
@@ -1580,7 +1581,7 @@ public class MissionDao {
             if (kmTotal == 0) {
                 return BigDecimal.ZERO;
             }
-            return coutTotal.divide(BigDecimal.valueOf(kmTotal), 2, BigDecimal.ROUND_HALF_UP);
+            return coutTotal.divide(BigDecimal.valueOf(kmTotal), 2, RoundingMode.HALF_UP);
         }
     }
 }

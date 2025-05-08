@@ -1,9 +1,5 @@
 package com.miage.parcauto.service;
 
-import com.miage.parcauto.dao.VehiculeDao;
-import com.miage.parcauto.model.vehicule.EtatVoiture;
-import com.miage.parcauto.model.vehicule.Vehicule;
-
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -12,6 +8,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.miage.parcauto.dao.VehiculeDao;
+import com.miage.parcauto.model.vehicule.EtatVoiture;
+import com.miage.parcauto.model.vehicule.Vehicule;
 
 /**
  * Service de gestion des véhicules.
@@ -358,6 +358,59 @@ public class VehiculeService {
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des états de véhicule", e);
             return Collections.emptyList();
+        }
+    }
+
+    /**
+     * Récupère les véhicules assignés à un utilisateur spécifique.
+     *
+     * @param idUtilisateur ID de l'utilisateur
+     * @return Liste des véhicules assignés à cet utilisateur ou liste vide en cas d'erreur
+     */
+    public List<Vehicule> getVehiculesByUtilisateur(Integer idUtilisateur) {
+        // Cette méthode doit être implémentée pour récupérer les véhicules assignés à un utilisateur
+        // En attendant, on retourne une liste vide
+        LOGGER.log(Level.WARNING, "Méthode getVehiculesByUtilisateur non implémentée");
+        return Collections.emptyList();
+    }
+
+    /**
+     * Vérifie si un véhicule est assigné à un utilisateur spécifique.
+     *
+     * @param idVehicule ID du véhicule
+     * @param idUtilisateur ID de l'utilisateur
+     * @return true si le véhicule est assigné à l'utilisateur, false sinon
+     */
+    public boolean isVehiculeAssignedToUser(Integer idVehicule, Integer idUtilisateur) {
+        // Cette méthode doit être implémentée pour vérifier si un véhicule est assigné à un utilisateur
+        // En attendant, pour éviter des erreurs, on implémente une version minimale
+        
+        if (idVehicule == null || idUtilisateur == null) {
+            return false;
+        }
+        
+        try {
+            // Cette implémentation devrait normalement consulter une table d'association entre véhicules et utilisateurs
+            List<Vehicule> vehiculesUtilisateur = getVehiculesByUtilisateur(idUtilisateur);
+            return vehiculesUtilisateur.stream()
+                .anyMatch(v -> v.getIdVehicule() != null && v.getIdVehicule().equals(idVehicule));
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification de l'assignation du véhicule", e);
+            return false;
+        }
+    }
+
+    /**
+     * Retourne le nombre total de véhicules dans le parc.
+     * @return nombre de véhicules, ou 0 en cas d'erreur
+     */
+    public int getVehiculesCount() {
+        try {
+            VehiculeDao.ParcStats stats = vehiculeDao.calculateParcStats();
+            return stats != null ? stats.getTotalVehicules() : 0;
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des véhicules", e);
+            return 0;
         }
     }
 

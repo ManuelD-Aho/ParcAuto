@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import com.miage.parcauto.model.entretien.Entretien;
 import com.miage.parcauto.model.vehicule.Vehicule;
-import com.miage.parcauto.model.vehicule.EtatVoiture;
 import com.miage.parcauto.service.EntretienService;
 import com.miage.parcauto.service.VehiculeService;
 import com.miage.parcauto.util.Permission;
@@ -20,7 +19,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 
 /**
@@ -227,7 +231,7 @@ public class EntretienController extends BaseController implements Initializable
             entretien.setMotifEntr(txtMotif.getText());
             entretien.setObservation(txtObservation.getText());
             entretien.setCoutEntr(txtCout.getText().isEmpty() ? null : new java.math.BigDecimal(txtCout.getText()));
-            Entretien added = entretienService.createEntretien(entretien);
+            Entretien added = entretienService.createEntretien(entretien, true);
             if (added != null) {
                 entretiens.add(added);
                 clearEntretienDetails();
