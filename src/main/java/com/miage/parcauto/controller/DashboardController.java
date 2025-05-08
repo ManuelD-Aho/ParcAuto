@@ -1,10 +1,12 @@
 package com.miage.parcauto.controller;
 
-import com.miage.parcauto.dao.UtilisateurDao;
-import com.miage.parcauto.util.Permission;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
+
+import com.miage.parcauto.dao.UtilisateurDao;
+import com.miage.parcauto.util.Permission;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -176,6 +178,7 @@ public class DashboardController extends BaseController implements Initializable
         boolean canAdd = hasPermission(Permission.AJOUTER_VEHICULE);
         boolean canModify = hasPermission(Permission.MODIFIER_VEHICULE);
         boolean canDelete = hasPermission(Permission.SUPPRIMER_VEHICULE);
+        
         boolean canChangeState = hasAnyPermission(
                 Permission.CHANGER_ETAT_VEHICULE_TOUS, 
                 Permission.CHANGER_ETAT_VEHICULE_LIMITE);
@@ -200,7 +203,6 @@ public class DashboardController extends BaseController implements Initializable
      * Configure le menu Missions en fonction des permissions.
      */
     private void configureMissionsMenu() {
-        // On implémentera la logique spécifique selon les besoins
         boolean hasAnyMissionPermission = hasAnyPermission(
                 Permission.CREER_MISSION,
                 Permission.PLANIFIER_MISSION,
@@ -380,5 +382,74 @@ public class DashboardController extends BaseController implements Initializable
         navigateTo(menuVehicules, "/fxml/vehicule_form.fxml", "Gestion de Parc Automobile - Véhicules");
     }
     
-    // Autres gestionnaires d'événements pour les éléments de menu
+    /**
+     * Gère le clic sur l'élément de menu pour ajouter un véhicule.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleAjouterVehicule(ActionEvent event) {
+        navigateTo(menuVehicules, "/fxml/vehicule_form.fxml", "Gestion de Parc Automobile - Ajouter un véhicule");
+    }
+    
+    /**
+     * Gère le clic sur l'élément de menu pour gérer les missions.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleGererMissions(ActionEvent event) {
+        navigateTo(menuMissions, "/fxml/mission_planner.fxml", "Gestion de Parc Automobile - Missions");
+    }
+    
+    /**
+     * Gère le clic sur l'élément de menu pour gérer les entretiens.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleGererEntretiens(ActionEvent event) {
+        navigateTo(menuEntretien, "/fxml/entretien_view.fxml", "Gestion de Parc Automobile - Entretiens");
+    }
+    
+    /**
+     * Gère le clic sur l'élément de menu pour gérer les finances.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleGererFinances(ActionEvent event) {
+        navigateTo(menuFinances, "/fxml/finance_view.fxml", "Gestion de Parc Automobile - Finances");
+    }
+    
+    /**
+     * Gère le clic sur l'élément de menu pour gérer les documents.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleGererDocuments(ActionEvent event) {
+        navigateTo(menuDocuments, "/fxml/document_view.fxml", "Gestion de Parc Automobile - Documents");
+    }
+    
+    /**
+     * Gère le clic sur l'élément de menu pour accéder aux rapports.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleRapports(ActionEvent event) {
+        navigateTo(menuRapports, "/fxml/report_view.fxml", "Gestion de Parc Automobile - Rapports");
+    }
+    
+    /**
+     * Gère le clic sur l'élément de menu pour accéder à l'administration.
+     * 
+     * @param event L'événement de clic
+     */
+    @FXML
+    private void handleAdministration(ActionEvent event) {
+        // Le module d'administration n'est pas encore implémenté
+        showInfoAlert("Information", "Le module d'administration est en cours de développement.");
+    }
 }

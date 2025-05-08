@@ -1,7 +1,8 @@
 package com.miage.parcauto.util;
 
-import com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
 import java.util.logging.Logger;
+
+import com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
 
 /**
  * Gestionnaire de session pour l'application.
