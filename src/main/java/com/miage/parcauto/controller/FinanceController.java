@@ -47,7 +47,6 @@ public class FinanceController extends BaseController implements Initializable {
     private static final Logger LOGGER = Logger.getLogger(FinanceController.class.getName());
     private final FinanceService financeService;
 
-    // Rendre les champs accessibles au package pour les tests
     @FXML
     DatePicker dateDebut;
     @FXML
@@ -144,7 +143,9 @@ public class FinanceController extends BaseController implements Initializable {
         loadRentabilite();
     }
 
-    // Rendre la méthode checkPermissions accessible pour les tests
+    /**
+     * Vérifie les permissions pour accéder à la gestion financière.
+     */
     @Override
     public boolean checkPermissions() {
         return hasAnyPermission(

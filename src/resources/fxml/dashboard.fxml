@@ -1,32 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.miage.parcauto.controller.DashboardController"
-            stylesheets="/css/theme.css">
-    <!-- Barre supérieure : infos utilisateur et déconnexion -->
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+
+    <!-- Barre supérieure : infos utilisateur, logo et déconnexion -->
     <top>
         <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
             <padding>
                 <Insets top="10" right="15" bottom="10" left="15"/>
             </padding>
-            <Label fx:id="lblUserName" styleClass="user-label" text="Utilisateur" />
-            <Label text="|" styleClass="sep-label" />
-            <Label fx:id="lblUserRole" styleClass="role-label" text="Rôle" />
+
+            <!-- Logo -->
+            <ImageView fitHeight="40" fitWidth="40" preserveRatio="true">
+                <Image url="@../images/logo.png" />
+            </ImageView>
+
+            <Text styleClass="app-title" text="Gestion de Parc Automobile" />
+
             <Pane HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnDeconnexion" text="Déconnexion" onAction="#handleDeconnexion" styleClass="btn,btn-danger" />
+
+            <HBox spacing="8" alignment="CENTER" styleClass="user-info-box">
+                <ImageView fitHeight="32" fitWidth="32" preserveRatio="true">
+                    <Image url="@../images/user_icon.png" />
+                </ImageView>
+                <VBox spacing="2">
+                    <Label fx:id="lblUserName" styleClass="user-label" text="Utilisateur" />
+                    <Label fx:id="lblUserRole" styleClass="role-label" text="Rôle" />
+                </VBox>
+            </HBox>
+
+            <Button fx:id="btnDeconnexion" text="Déconnexion" onAction="#handleDeconnexion" styleClass="btn,btn-danger">
+                <graphic>
+                    <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                        <Image url="@../images/logout_icon.png" />
+                    </ImageView>
+                </graphic>
+            </Button>
         </HBox>
     </top>
 
     <!-- Menu latéral gauche -->
     <left>
-        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="220">
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
             <padding>
                 <Insets top="24" right="0" bottom="24" left="0"/>
             </padding>
-            <MenuButton fx:id="menuVehicules" text="Véhicules" styleClass="sidebar-menu">
+
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+
+            <MenuButton fx:id="menuVehicules" text="Véhicules" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/vehicles_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
                     <MenuItem fx:id="menuItemConsulterVehicules" text="Consulter" onAction="#handleConsulterVehicules" />
                     <MenuItem fx:id="menuItemAjouterVehicule" text="Ajouter" onAction="#handleAjouterVehicule" />
@@ -36,34 +77,98 @@
                     <MenuItem fx:id="menuItemDeclarerPanne" text="Déclarer panne" />
                 </items>
             </MenuButton>
-            <MenuButton fx:id="menuMissions" text="Missions" styleClass="sidebar-menu">
+
+            <MenuButton fx:id="menuMissions" text="Missions" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/missions_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
-                    <MenuItem text="Gérer les missions" onAction="#handleGererMissions" />
+                    <MenuItem text="Consulter les missions" onAction="#handleGererMissions" />
+                    <MenuItem text="Créer une mission" />
+                    <MenuItem text="Planifier une mission" />
+                    <MenuItem text="Missions en cours" />
+                    <MenuItem text="Historique des missions" />
                 </items>
             </MenuButton>
-            <MenuButton fx:id="menuEntretien" text="Entretiens" styleClass="sidebar-menu">
+
+            <MenuButton fx:id="menuEntretien" text="Entretiens" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/maintenance_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
                     <MenuItem text="Gérer les entretiens" onAction="#handleGererEntretiens" />
+                    <MenuItem text="Planifier un entretien" />
+                    <MenuItem text="Interventions en cours" />
+                    <MenuItem text="Historique des entretiens" />
+                    <MenuItem text="Prestataires" />
                 </items>
             </MenuButton>
-            <MenuButton fx:id="menuFinances" text="Finances" styleClass="sidebar-menu">
+
+            <MenuButton fx:id="menuFinances" text="Finances" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/finance_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
-                    <MenuItem text="Gérer les finances" onAction="#handleGererFinances" />
+                    <MenuItem text="Tableau de bord financier" onAction="#handleGererFinances" />
+                    <MenuItem text="Comptes" />
+                    <MenuItem text="Dépôts et retraits" />
+                    <MenuItem text="Mensualités" />
+                    <MenuItem text="Calcul d'amortissement" />
+                    <MenuItem text="Assurances" />
                 </items>
             </MenuButton>
-            <MenuButton fx:id="menuDocuments" text="Documents" styleClass="sidebar-menu">
+
+            <MenuButton fx:id="menuDocuments" text="Documents" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/documents_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
-                    <MenuItem text="Gérer les documents" onAction="#handleGererDocuments" />
+                    <MenuItem text="Bibliothèque de documents" onAction="#handleGererDocuments" />
+                    <MenuItem text="Téléverser un document" />
+                    <MenuItem text="Validation de documents" />
+                    <MenuItem text="Documents techniques" />
+                    <MenuItem text="Contrats" />
                 </items>
             </MenuButton>
-            <MenuButton fx:id="menuRapports" text="Rapports" styleClass="sidebar-menu">
+
+            <MenuButton fx:id="menuRapports" text="Rapports" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/reports_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
-                    <MenuItem text="Accéder aux rapports" onAction="#handleRapports" />
+                    <MenuItem text="Tableau de bord" onAction="#handleRapports" />
+                    <MenuItem text="Inventaire du parc" />
+                    <MenuItem text="Statistiques d'utilisation" />
+                    <MenuItem text="Analyse des coûts" />
+                    <MenuItem text="États financiers" />
+                    <MenuItem text="Rapports personnalisés" />
+                    <MenuItem text="Exporter les données" />
                 </items>
             </MenuButton>
-            <MenuButton fx:id="menuAdministration" text="Administration" styleClass="sidebar-menu">
+
+            <MenuButton fx:id="menuAdministration" text="Administration" styleClass="sidebar-menu" maxWidth="Infinity">
+                <graphic>
+                    <ImageView fitHeight="20" fitWidth="20" preserveRatio="true">
+                        <Image url="@../images/admin_icon.png" />
+                    </ImageView>
+                </graphic>
                 <items>
-                    <MenuItem text="Administration" onAction="#handleAdministration" />
+                    <MenuItem text="Utilisateurs" onAction="#handleAdministration" />
+                    <MenuItem text="Droits d'accès" />
+                    <MenuItem text="Paramètres système" />
+                    <MenuItem text="Sauvegarde/Restauration" />
+                    <MenuItem text="Journaux d'audit" />
+                    <MenuItem text="Maintenance BDD" />
                 </items>
             </MenuButton>
         </VBox>
@@ -71,36 +176,209 @@
 
     <!-- Centre : panneaux statistiques dynamiques -->
     <center>
-        <VBox spacing="24" styleClass="dashboard-center">
-            <padding>
-                <Insets top="32" right="32" bottom="32" left="32"/>
-            </padding>
-            <HBox spacing="24">
-                <GridPane fx:id="gridStatsVehicules" styleClass="stat-card,stat-vehicules" hgap="12" vgap="8">
-                    <Label text="Véhicules" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <Label text="Total :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <Label fx:id="lblNbVehicules" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </GridPane>
-                <GridPane fx:id="gridStatsMissions" styleClass="stat-card,stat-missions" hgap="12" vgap="8">
-                    <Label text="Missions" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <Label text="En cours :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <Label fx:id="lblNbMissionsEnCours" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </GridPane>
-                <GridPane fx:id="gridStatsFinances" styleClass="stat-card,stat-finances" hgap="12" vgap="8">
-                    <Label text="Finances" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <Label text="Solde :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <Label fx:id="lblSoldeGlobal" text="0 €" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </GridPane>
-                <GridPane fx:id="gridStatsEntretien" styleClass="stat-card,stat-entretien" hgap="12" vgap="8">
-                    <Label text="Entretiens" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <Label text="À venir :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <Label fx:id="lblNbEntretiensAVenir" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                </GridPane>
-            </HBox>
-            <Pane fx:id="paneAlertes" styleClass="alertes-pane">
-                <Label text="Alertes" styleClass="alertes-title" />
-                <!-- Les alertes seront injectées dynamiquement -->
-            </Pane>
-        </VBox>
+        <ScrollPane fitToWidth="true" styleClass="dashboard-scrollpane">
+            <VBox spacing="24" styleClass="dashboard-center">
+                <padding>
+                    <Insets top="32" right="32" bottom="32" left="32"/>
+                </padding>
+
+                <!-- Titre de la page -->
+                <HBox alignment="CENTER_LEFT" spacing="16">
+                    <Label text="Tableau de bord" styleClass="page-title">
+                        <font>
+                            <Font name="System Bold" size="24"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="lblDateActuelle" text="Date" styleClass="date-label" />
+                    <Pane HBox.hgrow="ALWAYS" />
+                    <Button text="Rafraîchir" styleClass="btn,btn-primary">
+                        <graphic>
+                            <ImageView fitHeight="16" fitWidth="16" preserveRatio="true">
+                                <Image url="@../images/refresh_icon.png" />
+                            </ImageView>
+                        </graphic>
+                    </Button>
+                </HBox>
+
+                <!-- Cartes de statistiques -->
+                <HBox spacing="24">
+                    <GridPane fx:id="gridStatsVehicules" styleClass="stat-card,stat-vehicules" hgap="12" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <padding>
+                            <Insets top="16" right="16" bottom="16" left="16"/>
+                        </padding>
+                        <ImageView fitHeight="24" fitWidth="24" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Image url="@../images/car_icon.png" />
+                        </ImageView>
+                        <Label text="Véhicules" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                            <GridPane.margin>
+                                <Insets left="32"/>
+                            </GridPane.margin>
+                        </Label>
+                        <Label text="Total :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblNbVehicules" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Disponibles :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblNbVehiculesDisponibles" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </GridPane>
+
+                    <GridPane fx:id="gridStatsMissions" styleClass="stat-card,stat-missions" hgap="12" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <padding>
+                            <Insets top="16" right="16" bottom="16" left="16"/>
+                        </padding>
+                        <ImageView fitHeight="24" fitWidth="24" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Image url="@../images/mission_icon.png" />
+                        </ImageView>
+                        <Label text="Missions" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                            <GridPane.margin>
+                                <Insets left="32"/>
+                            </GridPane.margin>
+                        </Label>
+                        <Label text="En cours :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblNbMissionsEnCours" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Planifiées :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblNbMissionsPlanifiees" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </GridPane>
+
+                    <GridPane fx:id="gridStatsFinances" styleClass="stat-card,stat-finances" hgap="12" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <padding>
+                            <Insets top="16" right="16" bottom="16" left="16"/>
+                        </padding>
+                        <ImageView fitHeight="24" fitWidth="24" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Image url="@../images/money_icon.png" />
+                        </ImageView>
+                        <Label text="Finances" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                            <GridPane.margin>
+                                <Insets left="32"/>
+                            </GridPane.margin>
+                        </Label>
+                        <Label text="Solde :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblSoldeGlobal" text="0 €" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="Dépenses mois :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblDepensesMois" text="0 €" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </GridPane>
+
+                    <GridPane fx:id="gridStatsEntretien" styleClass="stat-card,stat-entretien" hgap="12" vgap="8">
+                        <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <padding>
+                            <Insets top="16" right="16" bottom="16" left="16"/>
+                        </padding>
+                        <ImageView fitHeight="24" fitWidth="24" preserveRatio="true" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                            <Image url="@../images/maintenance_icon.png" />
+                        </ImageView>
+                        <Label text="Entretiens" styleClass="stat-title" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2">
+                            <GridPane.margin>
+                                <Insets left="32"/>
+                            </GridPane.margin>
+                        </Label>
+                        <Label text="À venir :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblNbEntretiensAVenir" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label text="En cours :" styleClass="stat-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="lblNbEntretiensEnCours" text="0" styleClass="stat-value" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </GridPane>
+                </HBox>
+
+                <!-- Graphiques -->
+                <HBox spacing="24">
+                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                        <Label text="Répartition des véhicules par état" styleClass="chart-title" />
+                        <PieChart fx:id="chartVehiculesByState" legendVisible="true" />
+                    </VBox>
+                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                        <Label text="Missions par mois" styleClass="chart-title" />
+                        <BarChart fx:id="chartMissionsByMonth">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT" />
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </HBox>
+
+                <!-- Section alertes -->
+                <TitledPane text="Alertes et notifications" expanded="true" styleClass="alertes-titlepane">
+                    <VBox fx:id="paneAlertes" styleClass="alertes-pane" spacing="8">
+                        <!-- Les alertes seront injectées dynamiquement -->
+                    </VBox>
+                </TitledPane>
+
+                <!-- Section véhicules récents -->
+                <TitledPane text="Véhicules récemment ajoutés" expanded="true" styleClass="vehicles-titlepane">
+                    <TableView fx:id="tableRecentVehicles" styleClass="recent-vehicles-table">
+                        <columns>
+                            <TableColumn text="Immatriculation" prefWidth="120" />
+                            <TableColumn text="Marque" prefWidth="100" />
+                            <TableColumn text="Modèle" prefWidth="120" />
+                            <TableColumn text="Date d'ajout" prefWidth="120" />
+                            <TableColumn text="État" prefWidth="100" />
+                            <TableColumn text="Actions" prefWidth="100" />
+                        </columns>
+                    </TableView>
+                </TitledPane>
+
+                <!-- Section missions récentes -->
+                <TitledPane text="Missions récentes" expanded="false" styleClass="missions-titlepane">
+                    <TableView fx:id="tableRecentMissions" styleClass="recent-missions-table">
+                        <columns>
+                            <TableColumn text="Référence" prefWidth="100" />
+                            <TableColumn text="Date" prefWidth="120" />
+                            <TableColumn text="Véhicule" prefWidth="120" />
+                            <TableColumn text="Destination" prefWidth="150" />
+                            <TableColumn text="Statut" prefWidth="100" />
+                            <TableColumn text="Actions" prefWidth="100" />
+                        </columns>
+                    </TableView>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
     </center>
+
+    <!-- Barre d'état inférieure -->
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar">
+            <padding>
+                <Insets top="5" right="15" bottom="5" left="15"/>
+            </padding>
+            <Label fx:id="lblVersion" text="Version 1.1.0" />
+            <Separator orientation="VERTICAL" />
+            <Label fx:id="lblStatus" text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label fx:id="lblLastUpdate" text="Dernière mise à jour : 09/05/2025 10:30" />
+        </HBox>
+    </bottom>
 </BorderPane>
