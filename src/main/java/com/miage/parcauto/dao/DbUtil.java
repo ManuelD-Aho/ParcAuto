@@ -1,6 +1,5 @@
 package main.java.com.miage.parcauto.dao;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -14,11 +13,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Classe utilitaire pour gérer les connexions à la base de données.
- * Implémente le pattern Singleton pour maintenir un pool de connexions.
+ * Classe utilitaire simplifiée pour gérer les connexions à la base de données.
+ * Implémente le pattern Singleton pour maintenir une connexion unique.
  *
  * @author MIAGE Holding
- * @version 1.0
+ * @version 1.3
+ * @date 2025-05-09
  */
 public class DbUtil {
 
@@ -28,37 +28,33 @@ public class DbUtil {
     private static String url;
     private static String user;
     private static String password;
-    private static int maxPoolSize;
-
-    // Pool de connexions simple
-    private static Connection[] connectionPool;
-    private static boolean[] connectionStatus; // true si connexion disponible
 
     // Instance unique (Singleton)
     private static DbUtil instance;
 
+    // Connexion courante
+    private Connection connection;
+
     /**
      * Constructeur privé pour implémenter le pattern Singleton.
-     * Initialise le pool de connexions.
+     * Initialise la connexion à la base de données.
      */
     private DbUtil() {
         try {
-            // Enregistrement du driver JDBC
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
             // Chargement des propriétés
             loadProperties();
 
-            // Initialisation du pool
-            initializePool();
+            // Enregistrement du driver JDBC
+            Class.forName("com.mysql.cj.jdbc.Driver");
 
-            LOGGER.log(Level.INFO, "Pool de connexions initialisé avec {0} connexions", maxPoolSize);
+            LOGGER.log(Level.INFO, "Configuration de la base de données chargée avec succès");
+
         } catch (ClassNotFoundException ex) {
             LOGGER.log(Level.SEVERE, "Driver JDBC MySQL introuvable", ex);
             throw new RuntimeException("Driver JDBC MySQL introuvable", ex);
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'initialisation du pool de connexions", ex);
-            throw new RuntimeException("Erreur lors de l'initialisation du pool de connexions", ex);
+        } catch (Exception ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de l'initialisation de la connexion", ex);
+            throw new RuntimeException("Erreur lors de l'initialisation de la connexion", ex);
         }
     }
 
@@ -75,120 +71,130 @@ public class DbUtil {
     }
 
     /**
-     * Charge les paramètres de connexion depuis un fichier de propriétés
-     * ou depuis les variables d'environnement.
+     * Charge les paramètres de connexion depuis le fichier de propriétés ou l'environnement.
      */
     private void loadProperties() {
         Properties props = new Properties();
+        boolean propertiesLoaded = false;
 
-        // Essayer de charger depuis un fichier
-        try (InputStream input = new FileInputStream("db.properties")) {
-            props.load(input);
-
-            url = props.getProperty("db.url");
-            user = props.getProperty("db.user");
-            password = props.getProperty("db.password");
-            maxPoolSize = Integer.parseInt(props.getProperty("db.maxPoolSize", "10"));
-
+        // 1. Essayer de charger depuis le fichier dans le classpath
+        try (InputStream input = getClass().getResourceAsStream("/db.properties")) {
+            if (input != null) {
+                props.load(input);
+                propertiesLoaded = true;
+                LOGGER.log(Level.INFO, "Paramètres de connexion chargés depuis db.properties (classpath)");
+            }
         } catch (IOException ex) {
-            // Si le fichier n'est pas trouvé, utiliser les variables d'environnement
-            LOGGER.log(Level.INFO, "Fichier db.properties non trouvé, utilisation des variables d'environnement");
+            LOGGER.log(Level.WARNING, "Impossible de charger db.properties depuis le classpath", ex);
+        }
 
-            String dbHost = System.getenv("MYSQL_HOST") != null ? System.getenv("MYSQL_HOST") : "db";
-            String dbPort = System.getenv("MYSQL_PORT") != null ? System.getenv("MYSQL_PORT") : "3306";
-            String dbName = System.getenv("MYSQL_DATABASE") != null ? System.getenv("MYSQL_DATABASE") : "ParcAuto";
+        // 2. Essayer de charger depuis le fichier dans dao/
+        if (!propertiesLoaded) {
+            try (InputStream input = getClass().getResourceAsStream("/dao/db.properties")) {
+                if (input != null) {
+                    props.load(input);
+                    propertiesLoaded = true;
+                    LOGGER.log(Level.INFO, "Paramètres de connexion chargés depuis dao/db.properties");
+                }
+            } catch (IOException ex) {
+                LOGGER.log(Level.WARNING, "Impossible de charger dao/db.properties", ex);
+            }
+        }
 
-            url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
-            user = System.getenv("MYSQL_USER") != null ? System.getenv("MYSQL_USER") : "root";
-            password = System.getenv("MYSQL_PASSWORD") != null ? System.getenv("MYSQL_ROOT_PASSWORD") : "Root!23";
-            maxPoolSize = System.getenv("DB_MAX_POOL_SIZE") != null ?
-                    Integer.parseInt(System.getenv("DB_MAX_POOL_SIZE")) : 10;
+        // 3. Essayer de lire des variables d'environnement Docker si disponibles
+        if (!propertiesLoaded) {
+            String dbHost = System.getenv("MYSQL_HOST");
+            if (dbHost != null) {
+                String dbPort = System.getenv("MYSQL_PORT") != null ? System.getenv("MYSQL_PORT") : "3306";
+                String dbName = System.getenv("MYSQL_DATABASE") != null ? System.getenv("MYSQL_DATABASE") : "ParcAuto";
+
+                url = "jdbc:mysql://" + dbHost + ":" + dbPort + "/" + dbName + "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+                user = "root";
+                password = System.getenv("MYSQL_ROOT_PASSWORD") != null ? System.getenv("MYSQL_ROOT_PASSWORD") : "Root!123";
+
+                propertiesLoaded = true;
+                LOGGER.log(Level.INFO, "Paramètres de connexion chargés depuis variables d'environnement Docker");
+            }
+        }
+
+        // 4. Utiliser des valeurs par défaut si rien n'a été chargé
+        if (!propertiesLoaded) {
+            url = "jdbc:mysql://localhost:3306/ParcAuto?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+            user = "root";
+            password = "Root!123";
+            LOGGER.log(Level.WARNING, "Utilisation des paramètres de connexion par défaut");
+        } else {
+            // Lire les propriétés si elles ont été chargées depuis un fichier
+            if (props.size() > 0) {
+                url = props.getProperty("db.url");
+                user = props.getProperty("db.user");
+                password = props.getProperty("db.password");
+            }
         }
 
         // Valider les paramètres
         if (url == null || user == null || password == null) {
             throw new IllegalStateException("Paramètres de connexion à la base de données manquants");
         }
+
+        LOGGER.log(Level.INFO, "URL de connexion configurée: {0}", url);
+        LOGGER.log(Level.INFO, "Utilisateur configuré: {0}", user);
     }
 
     /**
-     * Initialise le pool de connexions.
-     *
-     * @throws SQLException Si une erreur se produit lors de la création des connexions
-     */
-    private void initializePool() throws SQLException {
-        connectionPool = new Connection[maxPoolSize];
-        connectionStatus = new boolean[maxPoolSize];
-
-        // Initialiser les connexions
-        for (int i = 0; i < maxPoolSize; i++) {
-            connectionPool[i] = createConnection();
-            connectionStatus[i] = true; // Disponible
-        }
-    }
-
-    /**
-     * Crée une nouvelle connexion à la base de données.
-     *
-     * @return Une nouvelle connexion
-     * @throws SQLException Si une erreur se produit lors de la création de la connexion
-     */
-    private Connection createConnection() throws SQLException {
-        return DriverManager.getConnection(url, user, password);
-    }
-
-    /**
-     * Obtient une connexion du pool.
+     * Obtient une connexion à la base de données.
      *
      * @return Une connexion à la base de données
-     * @throws SQLException Si aucune connexion n'est disponible ou si une erreur se produit
+     * @throws SQLException Si une erreur se produit lors de la connexion
      */
     public synchronized Connection getConnection() throws SQLException {
-        // Chercher une connexion disponible
-        for (int i = 0; i < maxPoolSize; i++) {
-            if (connectionStatus[i]) {
-                // Vérifier si la connexion est toujours valide
-                if (connectionPool[i] == null || connectionPool[i].isClosed() || !connectionPool[i].isValid(2)) {
-                    connectionPool[i] = createConnection();
-                }
-
-                connectionStatus[i] = false; // Marquer comme utilisée
-                return connectionPool[i];
-            }
+        if (connection == null || connection.isClosed()) {
+            connection = DriverManager.getConnection(url, user, password);
+            LOGGER.log(Level.INFO, "Nouvelle connexion établie à {0}", url);
         }
-
-        // Aucune connexion disponible, en créer une nouvelle (hors pool)
-        LOGGER.log(Level.WARNING, "Pool de connexions saturé, création d'une connexion temporaire");
-        return createConnection();
+        return connection;
     }
 
     /**
      * Libère une connexion et la remet dans le pool.
+     * Dans cette implémentation simplifiée, vérifie seulement si la connexion
+     * passée est la même que la connexion stockée.
      *
      * @param conn La connexion à libérer
      */
     public synchronized void releaseConnection(Connection conn) {
         if (conn != null) {
-            // Chercher la connexion dans le pool
-            for (int i = 0; i < maxPoolSize; i++) {
-                if (connectionPool[i] == conn) {
-                    connectionStatus[i] = true; // Marquer comme disponible
-                    return;
+            // Si c'est notre connexion stockée, on la laisse
+            // (elle sera fermée via closeConnection si nécessaire)
+            if (connection != conn) {
+                // Si ce n'est pas notre connexion stockée, on la ferme
+                try {
+                    conn.close();
+                    LOGGER.log(Level.INFO, "Connexion externe fermée");
+                } catch (SQLException ex) {
+                    LOGGER.log(Level.WARNING, "Erreur lors de la fermeture d'une connexion externe", ex);
                 }
             }
+        }
+    }
 
-            // Si ce n'est pas une connexion du pool, la fermer
+    /**
+     * Ferme la connexion à la base de données.
+     */
+    public synchronized void closeConnection() {
+        if (connection != null) {
             try {
-                conn.close();
+                connection.close();
+                connection = null;
+                LOGGER.log(Level.INFO, "Connexion fermée");
             } catch (SQLException ex) {
-                LOGGER.log(Level.WARNING, "Erreur lors de la fermeture d'une connexion", ex);
+                LOGGER.log(Level.WARNING, "Erreur lors de la fermeture de la connexion", ex);
             }
         }
     }
 
     /**
      * Ferme une ressource JDBC (Statement, PreparedStatement, ResultSet).
-     * Méthode générique pour fermer les différents types de ressources.
      *
      * @param <T> Type de la ressource (AutoCloseable)
      * @param resource La ressource à fermer
@@ -232,36 +238,15 @@ public class DbUtil {
 
     /**
      * Effectue un rollback sur une connexion.
-     *
-     * @param conn La connexion sur laquelle effectuer le rollback
      */
     public void rollback(Connection conn) {
-        if (conn != null) {
+        if (connection != null) {
             try {
-                conn.rollback();
+                connection.rollback();
             } catch (SQLException ex) {
                 LOGGER.log(Level.WARNING, "Erreur lors du rollback", ex);
             }
         }
-    }
-
-    /**
-     * Ferme toutes les connexions du pool.
-     * À utiliser lors de l'arrêt de l'application.
-     */
-    public synchronized void shutdown() {
-        for (int i = 0; i < maxPoolSize; i++) {
-            if (connectionPool[i] != null) {
-                try {
-                    connectionPool[i].close();
-                } catch (SQLException ex) {
-                    LOGGER.log(Level.WARNING, "Erreur lors de la fermeture d'une connexion", ex);
-                } finally {
-                    connectionPool[i] = null;
-                }
-            }
-        }
-        LOGGER.log(Level.INFO, "Pool de connexions fermé");
     }
 
     /**
@@ -276,7 +261,7 @@ public class DbUtil {
         boolean isValid = false;
 
         try {
-            testConn = createConnection();
+            testConn = DriverManager.getConnection(url, user, password);
             stmt = testConn.createStatement();
             rs = stmt.executeQuery("SELECT 1");
 
@@ -285,7 +270,7 @@ public class DbUtil {
                 LOGGER.log(Level.INFO, "Connexion à la base de données validée");
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Échec de test de connexion à la base de données", ex);
+            LOGGER.log(Level.SEVERE, "Échec de test de connexion à la base de données: {0}", ex.getMessage());
         } finally {
             closeResultSet(rs);
             closeStatement(stmt);
@@ -299,5 +284,13 @@ public class DbUtil {
         }
 
         return isValid;
+    }
+
+    /**
+     * Ferme toutes les connexions et ressources lors de l'arrêt de l'application.
+     */
+    public void shutdown() {
+        closeConnection();
+        LOGGER.log(Level.INFO, "Ressources de base de données libérées");
     }
 }

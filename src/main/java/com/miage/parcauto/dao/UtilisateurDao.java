@@ -684,6 +684,70 @@ public class UtilisateurDao {
         }
     }
 
+    /**
+     * Met à jour les informations d'un utilisateur (login, rôle, idPersonnel).
+     *
+     * @param utilisateur L'utilisateur à mettre à jour
+     * @return true si la mise à jour a réussi, false sinon
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public boolean update(Utilisateur utilisateur) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = dbUtil.getConnection();
+            String sql = "UPDATE UTILISATEUR SET login = ?, role = ?, id_personnel = ? WHERE id = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, utilisateur.getLogin());
+            pstmt.setString(2, utilisateur.getRole().name());
+            if (utilisateur.getIdPersonnel() != null) {
+                pstmt.setInt(3, utilisateur.getIdPersonnel());
+            } else {
+                pstmt.setNull(3, java.sql.Types.INTEGER);
+            }
+            pstmt.setInt(4, utilisateur.getId());
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour d'un utilisateur", ex);
+            throw ex;
+        } finally {
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
+    /**
+     * Compte le nombre d'utilisateurs pour un rôle donné.
+     *
+     * @param role Le rôle à compter
+     * @return Le nombre d'utilisateurs ayant ce rôle
+     * @throws SQLException En cas d'erreur d'accès à la base de données
+     */
+    public int countByRole(Role role) throws SQLException {
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            conn = dbUtil.getConnection();
+            String sql = "SELECT COUNT(*) AS count FROM UTILISATEUR WHERE role = ?";
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, role.name());
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+            return 0;
+        } catch (SQLException ex) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des utilisateurs par rôle", ex);
+            throw ex;
+        } finally {
+            dbUtil.closeResultSet(rs);
+            dbUtil.closePreparedStatement(pstmt);
+            dbUtil.releaseConnection(conn);
+        }
+    }
+
     // ====== Méthodes utilitaires pour la gestion des mots de passe et du MFA ======
 
     /**

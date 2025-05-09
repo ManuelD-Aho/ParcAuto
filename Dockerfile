@@ -1,28 +1,19 @@
-# 1) Base Debian avec OpenJDK 22 et JavaFX via APT
-FROM openjdk:22-jdk-slim
+FROM openjdk:21-slim
 
 WORKDIR /app
 
-# Installer utilitaires + JavaFX
-RUN apt-get update \
- && apt-get install -y findutils openjfx \
- && rm -rf /var/lib/apt/lists/*
+# Copier les fichiers JAR et ressources
+COPY target/*.jar app.jar
+COPY lib/ lib/
 
-# Copier driver JDBC et sources
-COPY mysql-connector-j-8.0.33.jar /app/
-COPY src/ /app/src/
+# Exposer le port si nécessaire pour JavaFX
+# EXPOSE 8080
 
-# Compiler toutes les classes Java avec JavaFX + JDBC
-RUN find src/main/java -name "*.java" > sources.txt \
- && javac \
-      --module-path /usr/share/openjfx/lib \
-      --add-modules javafx.controls,javafx.fxml \
-      -cp mysql-connector-j-8.0.33.jar \
-      @sources.txt
+# Définir les variables d'environnement
+ENV MYSQL_HOST=db
+ENV MYSQL_PORT=3306
+ENV MYSQL_DATABASE=ParcAuto
+ENV TZ=Europe/Paris
 
-# Point d’entrée : lance l’application JavaFX
-CMD ["java", \
-     "--module-path", "/usr/share/openjfx/lib", \
-     "--add-modules", "javafx.controls,javafx.fxml", \
-     "-cp", "mysql-connector-j-8.0.33.jar:src/main/java", \
-     "com.miage.test.MainApp"]
+# Commande de démarrage
+ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-cp", "app.jar:lib/*", "main.java.com.miage.parcauto.MainApp"]

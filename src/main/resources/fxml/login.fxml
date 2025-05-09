@@ -2,68 +2,141 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.miage.parcauto.controller.LoginController"
-            stylesheets="../css/theme.css"
-            prefWidth="1000" prefHeight="600">
-    <center>
-        <StackPane alignment="CENTER">
-            <HBox alignment="CENTER" spacing="30" styleClass="login-container">
-                <!-- Logo et informations de l'application -->
-                <VBox alignment="CENTER" styleClass="login-banner" prefWidth="500" prefHeight="400" spacing="20">
-                    <ImageView fitHeight="150" fitWidth="150" preserveRatio="true">
-                        <Image url="@../images/logo.png" />
-                    </ImageView>
-                    <Text text="ParcAuto" styleClass="app-name">
-                        <font>
-                            <Font name="System Bold" size="36" />
-                        </font>
-                    </Text>
-                    <Text text="Gestion de Parc Automobile" styleClass="app-tagline">
-                        <font>
-                            <Font size="18" />
-                        </font>
-                    </Text>
-                    <Text text="v1.0" styleClass="app-version" />
-                </VBox>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
 
-                <!-- Formulaire de connexion -->
-                <VBox alignment="CENTER" styleClass="login-form-container" prefWidth="400" prefHeight="400" spacing="20">
-                    <padding>
-                        <Insets top="30" right="40" bottom="30" left="40" />
-                    </padding>
-                    <Text text="Connexion" styleClass="login-title">
-                        <font>
-                            <Font size="24" />
-                        </font>
-                    </Text>
-                    <TextField fx:id="txtUsername" promptText="Nom d'utilisateur" styleClass="login-field">
-                        <VBox.margin>
-                            <Insets top="20" />
-                        </VBox.margin>
-                    </TextField>
-                    <PasswordField fx:id="txtPassword" promptText="Mot de passe" styleClass="login-field" />
-                    <HBox alignment="CENTER_RIGHT">
-                        <Hyperlink fx:id="lnkForgotPassword" text="Mot de passe oublié ?" styleClass="forgot-password" />
-                    </HBox>
-                    <Button fx:id="btnConnexion" text="Se connecter" styleClass="btn,btn-primary,login-button" 
-                            onAction="#handleConnexion" defaultButton="true" />
-                    <Label fx:id="lblError" styleClass="login-error" text="" />
-                </VBox>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="main.java.com.miage.parcauto.controller.LoginController"
+           styleClass="root-pane">
+
+    <!-- Background avec dégradé -->
+    <Rectangle styleClass="background-gradient" width="1280" height="800" />
+
+    <!-- Paricules d'animation en arrière-plan -->
+    <Pane styleClass="particles-container">
+        <!-- Les particules seront générées dynamiquement par CSS -->
+    </Pane>
+
+    <!-- Container principal -->
+    <HBox styleClass="login-container" alignment="CENTER" maxWidth="1000" maxHeight="600">
+
+        <!-- Côté gauche: Bannière -->
+        <VBox styleClass="login-banner" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <padding><Insets top="40" right="30" bottom="40" left="40" /></padding>
+
+            <ImageView styleClass="app-logo" fitWidth="120" fitHeight="120" preserveRatio="true">
+                <Image url="@../images/logo.png" />
+            </ImageView>
+
+            <Label text="ParcAuto" styleClass="app-name">
+                <font>
+                    <Font name="System Bold" size="42" />
+                </font>
+            </Label>
+
+            <Label text="Gestion intelligente de votre parc automobile" styleClass="app-tagline" wrapText="true" />
+
+            <VBox styleClass="features-list" spacing="15" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                <padding><Insets top="30" /></padding>
+
+                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="15">
+                    <Region styleClass="feature-icon, icon-fleet" />
+                    <Label text="Gestion complète de votre flotte" styleClass="feature-text" />
+                </HBox>
+
+                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="15">
+                    <Region styleClass="feature-icon, icon-mission" />
+                    <Label text="Planification optimisée des missions" styleClass="feature-text" />
+                </HBox>
+
+                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="15">
+                    <Region styleClass="feature-icon, icon-finance" />
+                    <Label text="Suivi financier en temps réel" styleClass="feature-text" />
+                </HBox>
+
+                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="15">
+                    <Region styleClass="feature-icon, icon-maintenance" />
+                    <Label text="Maintenance préventive intelligente" styleClass="feature-text" />
+                </HBox>
+            </VBox>
+
+            <HBox styleClass="company-info" alignment="CENTER">
+                <Label text="© 2025 MIAGE Holding" styleClass="copyright-text" />
             </HBox>
-        </StackPane>
-    </center>
-    <bottom>
-        <HBox alignment="CENTER" styleClass="login-footer">
-            <padding>
-                <Insets top="10" right="0" bottom="10" left="0" />
-            </padding>
-            <Label text="© 2025 MIAGE Holding - Tous droits réservés" />
-        </HBox>
-    </bottom>
-</BorderPane>
+        </VBox>
+
+        <!-- Côté droit: Formulaire de connexion -->
+        <VBox styleClass="login-form" alignment="CENTER" spacing="25">
+            <padding><Insets top="50" right="60" bottom="50" left="60" /></padding>
+
+            <Label text="Authentification" styleClass="form-title">
+                <font>
+                    <Font name="System Bold" size="28" />
+                </font>
+            </Label>
+
+            <Label text="Connectez-vous à votre compte pour accéder à votre tableau de bord"
+                   styleClass="form-subtitle" wrapText="true" textAlignment="CENTER" />
+
+            <VBox spacing="5">
+                <Label text="Nom d'utilisateur" styleClass="field-label" />
+                <TextField fx:id="txtLogin" promptText="Entrez votre nom d'utilisateur"
+                           styleClass="text-field-custom" />
+            </VBox>
+
+            <VBox spacing="5">
+                <Label text="Mot de passe" styleClass="field-label" />
+                <PasswordField fx:id="txtPassword" promptText="Entrez votre mot de passe"
+                               styleClass="text-field-custom" />
+                <HBox alignment="CENTER_RIGHT">
+                    <Hyperlink text="Mot de passe oublié ?" styleClass="forgot-password" />
+                </HBox>
+            </VBox>
+
+            <!-- Message d'erreur -->
+            <Label fx:id="lblErreur" styleClass="error-message" visible="false"
+                   wrapText="true" textAlignment="CENTER" />
+
+            <!-- Bouton de connexion -->
+            <Button fx:id="btnConnexion" text="Se connecter" styleClass="btn-primary, btn-login"
+                    onAction="#handleConnexion" prefWidth="240" defaultButton="true" />
+
+            <!-- Panneau MFA (Authentication à deux facteurs) -->
+            <VBox fx:id="mfaPanel" styleClass="mfa-panel" spacing="15" alignment="CENTER" visible="false">
+                <Label text="Authentification à deux facteurs" styleClass="mfa-title" />
+                <Label text="Veuillez entrer le code reçu par email ou SMS" styleClass="mfa-instruction" />
+
+                <HBox spacing="5" alignment="CENTER">
+                    <TextField fx:id="txtCodeMfa" promptText="Code de vérification"
+                               styleClass="text-field-custom, mfa-code" maxWidth="150" />
+                </HBox>
+
+                <Button text="Valider" styleClass="btn-secondary" onAction="#handleValidateMfa" />
+            </VBox>
+
+            <!-- Message de choix d'environnement -->
+            <HBox styleClass="env-selector" alignment="CENTER" spacing="15">
+                <Label text="Environnement:" styleClass="env-label" />
+                <ChoiceBox styleClass="env-dropdown">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Production" />
+                            <String fx:value="Pré-production" />
+                            <String fx:value="Test" />
+                        </FXCollections>
+                    </items>
+                    <value>
+                        <String fx:value="Production" />
+                    </value>
+                </ChoiceBox>
+            </HBox>
+
+            <!-- Version -->
+            <Label text="ParcAuto v1.0.0" styleClass="version-text" />
+        </VBox>
+    </HBox>
+</StackPane>

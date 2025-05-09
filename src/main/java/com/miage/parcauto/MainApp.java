@@ -1,12 +1,15 @@
 package main.java.com.miage.parcauto;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import main.java.com.miage.parcauto.util.FxmlLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import main.java.com.miage.parcauto.util.SecurityManager;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -25,7 +28,7 @@ public class MainApp extends Application {
     
     private static final Logger LOGGER = Logger.getLogger(MainApp.class.getName());
     private static final String APP_TITLE = "Gestion de Parc Automobile";
-    private static final String LOGIN_FXML = "ressources/fxml/login.fxml";
+    private static final String LOGIN_FXML = "/fxml/login.fxml";
     private static final String APP_ICON = "/images/logo.png";
     
     /**
@@ -45,34 +48,57 @@ public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // Initialisation du système de sécurité
             initializeSecurityManager();
-            
-            // Configuration du stage principal et chargement de la vue de login
+
+            // titre
             primaryStage.setTitle(APP_TITLE);
-            // Correction du chargement de l'icône avec vérification
-            var iconStream = getClass().getResourceAsStream(APP_ICON);
-            if (iconStream != null) {
-                primaryStage.getIcons().add(new Image(iconStream));
-            } else {
-                LOGGER.warning("L'icône de l'application est introuvable : " + APP_ICON);
-            }
             primaryStage.setResizable(true);
-            primaryStage.setMaximized(true); // Mode plein écran
-            
-            // Utilisation de FxmlLoader pour charger la vue
-            FxmlLoader.loadAndShow(primaryStage, LOGIN_FXML, APP_TITLE, null);
-            
+            primaryStage.setMaximized(true);
+
+            // CHARGEMENT DE L'ICONE
+            String iconPath;
+            var iconStream = getClass().getResource(APP_ICON);
+            if (iconStream != null) {
+                // chemin sur classpath
+                iconPath = APP_ICON;
+            } else {
+                // fallback sur chemin absolu du projet (en dev)
+                Path absIcon = Paths.get(
+                        System.getProperty("user.dir"),
+                        "src", "main", "resources",
+                        APP_ICON.startsWith("/") ? APP_ICON.substring(1) : APP_ICON
+                );
+                iconPath = absIcon.toUri().toString();
+            }
+            primaryStage.getIcons().add(new Image(iconPath));
+
+            // CHARGEMENT DU FXML
+            String fxmlPath = LOGIN_FXML; // ex "/fxml/login.fxml"
+            URL fxmlUrl = getClass().getResource(fxmlPath);
+            if (fxmlUrl == null) {
+                Path absFxml = Paths.get(
+                        System.getProperty("user.dir"),
+                        "src", "main", "resources",
+                        fxmlPath.startsWith("/") ? fxmlPath.substring(1) : fxmlPath
+                );
+                fxmlUrl = absFxml.toUri().toURL();
+            }
+            // charge et affiche
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent root = loader.load();
+            primaryStage.setScene(new Scene(root));
+            primaryStage.show();
+
             LOGGER.info("Application démarrée avec succès");
-            
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du chargement de l'interface utilisateur", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors du chargement de l'interface", e);
             showFatalError(e);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur inattendue lors du démarrage de l'application", e);
+            LOGGER.log(Level.SEVERE, "Erreur inattendue", e);
             showFatalError(e);
         }
     }
+
     
     /**
      * Initialise le gestionnaire de sécurité de l'application.

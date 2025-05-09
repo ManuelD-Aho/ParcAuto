@@ -24,7 +24,7 @@
 2. **Exécuter l’application** :
 
    ```cmd
-   java -cp "lib/*;target/classes" com.miage.parcauto.MainApp
+   java -cp "lib/*;target/classes" com.miage.parcauto.main.java.com.miage.parcauto.MainApp
    ```
 
 3. **Lancer les tests unitaires** :
