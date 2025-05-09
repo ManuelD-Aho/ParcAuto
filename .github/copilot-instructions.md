@@ -30,24 +30,7 @@ Le code doit être entièrement compilable, documenté (Javadoc), testé et réd
 - Fournir **tests unitaires JUnit 5** couvrant ≥ 80 % de classe DAO + Services.  
 - Pipeline GitHub Actions : Maven build → Tests → exec:java vérification → build image Docker → push.  
 - `docker-compose.yml` doit démarrer :  
-  ```yaml
-  services:
-    mysql:
-      image: mysql:8
-      environment:
-        MYSQL_ROOT_PASSWORD: parcauto_root_pw
-        MYSQL_DATABASE: parcauto
-      ports: [3306:3306]
-      volumes: ["./db:/docker-entrypoint-initdb.d"]
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      environment:
-        PMA_HOST: mysql
-      ports: [8081:80]
-    app:
-      build: .
-      depends_on: [mysql]
-      ports: [8080:8080]
+
 
 
 ParcAuto – Vue d’ensemble des acteurs et des flux de données 📊
@@ -70,7 +53,7 @@ Services métier	Couche Java regroupant la logique (ex. VehiculeService)
 DAO / JDBC	Couche d’accès aux données (HikariCP → MySQL)
 Base MySQL	Schéma parcauto : tables, vues, triggers
 phpMyAdmin	Interface web d’administration SQL (port 8081)
-GitHub Actions	CI : build, tests, analyse Sonar, build/push image Docker
+GitHub Actions	CI : build, , analyse Sonar, build/push image Docker
 Docker Compose	Orchestration : mysql, phpmyadmin, app
 
 3. Diagramme de contexte (DFD 0) 🗺️
@@ -156,65 +139,3 @@ Sociétaire	LIRE_MISSION, LIRE_VEHICULE
 Admin Système	* (toutes les permissions)
 
 BaseController appelle SessionManager.aDroit() avant chaque action sensible et affiche une alerte si l’utilisateur manque de droits.
-
-6. Flux d’intégration continue & déploiement 🚚
-plantuml
-Copier
-Modifier
-@startuml cicd
-actor Dev
-Dev -> "GitHub Repo" : push / PR
-"GitHub Repo" -> "GitHub Actions CI" : déclenche workflow
-"GitHub Actions CI" -> Maven : mvn clean verify
-Maven --> "JUnit/Mockito" : tests
-Maven -> SonarCloud : analyse qualité
-"GitHub Actions CI" -> Docker : build image\n(parcauto:latest)
-Docker -> "ghcr.io" : push
-"GitHub Actions CI" -> Slack/Email : notification
-@enduml
-Déploiement local :
-
-bash
-Copier
-Modifier
-# Clone & build
-git clone https://github.com/…/parcauto.git
-cd parcauto
-mvn clean package
-
-# Lancer l’écosystème
-docker-compose up
-# ➜ MySQL  : localhost:3306   (root/parcauto_root_pw)
-# ➜ phpMyAdmin : http://localhost:8081
-# ➜ App JavaFX : java -jar target/parcauto.jar
-7. Cycle de vie d’une donnée (exemple : ajout véhicule) 🔄
-UI : l’Agent saisit les champs (FXML → TextFields).
-
-Validation : Validator contrôle la plaque d’immatriculation (AB‑123‑CD).
-
-Service : VehiculeService.ajouterVehicule() applique les règles métier (kilométrage ≥ 0).
-
-DAO : VehiculeDao.save() prépare l’INSERT.
-
-DB : déclencheur trg_log_insert écrit dans la table VEHICULE_LOG.
-
-Service : retourne l’ID généré.
-
-UI : TableView se rafraîchit et affiche le nouveau véhicule.
-
-8. Glossaire abrégé
-Terme	Définition courte
-Mission	Déplacement planifié d’un véhicule pour un sociétaire
-Entretien	Intervention de maintenance préventive ou corrective
-Mouvement	Opération financière (dépense ou recette) rattachée à une mission
-TCO	Total Cost of Ownership – coût complet d’un véhicule sur sa durée de vie
-
-9. Points d’extension prévus 🔧
-Module GPS / télématique (future intégration via WebSocket, pas REST).
-
-Export Excel via Apache POI directement depuis ReportingService.
-
-Archivage documents : stockage chiffré des factures PDF, indexation plein‑texte (Lucene).
-
-// Suppression de toute référence à Maven :
-// Ce projet ne doit plus mentionner Maven dans les instructions ou commentaires.

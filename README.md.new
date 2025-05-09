@@ -9,11 +9,6 @@
 6. [Installation et démarrage](#installation-et-démarrage)
 7. [Structure du projet](#structure-du-projet)
 8. [Docker et déploiement](#docker-et-déploiement)
-9. [Remarques](#remarques)](#modèle-de-données)
-5. [Système de sécurité RBAC](#système-de-sécurité-rbac)
-6. [Installation et démarrage](#installation-et-démarrage)
-7. [Structure du projet](#structure-du-projet)
-8. [Docker et déploiement](#docker-et-déploiement)
 9. [Remarques](#remarques)
 
 ## Présentation du projet
@@ -125,12 +120,14 @@ L'application ParcAuto est structurée selon une architecture en couches traditi
 - Export des données et rapports
 - Alertes et notifications personnalisables
 
-### Système de sécurité RBAC
+## Système de sécurité RBAC
+
+Le système de sécurité implémente un modèle RBAC (Role-Based Access Control) complet :
+
+### Composants du système de sécurité
 - Authentification des utilisateurs
 - Contrôle d'accès basé sur les rôles (permissions)
 - Support MFA (authentification à deux facteurs)
-
-Le système de sécurité implémente un modèle RBAC (Role-Based Access Control) complet :
 
 ### Rôles principaux
 - **Responsable Logistique (U1)** : Accès complet à la gestion des véhicules, missions, entretiens et finances
@@ -256,8 +253,6 @@ L'accès à l'application se fait avec les identifiants suivants :
 
 ## Structure du projet
 
-## Structure du projet
-
 ```
 parcauto/
 ├── src/
@@ -297,62 +292,109 @@ parcauto/
 └── README.md                              # Documentation
 ```
 
-## Structure du projet
+### Gestion des dépendances
 
-- `src/main/java` : code source principal (Java)
-- `src/main/resources` : ressources (FXML, CSS, images, JS)
-- `src/test/java` : tests unitaires (JUnit 5, Mockito)
-- `lib/` : dépendances externes (JARs)
-- `build.bat` : script de compilation Windows
-- `run_tests.bat` : script d'exécution des tests unitaires
-- `target/classes` : classes compilées
-- `target/test-classes` : classes de test compilées
-- `docker-compose.yml` : orchestration MySQL, phpMyAdmin, app
-- `db/ParcAuto.sql` : schéma SQL complet
-
-## Compilation et exécution (Windows)
-
-1. **Compiler le projet** :
-
-   ```cmd
-   build.bat
-   ```
-
-2. **Exécuter l’application** :
-
-   ```cmd
-   java -cp "lib/*;target/classes" com.miage.parcauto.main.java.com.miage.parcauto.MainApp
-   ```
-
-3. **Lancer les tests unitaires** :
-
-   ```cmd
-   run_tests.bat
-   ```
-
-## Gestion des dépendances
-
-Placez tous les fichiers JAR nécessaires dans le dossier `lib/` :
+Placez tous les fichiers JAR nécessaires dans le dossier `lib/` :
 - JavaFX 17 (modules nécessaires)
 - mysql-connector-j-8.0.33.jar
 - spring-security-crypto-6.4.5.jar (pour BCrypt)
 - JUnit 5, Mockito, etc.
 
+## Docker et déploiement
+
+L'application peut être déployée en mode conteneurisé avec Docker :
+
+### Services Docker
+- **MySQL 8.3** : Base de données pour le stockage persistant
+- **phpMyAdmin** : Interface web pour l'administration de la base
+- **Application ParcAuto** : L'application Java packagée dans une image Docker
+
+### Configuration
+
+Le fichier docker-compose.yml définit les services nécessaires :
+```yaml
+services:
+  db:
+    image: mysql:8.3
+    container_name: parcauto-mysql
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    networks:
+      - parcauto-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: parcauto-phpmyadmin
+    restart: unless-stopped
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - parcauto-network
+```
+
+### Base de données
+
+L'initialisation de la base de données est automatisée :
+- Le script SQL (`db/ParcAuto.sql`) crée les tables, vues et contraintes
+- Le schéma est créé automatiquement au démarrage via le volume monté `/docker-entrypoint-initdb.d`
+
+### Variables d'environnement
+
+Le fichier `.env` contient les variables d'environnement pour la configuration :
+```properties
+# MySQL - Configuration simplifiée
+MYSQL_ROOT_PASSWORD=Root!123
+MYSQL_DATABASE=ParcAuto
+
+# PhpMyAdmin
+PMA_USER=root
+PMA_PASSWORD=Root!123
+```
+
+### Image Docker de l'application
+
+Un Dockerfile est fourni pour construire l'image de l'application :
+```dockerfile
+FROM openjdk:21-slim
+
+WORKDIR /app
+
+# Copier les fichiers JAR et ressources
+COPY target/*.jar app.jar
+COPY lib/ lib/
+
+# Définir les variables d'environnement
+ENV MYSQL_HOST=db
+ENV MYSQL_PORT=3306
+ENV MYSQL_DATABASE=ParcAuto
+ENV TZ=Europe/Paris
+
+# Commande de démarrage
+ENTRYPOINT ["java", "-Dfile.encoding=UTF-8", "-cp", "app.jar:lib/*", "main.java.com.miage.parcauto.MainApp"]
+```
+
 ## Remarques
-- Le projet ne dépend plus de Maven.
-- Les scripts batch assurent la compilation et l’exécution.
-- Adaptez les chemins si vous êtes sous Linux/Mac (scripts non fournis).
-- Pour ajouter une dépendance, placez le JAR dans `lib/` et relancez la compilation.
 
-## Docker & Base de données
-
-- Lancer l’écosystème :
-  ```cmd
-  docker-compose up
-  ```
-- Accès MySQL : localhost:3306 (root/parcauto_root_pw)
-- phpMyAdmin : http://localhost:8081
+- Le projet utilise une approche JAR classique sans gestionnaire de dépendances
+- Les scripts batch assurent la compilation et l'exécution sur Windows
+- Adaptez les chemins si vous êtes sous Linux/Mac (scripts non fournis)
+- Pour ajouter une dépendance, placez le JAR dans `lib/` et relancez la compilation
 
 ---
 
-Pour toute question, consultez la documentation interne ou contactez l’équipe ParcAuto.
+Pour toute question, consultez la documentation interne ou contactez l'équipe ParcAuto.
