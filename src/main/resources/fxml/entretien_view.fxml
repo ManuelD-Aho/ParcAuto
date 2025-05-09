@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.miage.parcauto.controller.EntretienController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <Text styleClass="app-title" text="Entretiens" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" />
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <MenuButton text="Tableau de bord" />
+            <MenuButton text="Véhicules" />
+            <MenuButton text="Missions" />
+            <MenuButton text="Finances" />
+            <MenuButton text="Entretiens" />
+            <MenuButton text="Documents" />
+            <MenuButton text="Rapports" />
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="24" padding="24" styleClass="entretien-center">
+            <HBox spacing="16">
+                <ComboBox fx:id="comboVehicule" promptText="Véhicule" />
+                <ComboBox fx:id="comboType" promptText="Type d'entretien" />
+                <ComboBox fx:id="comboStatut" promptText="Statut" />
+                <DatePicker fx:id="dateEntree" promptText="Date entrée" />
+                <DatePicker fx:id="dateSortie" promptText="Date sortie" />
+                <TextField fx:id="txtMotif" promptText="Motif" />
+                <TextField fx:id="txtObservation" promptText="Observation" />
+                <TextField fx:id="txtCout" promptText="Coût (€)" />
+            </HBox>
+            <HBox spacing="8">
+                <Button fx:id="btnAjouter" text="Ajouter" styleClass="btn,btn-success" />
+                <Button fx:id="btnModifier" text="Modifier" styleClass="btn,btn-primary" />
+                <Button fx:id="btnSupprimer" text="Supprimer" styleClass="btn,btn-danger" />
+                <Button fx:id="btnCloturer" text="Clôturer" styleClass="btn,btn-warning" />
+            </HBox>
+            <TitledPane text="Liste des entretiens">
+                <TableView fx:id="tableEntretiens">
+                    <columns>
+                        <TableColumn fx:id="colVehicule" text="Véhicule" />
+                        <TableColumn fx:id="colType" text="Type" />
+                        <TableColumn fx:id="colStatut" text="Statut" />
+                        <TableColumn fx:id="colDateEntree" text="Entrée" />
+                        <TableColumn fx:id="colDateSortie" text="Sortie" />
+                        <TableColumn fx:id="colCout" text="Coût (€)" />
+                    </columns>
+                </TableView>
+            </TitledPane>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar" />
+    </bottom>
+</BorderPane>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.miage.parcauto.controller.ReportController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <Text styleClass="app-title" text="Rapports" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" />
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <MenuButton text="Tableau de bord" />
+            <MenuButton text="Véhicules" />
+            <MenuButton text="Missions" />
+            <MenuButton text="Finances" />
+            <MenuButton text="Entretiens" />
+            <MenuButton text="Documents" />
+            <MenuButton text="Rapports" />
+            <MenuButton text="Paramètres" />
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="24" padding="24" styleClass="report-center">
+            <HBox spacing="16">
+                <ComboBox fx:id="comboTypeRapport" promptText="Type de rapport" />
+                <DatePicker fx:id="dateDebut" promptText="Début" />
+                <DatePicker fx:id="dateFin" promptText="Fin" />
+                <Button fx:id="btnGenerer" text="Générer" styleClass="btn,btn-primary" />
+                <Button fx:id="btnExporter" text="Exporter Excel" styleClass="btn,btn-success" />
+            </HBox>
+            <TitledPane text="Résultat du rapport">
+                <TableView fx:id="tableRapport">
+                    <columns>
+                        <TableColumn fx:id="colCol1" text="Colonne 1" />
+                        <TableColumn fx:id="colCol2" text="Colonne 2" />
+                        <TableColumn fx:id="colCol3" text="Colonne 3" />
+                        <TableColumn fx:id="colCol4" text="Colonne 4" />
+                    </columns>
+                </TableView>
+            </TitledPane>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar" />
+    </bottom>
+</BorderPane>

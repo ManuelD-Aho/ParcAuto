@@ -215,3 +215,6 @@ Module GPS / télématique (future intégration via WebSocket, pas REST).
 Export Excel via Apache POI directement depuis ReportingService.
 
 Archivage documents : stockage chiffré des factures PDF, indexation plein‑texte (Lucene).
+
+// Suppression de toute référence à Maven :
+// Ce projet ne doit plus mentionner Maven dans les instructions ou commentaires.

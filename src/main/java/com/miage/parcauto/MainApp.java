@@ -4,15 +4,18 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.miage.parcauto.util.FxmlLoader;
 import com.miage.parcauto.util.SecurityManager;
+
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * Classe principale de l'application de gestion de parc automobile.
@@ -48,23 +51,14 @@ public class MainApp extends Application {
             // Initialisation du système de sécurité
             initializeSecurityManager();
             
-            // Chargement de la vue de login
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(LOGIN_FXML));
-            Parent root = loader.load();
-            
-            // Configuration de la scène principale
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/css/theme.css").toExternalForm());
-            
-            // Configuration du stage principal
+            // Configuration du stage principal et chargement de la vue de login
             primaryStage.setTitle(APP_TITLE);
-            primaryStage.setScene(scene);
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream(APP_ICON)));
             primaryStage.setResizable(true);
-            primaryStage.centerOnScreen();
+            primaryStage.setMaximized(true); // Mode plein écran
             
-            // Affichage de l'application
-            primaryStage.show();
+            // Utilisation de FxmlLoader pour charger la vue
+            FxmlLoader.loadAndShow(primaryStage, LOGIN_FXML, APP_TITLE, null);
             
             LOGGER.info("Application démarrée avec succès");
             
@@ -104,17 +98,21 @@ public class MainApp extends Application {
     
     /**
      * Affiche une boîte de dialogue d'erreur fatale avant de quitter l'application.
+     * Exécution sur le thread JavaFX pour éviter les problèmes de thread.
      * 
      * @param e Exception à l'origine de l'erreur
      */
     private void showFatalError(Exception e) {
-        LOGGER.severe("Erreur fatale: " + e.getMessage());
-        // Afficher une boîte de dialogue d'erreur avant de quitter
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Erreur fatale");
-        alert.setHeaderText("Une erreur fatale est survenue");
-        alert.setContentText("L'application va être fermée : " + e.getMessage());
-        alert.showAndWait();
-        System.exit(1);
+        LOGGER.log(Level.SEVERE, "Erreur fatale: {0}", e.getMessage());
+        // Afficher une boîte de dialogue d'erreur sur le thread JavaFX
+        Platform.runLater(() -> {
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Erreur fatale");
+            alert.setHeaderText("Une erreur fatale est survenue");
+            alert.setContentText("L'application va être fermée : " + e.getMessage());
+            alert.showAndWait();
+            Platform.exit();
+            System.exit(1);
+        });
     }
 }

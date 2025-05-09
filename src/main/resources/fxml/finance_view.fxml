@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.miage.parcauto.controller.FinanceController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <Text styleClass="app-title" text="Finances" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnAfficherBilan" text="Afficher le bilan" styleClass="btn,btn-primary" />
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <MenuButton text="Tableau de bord" />
+            <MenuButton text="Véhicules" />
+            <MenuButton text="Missions" />
+            <MenuButton text="Finances" />
+            <MenuButton text="Entretiens" />
+            <MenuButton text="Documents" />
+            <MenuButton text="Rapports" />
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="24" padding="24" styleClass="finance-center">
+            <HBox spacing="32">
+                <VBox spacing="8">
+                    <Label text="Période" />
+                    <HBox spacing="8">
+                        <DatePicker fx:id="dateDebut" promptText="Début" />
+                        <DatePicker fx:id="dateFin" promptText="Fin" />
+                    </HBox>
+                </VBox>
+                <VBox spacing="8">
+                    <Label text="Recettes" />
+                    <Label fx:id="lblRecettes" styleClass="stat-value" />
+                </VBox>
+                <VBox spacing="8">
+                    <Label text="Dépenses" />
+                    <Label fx:id="lblDepenses" styleClass="stat-value" />
+                </VBox>
+                <VBox spacing="8">
+                    <Label text="Solde" />
+                    <Label fx:id="lblSolde" styleClass="stat-value" />
+                </VBox>
+                <VBox spacing="8">
+                    <Label text="Marge" />
+                    <Label fx:id="lblMarge" styleClass="stat-value" />
+                </VBox>
+            </HBox>
+            <TitledPane text="Évolution mensuelle">
+                <TableView fx:id="tableEvolution">
+                    <columns>
+                        <TableColumn fx:id="colMois" text="Mois" />
+                        <TableColumn fx:id="colRecettes" text="Recettes" />
+                        <TableColumn fx:id="colDepenses" text="Dépenses" />
+                        <TableColumn fx:id="colSolde" text="Solde" />
+                    </columns>
+                </TableView>
+            </TitledPane>
+            <HBox spacing="24">
+                <TitledPane text="Alertes assurance">
+                    <TableView fx:id="tableAlertesAssurance" prefHeight="120" />
+                </TitledPane>
+                <TitledPane text="Alertes entretien">
+                    <TableView fx:id="tableAlertesEntretien" prefHeight="120" />
+                </TitledPane>
+            </HBox>
+            <TitledPane text="Répartition budgétaire">
+                <TableView fx:id="tableRepartition" />
+            </TitledPane>
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar" />
+    </bottom>
+</BorderPane>

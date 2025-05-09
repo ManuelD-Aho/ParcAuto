@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.miage.parcauto.controller.DocumentController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <Text styleClass="app-title" text="Documents" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" />
+        </HBox>
+    </top>
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <MenuButton text="Tableau de bord" />
+            <MenuButton text="Véhicules" />
+            <MenuButton text="Missions" />
+            <MenuButton text="Finances" />
+            <MenuButton text="Entretiens" />
+            <MenuButton text="Documents" />
+            <MenuButton text="Rapports" />
+        </VBox>
+    </left>
+    <center>
+        <VBox spacing="24" padding="24" styleClass="document-center">
+            <HBox spacing="16">
+                <ComboBox fx:id="comboSocietaire" promptText="Sociétaire" />
+                <ComboBox fx:id="comboTypeDoc" promptText="Type de document" />
+                <TextField fx:id="txtNomFichier" promptText="Nom du fichier" />
+                <TextField fx:id="txtDateUpload" promptText="Date d'upload" />
+                <Button fx:id="btnUpload" text="Uploader" styleClass="btn,btn-success" />
+            </HBox>
+            <HBox spacing="8">
+                <Button fx:id="btnConsulter" text="Consulter" styleClass="btn,btn-primary" />
+                <Button fx:id="btnValider" text="Valider" styleClass="btn,btn-success" />
+                <Button fx:id="btnSupprimer" text="Supprimer" styleClass="btn,btn-danger" />
+            </HBox>
+            <TitledPane text="Liste des documents">
+                <TableView fx:id="tableDocuments">
+                    <columns>
+                        <TableColumn fx:id="colNomFichier" text="Nom du fichier" />
+                        <TableColumn fx:id="colSocietaire" text="Sociétaire" />
+                        <TableColumn fx:id="colType" text="Type" />
+                        <TableColumn fx:id="colDateUpload" text="Date d'upload" />
+                    </columns>
+                </TableView>
+            </TitledPane>
+            <VBox fx:id="detailPane" visible="false" managed="false" spacing="8" styleClass="document-detail-pane" />
+        </VBox>
+    </center>
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar" />
+    </bottom>
+</BorderPane>
