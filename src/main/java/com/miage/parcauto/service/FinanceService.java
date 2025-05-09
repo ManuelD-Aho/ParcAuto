@@ -1,4 +1,4 @@
-package com.miage.parcauto.service;
+package main.java.com.miage.parcauto.service;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -7,13 +7,13 @@ import java.time.Month;
 import java.util.List;
 import java.util.Map;
 
-import com.miage.parcauto.dao.FinanceDao;
-import com.miage.parcauto.dao.FinanceDao.AlerteAssurance;
-import com.miage.parcauto.dao.FinanceDao.AlerteEntretien;
-import com.miage.parcauto.dao.FinanceDao.BilanFinancier;
-import com.miage.parcauto.dao.FinanceDao.BilanMensuel;
-import com.miage.parcauto.dao.FinanceDao.RentabiliteVehicule;
-import com.miage.parcauto.dao.FinanceDao.TCOVehicule;
+import main.java.com.miage.parcauto.dao.FinanceDao;
+import main.java.com.miage.parcauto.dao.FinanceDao.AlerteAssurance;
+import main.java.com.miage.parcauto.dao.FinanceDao.AlerteEntretien;
+import main.java.com.miage.parcauto.dao.FinanceDao.BilanFinancier;
+import main.java.com.miage.parcauto.dao.FinanceDao.BilanMensuel;
+import main.java.com.miage.parcauto.dao.FinanceDao.RentabiliteVehicule;
+import main.java.com.miage.parcauto.dao.FinanceDao.TCOVehicule;
 
 /**
  * Service métier pour la gestion financière du parc automobile.

@@ -1,8 +1,8 @@
-package com.miage.parcauto.dao;
+package main.java.com.miage.parcauto.dao;
 
-import com.miage.parcauto.model.entretien.Entretien;
-import com.miage.parcauto.model.vehicule.EtatVoiture;
-import com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.model.entretien.Entretien;
+import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

@@ -1,11 +1,11 @@
-package com.miage.parcauto.service;
+package main.java.com.miage.parcauto.service;
 
-import com.miage.parcauto.dao.MissionDao;
-import com.miage.parcauto.dao.VehiculeDao;
-import com.miage.parcauto.model.mission.DepenseMission;
-import com.miage.parcauto.model.mission.Mission;
-import com.miage.parcauto.model.vehicule.Vehicule;
-import com.miage.parcauto.model.vehicule.EtatVoiture;
+import main.java.com.miage.parcauto.dao.MissionDao;
+import main.java.com.miage.parcauto.dao.VehiculeDao;
+import main.java.com.miage.parcauto.model.mission.DepenseMission;
+import main.java.com.miage.parcauto.model.mission.Mission;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;

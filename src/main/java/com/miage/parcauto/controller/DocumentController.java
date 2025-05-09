@@ -1,4 +1,4 @@
-package com.miage.parcauto.controller;
+package main.java.com.miage.parcauto.controller;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,13 +11,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.DocumentDao;
-import com.miage.parcauto.dao.DocumentDao.Document;
-import com.miage.parcauto.dao.DocumentDao.TypeDoc;
-import com.miage.parcauto.model.Societaire;
-import com.miage.parcauto.service.DocumentService;
-import com.miage.parcauto.service.SocietaireService;
-import com.miage.parcauto.util.Permission;
+import main.java.com.miage.parcauto.dao.DocumentDao.Document;
+import main.java.com.miage.parcauto.dao.DocumentDao.TypeDoc;
+import main.java.com.miage.parcauto.model.Societaire;
+import main.java.com.miage.parcauto.service.DocumentService;
+import main.java.com.miage.parcauto.service.SocietaireService;
+import main.java.com.miage.parcauto.util.Permission;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -25,8 +24,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;

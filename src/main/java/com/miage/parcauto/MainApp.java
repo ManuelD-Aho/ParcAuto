@@ -1,21 +1,18 @@
-package com.miage.parcauto;
+package main.java.com.miage.parcauto;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.util.FxmlLoader;
-import com.miage.parcauto.util.SecurityManager;
+import main.java.com.miage.parcauto.util.FxmlLoader;
+import main.java.com.miage.parcauto.util.SecurityManager;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 /**
  * Classe principale de l'application de gestion de parc automobile.
@@ -28,7 +25,7 @@ public class MainApp extends Application {
     
     private static final Logger LOGGER = Logger.getLogger(MainApp.class.getName());
     private static final String APP_TITLE = "Gestion de Parc Automobile";
-    private static final String LOGIN_FXML = "/fxml/login.fxml";
+    private static final String LOGIN_FXML = "ressources/fxml/login.fxml";
     private static final String APP_ICON = "/images/logo.png";
     
     /**
@@ -53,7 +50,13 @@ public class MainApp extends Application {
             
             // Configuration du stage principal et chargement de la vue de login
             primaryStage.setTitle(APP_TITLE);
-            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream(APP_ICON)));
+            // Correction du chargement de l'icône avec vérification
+            var iconStream = getClass().getResourceAsStream(APP_ICON);
+            if (iconStream != null) {
+                primaryStage.getIcons().add(new Image(iconStream));
+            } else {
+                LOGGER.warning("L'icône de l'application est introuvable : " + APP_ICON);
+            }
             primaryStage.setResizable(true);
             primaryStage.setMaximized(true); // Mode plein écran
             

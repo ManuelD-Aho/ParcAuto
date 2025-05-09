@@ -1,4 +1,4 @@
-package com.miage.parcauto.util;
+package main.java.com.miage.parcauto.util;
 
 /**
  * Enumération des permissions possibles dans l'application.

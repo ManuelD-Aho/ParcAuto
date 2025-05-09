@@ -1,4 +1,4 @@
-package com.miage.parcauto.dao;
+package main.java.com.miage.parcauto.dao;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.model.Societaire;
+import main.java.com.miage.parcauto.model.Societaire;
 
 /**
  * Classe d'accès aux données pour les sociétaires.

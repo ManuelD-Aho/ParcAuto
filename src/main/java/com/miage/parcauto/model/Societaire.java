@@ -1,4 +1,4 @@
-package com.miage.parcauto.model;
+package main.java.com.miage.parcauto.model;
 
 import java.time.LocalDate;
 import java.util.Objects;

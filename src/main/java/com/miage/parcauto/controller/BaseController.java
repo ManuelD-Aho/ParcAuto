@@ -1,13 +1,13 @@
-package com.miage.parcauto.controller;
+package main.java.com.miage.parcauto.controller;
 
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
-import com.miage.parcauto.util.Permission;
-import com.miage.parcauto.util.SecurityManager;
-import com.miage.parcauto.util.SessionManager;
+import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
+import main.java.com.miage.parcauto.util.Permission;
+import main.java.com.miage.parcauto.util.SecurityManager;
+import main.java.com.miage.parcauto.util.SessionManager;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

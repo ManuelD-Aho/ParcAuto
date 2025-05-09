@@ -1,4 +1,4 @@
-package com.miage.parcauto.controller;
+package main.java.com.miage.parcauto.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -6,9 +6,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.UtilisateurDao;
-import com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
-import com.miage.parcauto.util.SessionManager;
+import main.java.com.miage.parcauto.dao.UtilisateurDao;
+import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
+import main.java.com.miage.parcauto.util.SessionManager;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

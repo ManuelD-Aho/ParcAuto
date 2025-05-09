@@ -1,4 +1,4 @@
-package com.miage.parcauto.util;
+package main.java.com.miage.parcauto.util;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.UtilisateurDao;
+import main.java.com.miage.parcauto.dao.UtilisateurDao;
 
 /**
  * Gestionnaire de sécurité pour l'application.

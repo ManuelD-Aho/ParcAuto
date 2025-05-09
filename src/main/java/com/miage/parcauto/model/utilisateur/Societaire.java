@@ -1,4 +1,4 @@
-package com.miage.parcauto.model.utilisateur;
+package main.java.com.miage.parcauto.model.utilisateur;
 
 import java.io.Serializable;
 import java.time.LocalDate;

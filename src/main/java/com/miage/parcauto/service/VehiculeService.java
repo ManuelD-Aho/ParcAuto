@@ -1,4 +1,4 @@
-package com.miage.parcauto.service;
+package main.java.com.miage.parcauto.service;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.VehiculeDao;
-import com.miage.parcauto.model.vehicule.EtatVoiture;
-import com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.dao.VehiculeDao;
+import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
 /**
  * Service de gestion des véhicules.

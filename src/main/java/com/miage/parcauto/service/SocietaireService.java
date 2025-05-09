@@ -1,4 +1,4 @@
-package com.miage.parcauto.service;
+package main.java.com.miage.parcauto.service;
 
 import java.sql.SQLException;
 import java.util.Collections;
@@ -7,9 +7,11 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.SocieteCompteDao;
-import com.miage.parcauto.model.finance.SocieteCompte;
-import com.miage.parcauto.model.rh.Personnel;
+import main.java.com.miage.parcauto.dao.SocieteCompteDao;
+import main.java.com.miage.parcauto.dao.UtilisateurDao;
+import main.java.com.miage.parcauto.model.Societaire;
+import main.java.com.miage.parcauto.model.finance.SocieteCompte;
+import main.java.com.miage.parcauto.model.rh.Personnel;
 
 /**
  * Service de gestion des sociétaires (comptes sociétaires).
@@ -158,8 +160,8 @@ public class SocietaireService {
         if (idUtilisateur == null) return null;
         try {
             // On suppose que l'utilisateur a un idPersonnel associé
-            com.miage.parcauto.dao.UtilisateurDao utilisateurDao = new com.miage.parcauto.dao.UtilisateurDao();
-            Optional<com.miage.parcauto.dao.UtilisateurDao.Utilisateur> userOpt = utilisateurDao.findById(idUtilisateur);
+           UtilisateurDao utilisateurDao = new UtilisateurDao();
+            Optional<UtilisateurDao.Utilisateur> userOpt = utilisateurDao.findById(idUtilisateur);
             if (userOpt.isPresent() && userOpt.get().getIdPersonnel() != null) {
                 Optional<SocieteCompte> compteOpt = societeCompteDao.findByIdPersonnel(userOpt.get().getIdPersonnel());
                 return compteOpt.orElse(null);
@@ -176,11 +178,11 @@ public class SocietaireService {
      * @param idUtilisateur L'identifiant de l'utilisateur
      * @return Le sociétaire associé ou null si non trouvé
      */
-    public com.miage.parcauto.model.Societaire getSocietaireByIdUtilisateur(Integer idUtilisateur) {
+    public Societaire getSocietaireByIdUtilisateur(Integer idUtilisateur) {
         SocieteCompte compte = getSocieteCompteByIdUtilisateur(idUtilisateur);
         if (compte == null) return null;
         // Conversion SocieteCompte -> Societaire (modèle métier)
-        com.miage.parcauto.model.Societaire s = new com.miage.parcauto.model.Societaire();
+        Societaire s = new Societaire();
         s.setIdSocietaire(compte.getIdSocietaire());
         s.setNom(compte.getNom());
         // Si le prénom est disponible via le personnel associé

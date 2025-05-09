@@ -1,4 +1,4 @@
-package com.miage.parcauto.controller;
+package main.java.com.miage.parcauto.controller;
 
 import java.net.URL;
 import java.util.List;
@@ -7,11 +7,11 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.model.mission.Mission;
-import com.miage.parcauto.model.vehicule.Vehicule;
-import com.miage.parcauto.service.MissionService;
-import com.miage.parcauto.service.VehiculeService;
-import com.miage.parcauto.util.Permission;
+import main.java.com.miage.parcauto.model.mission.Mission;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.service.MissionService;
+import main.java.com.miage.parcauto.service.VehiculeService;
+import main.java.com.miage.parcauto.util.Permission;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;

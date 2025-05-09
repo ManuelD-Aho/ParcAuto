@@ -1,4 +1,4 @@
-package com.miage.parcauto.model.finance;
+package main.java.com.miage.parcauto.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

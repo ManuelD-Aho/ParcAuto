@@ -1,4 +1,4 @@
-package com.miage.parcauto.model.entretien;
+package main.java.com.miage.parcauto.model.entretien;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

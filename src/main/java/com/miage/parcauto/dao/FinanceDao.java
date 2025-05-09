@@ -1,11 +1,11 @@
-package com.miage.parcauto.dao;
+package main.java.com.miage.parcauto.dao;
 
-import com.miage.parcauto.model.finance.SocieteCompte;
-import com.miage.parcauto.model.finance.Mouvement;
-import com.miage.parcauto.model.mission.Mission;
-import com.miage.parcauto.model.entretien.Entretien;
-import com.miage.parcauto.model.entretien.Assurance;
-import com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.model.finance.SocieteCompte;
+import main.java.com.miage.parcauto.model.finance.Mouvement;
+import main.java.com.miage.parcauto.model.mission.Mission;
+import main.java.com.miage.parcauto.model.entretien.Entretien;
+import main.java.com.miage.parcauto.model.entretien.Assurance;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

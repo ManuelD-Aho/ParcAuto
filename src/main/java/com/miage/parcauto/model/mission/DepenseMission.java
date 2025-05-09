@@ -1,4 +1,4 @@
-package com.miage.parcauto.model.mission;
+package main.java.com.miage.parcauto.model.mission;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

@@ -1,4 +1,4 @@
-package com.miage.parcauto.service;
+package main.java.com.miage.parcauto.service;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.DocumentDao;
-import com.miage.parcauto.dao.DocumentDao.Document;
-import com.miage.parcauto.dao.DocumentDao.TypeDoc;
+import main.java.com.miage.parcauto.dao.DocumentDao;
+import main.java.com.miage.parcauto.dao.DocumentDao.Document;
+import main.java.com.miage.parcauto.dao.DocumentDao.TypeDoc;
 
 /**
  * Service pour la gestion des documents.

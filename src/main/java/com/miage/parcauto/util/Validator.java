@@ -1,4 +1,4 @@
-package com.miage.parcauto.util;
+package main.java.com.miage.parcauto.util;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

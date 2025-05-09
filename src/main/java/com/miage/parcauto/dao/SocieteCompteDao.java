@@ -1,8 +1,8 @@
-package com.miage.parcauto.dao;
+package main.java.com.miage.parcauto.dao;
 
-import com.miage.parcauto.model.finance.SocieteCompte;
-import com.miage.parcauto.model.finance.Mouvement;
-import com.miage.parcauto.model.rh.Personnel;
+import main.java.com.miage.parcauto.model.finance.SocieteCompte;
+import main.java.com.miage.parcauto.model.finance.Mouvement;
+import main.java.com.miage.parcauto.model.rh.Personnel;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

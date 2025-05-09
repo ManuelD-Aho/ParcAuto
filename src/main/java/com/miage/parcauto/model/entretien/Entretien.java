@@ -1,6 +1,6 @@
-package com.miage.parcauto.model.entretien;
+package main.java.com.miage.parcauto.model.entretien;
 
-import com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

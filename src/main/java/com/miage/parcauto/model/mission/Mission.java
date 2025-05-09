@@ -1,6 +1,6 @@
-package com.miage.parcauto.model.mission;
+package main.java.com.miage.parcauto.model.mission;
 
-import com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

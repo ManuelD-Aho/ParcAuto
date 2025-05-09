@@ -1,6 +1,6 @@
-package com.miage.parcauto.model.finance;
+package main.java.com.miage.parcauto.model.finance;
 
-import com.miage.parcauto.model.rh.Personnel;
+import main.java.com.miage.parcauto.model.rh.Personnel;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

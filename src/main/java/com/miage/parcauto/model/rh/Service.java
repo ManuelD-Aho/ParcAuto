@@ -1,4 +1,4 @@
-package com.miage.parcauto.model.rh;
+package main.java.com.miage.parcauto.model.rh;
 
 import java.io.Serializable;
 import java.util.Objects;

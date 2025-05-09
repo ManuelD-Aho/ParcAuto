@@ -1,4 +1,4 @@
-package com.miage.parcauto.dao;
+package main.java.com.miage.parcauto.dao;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

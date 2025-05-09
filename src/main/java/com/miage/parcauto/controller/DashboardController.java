@@ -1,4 +1,4 @@
-package com.miage.parcauto.controller;
+package main.java.com.miage.parcauto.controller;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -7,12 +7,12 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.miage.parcauto.dao.UtilisateurDao;
-import com.miage.parcauto.service.EntretienService;
-import com.miage.parcauto.service.FinanceService;
-import com.miage.parcauto.service.MissionService;
-import com.miage.parcauto.service.VehiculeService;
-import com.miage.parcauto.util.Permission;
+import main.java.com.miage.parcauto.dao.UtilisateurDao;
+import main.java.com.miage.parcauto.service.EntretienService;
+import main.java.com.miage.parcauto.service.FinanceService;
+import main.java.com.miage.parcauto.service.MissionService;
+import main.java.com.miage.parcauto.service.VehiculeService;
+import main.java.com.miage.parcauto.util.Permission;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -26,6 +26,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import main.java.com.miage.parcauto.dao.FinanceDao;
 
 /**
  * Contrôleur pour la vue du tableau de bord.
@@ -244,8 +245,8 @@ public class DashboardController extends BaseController implements Initializable
 
             // Alertes d'assurance (ex: expiration dans 30 jours)
             try {
-                List<com.miage.parcauto.dao.FinanceDao.AlerteAssurance> alertesAssurance = financeService.getAlertesAssurances(30);
-                for (com.miage.parcauto.dao.FinanceDao.AlerteAssurance a : alertesAssurance) {
+                List<FinanceDao.AlerteAssurance> alertesAssurance = financeService.getAlertesAssurances(30);
+                for (FinanceDao.AlerteAssurance a : alertesAssurance) {
                     String titreA = "Assurance à renouveler";
                     String msg = String.format("%s %s (%s) - expire le %s, coût: %.2f €", a.getMarque(), a.getModele(), a.getImmatriculation(), a.getDateFin().toLocalDate(), a.getCoutAssurance());
                     alertes.add(new AlerteDashboard(titreA, msg, a.getDateFin().toLocalDate().toString(), "finance-alerte"));
@@ -256,8 +257,8 @@ public class DashboardController extends BaseController implements Initializable
 
             // Alertes d'entretien (ex: entretien préventif à prévoir)
             try {
-                List<com.miage.parcauto.dao.FinanceDao.AlerteEntretien> alertesEntretien = financeService.getAlertesEntretiens(10000);
-                for (com.miage.parcauto.dao.FinanceDao.AlerteEntretien e : alertesEntretien) {
+                List<FinanceDao.AlerteEntretien> alertesEntretien = financeService.getAlertesEntretiens(10000);
+                for (FinanceDao.AlerteEntretien e : alertesEntretien) {
                     String titreE = "Entretien préventif à prévoir";
                     String msg = String.format("%s %s (%s) - %d km depuis dernier entretien", e.getMarque(), e.getModele(), e.getImmatriculation(), e.getKmDepuisDernierEntretien());
                     String dateDernier = e.getDateDernierEntretien() != null ? e.getDateDernierEntretien().toLocalDate().toString() : "?";
