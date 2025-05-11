@@ -1,9 +1,6 @@
 package main.java.com.miage.parcauto;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +15,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import main.java.com.miage.parcauto.dao.DbUtil;
+import main.java.com.miage.parcauto.util.ResourceManager;
 import main.java.com.miage.parcauto.util.SecurityManager;
 
 /**
@@ -25,8 +23,8 @@ import main.java.com.miage.parcauto.util.SecurityManager;
  * Cette classe sert de point d'entrée à l'application et initialise l'interface utilisateur JavaFX.
  *
  * @author MIAGE Holding
- * @version 1.2
- * @date 2025-05-10
+ * @version 1.3
+ * @date 2025-05-11
  */
 public class MainApp extends Application {
 
@@ -34,7 +32,7 @@ public class MainApp extends Application {
 
     // Configuration de l'application
     private static final String APP_TITLE = "Gestion de Parc Automobile";
-    private static final String APP_VERSION = "1.0.0";
+    private static final String APP_VERSION = "1.2.0";
     private static final String LOGIN_FXML = "/fxml/login.fxml";
     private static final String APP_ICON = "/images/logo.png";
 
@@ -42,6 +40,14 @@ public class MainApp extends Application {
     private static final String[] CSS_FILES = {
             "/css/theme.css",         // Style global
             "/css/login-theme.css"    // Style spécifique à l'écran de login
+    };
+
+    // Liste des ressources critiques à vérifier au démarrage
+    private static final String[] CRITICAL_RESOURCES = {
+            LOGIN_FXML,
+            APP_ICON,
+            "/css/theme.css",
+            "/images/logo-parcauto.png"  // L'image qui cause le problème
     };
 
     private Stage primaryStage;
@@ -65,6 +71,14 @@ public class MainApp extends Application {
     public void start(Stage primaryStage) {
         try {
             this.primaryStage = primaryStage;
+
+            // S'assurer que les répertoires de ressources existent
+            ResourceManager.ensureResourceDirectories();
+
+            // Vérifier les ressources critiques
+            if (!ResourceManager.validateResources(CRITICAL_RESOURCES)) {
+                LOGGER.warning("Certaines ressources critiques sont manquantes. L'application pourrait ne pas fonctionner correctement.");
+            }
 
             // Initialiser les composants système
             initializeSystemComponents();
@@ -144,33 +158,17 @@ public class MainApp extends Application {
     }
 
     /**
-     * Charge l'icône de l'application avec gestion de fallback.
+     * Charge l'icône de l'application.
      *
      * @param stage Le stage auquel appliquer l'icône
      */
     private void loadAppIcon(Stage stage) {
-        try {
-            URL iconResource = getClass().getResource(APP_ICON);
-
-            if (iconResource != null) {
-                // Chargement depuis le classpath
-                stage.getIcons().add(new Image(iconResource.toExternalForm()));
-                LOGGER.fine("Icône chargée depuis le classpath");
-            } else {
-                // Fallback sur le chemin absolu (utile en développement)
-                Path absolutePath = Paths.get(
-                        System.getProperty("user.dir"),
-                        "src", "main", "resources",
-                        APP_ICON.startsWith("/") ? APP_ICON.substring(1) : APP_ICON
-                );
-
-                String iconUri = absolutePath.toUri().toString();
-                stage.getIcons().add(new Image(iconUri));
-                LOGGER.fine("Icône chargée depuis le chemin absolu: " + iconUri);
-            }
-        } catch (Exception e) {
-            // Non-fatal, on continue sans icône
-            LOGGER.log(Level.WARNING, "Impossible de charger l'icône de l'application", e);
+        Image appIcon = ResourceManager.getImage(APP_ICON);
+        if (appIcon != null) {
+            stage.getIcons().add(appIcon);
+            LOGGER.fine("Icône chargée avec succès");
+        } else {
+            LOGGER.warning("Impossible de charger l'icône de l'application");
         }
     }
 
@@ -181,82 +179,19 @@ public class MainApp extends Application {
      * @throws IOException Si une erreur survient lors du chargement de l'interface
      */
     private void loadLoginInterface(Stage stage) throws IOException {
-        // Charger le fichier FXML
-        URL fxmlResource = getFxmlResource(LOGIN_FXML);
-        FXMLLoader loader = new FXMLLoader(fxmlResource);
+        // Charger le fichier FXML via le ResourceManager
+        FXMLLoader loader = ResourceManager.getFXMLLoader(LOGIN_FXML);
         Parent root = loader.load();
 
         // Créer la scène
         mainScene = new Scene(root);
 
         // Appliquer les styles CSS
-        applyStylesheets(mainScene);
+        ResourceManager.applyStylesheets(mainScene, CSS_FILES);
 
         // Afficher la scène
         stage.setScene(mainScene);
         stage.show();
-    }
-
-    /**
-     * Récupère l'URL d'une ressource FXML avec gestion de fallback.
-     *
-     * @param fxmlPath Le chemin du fichier FXML
-     * @return L'URL de la ressource FXML
-     * @throws IOException Si la ressource est introuvable
-     */
-    private URL getFxmlResource(String fxmlPath) throws IOException {
-        URL resource = getClass().getResource(fxmlPath);
-
-        if (resource != null) {
-            return resource;
-        }
-
-        // Fallback sur le chemin absolu (utile en développement)
-        Path absolutePath = Paths.get(
-                System.getProperty("user.dir"),
-                "src", "main", "resources",
-                fxmlPath.startsWith("/") ? fxmlPath.substring(1) : fxmlPath
-        );
-
-        if (!absolutePath.toFile().exists()) {
-            throw new IOException("Fichier FXML introuvable: " + fxmlPath);
-        }
-
-        return absolutePath.toUri().toURL();
-    }
-
-    /**
-     * Applique les feuilles de style CSS à la scène.
-     *
-     * @param scene La scène à styliser
-     */
-    private void applyStylesheets(Scene scene) {
-        for (String cssFile : CSS_FILES) {
-            try {
-                URL cssResource = getClass().getResource(cssFile);
-
-                if (cssResource != null) {
-                    scene.getStylesheets().add(cssResource.toExternalForm());
-                    LOGGER.fine("Feuille de style appliquée: " + cssFile);
-                } else {
-                    // Fallback sur le chemin absolu
-                    Path absolutePath = Paths.get(
-                            System.getProperty("user.dir"),
-                            "src", "main", "resources",
-                            cssFile.startsWith("/") ? cssFile.substring(1) : cssFile
-                    );
-
-                    if (absolutePath.toFile().exists()) {
-                        scene.getStylesheets().add(absolutePath.toUri().toString());
-                        LOGGER.fine("Feuille de style appliquée depuis le chemin absolu: " + cssFile);
-                    } else {
-                        LOGGER.warning("Feuille de style introuvable: " + cssFile);
-                    }
-                }
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Erreur lors de l'application de la feuille de style: " + cssFile, e);
-            }
-        }
     }
 
     /**
@@ -292,12 +227,10 @@ public class MainApp extends Application {
             alert.setHeaderText("Une erreur fatale est survenue");
             alert.setContentText("L'application va être fermée : " + e.getMessage());
 
-            // Appliquer un style personnalisé à l'alerte si possible
-            try {
-                alert.getDialogPane().getStylesheets().add(getClass().getResource("/css/login-theme.css").toExternalForm());
-                alert.getDialogPane().getStyleClass().add("error-dialog");
-            } catch (Exception ex) {
-                // Ignorer les erreurs de style, on utilise le style par défaut
+            // Appliquer un style personnalisé à l'alerte
+            String css = ResourceManager.getStylesheetPath("/css/theme.css");
+            if (css != null) {
+                alert.getDialogPane().getStylesheets().add(css);
             }
 
             alert.showAndWait();

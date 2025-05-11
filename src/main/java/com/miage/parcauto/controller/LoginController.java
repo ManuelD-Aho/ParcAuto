@@ -1,7 +1,6 @@
 package main.java.com.miage.parcauto.controller;
 
 import java.io.IOException;
-import java.net.URL;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -22,7 +21,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -33,6 +31,7 @@ import javafx.util.Duration;
 
 import main.java.com.miage.parcauto.dao.UtilisateurDao;
 import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
+import main.java.com.miage.parcauto.util.ResourceManager;
 import main.java.com.miage.parcauto.util.SessionManager;
 
 /**
@@ -40,12 +39,19 @@ import main.java.com.miage.parcauto.util.SessionManager;
  * Gère l'authentification des utilisateurs avec animations et transitions.
  *
  * @author MIAGE Holding
- * @version 1.1
+ * @version 1.2
  */
 public class LoginController {
 
     private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
     private final UtilisateurDao utilisateurDao;
+
+    // Constantes pour les ressources
+    private static final String DASHBOARD_FXML = "/fxml/dashboard.fxml";
+    private static final String[] DASHBOARD_CSS = {
+            "/css/theme.css",
+            "/css/dashboard.css"
+    };
 
     @FXML
     private TextField txtLogin;
@@ -142,27 +148,23 @@ public class LoginController {
      */
     private void loginSuccessful() {
         try {
-            URL fxmlUrl = getClass().getResource("/fxml/dashboard.fxml");
-            if (fxmlUrl == null) {
-                LOGGER.severe("dashboard.fxml introuvable dans le classpath !");
-                showErrorDialog("dashboard.fxml introuvable dans le classpath !");
-                return;
-            }
-            Parent dashboardRoot = FXMLLoader.load(fxmlUrl);
-            Stage stage = (Stage) txtLogin.getScene().getWindow();
+            // Chargement du dashboard via le ResourceManager
+            FXMLLoader loader = ResourceManager.getFXMLLoader(DASHBOARD_FXML);
+            Parent dashboardRoot = loader.load();
+
+            // Configuration de la scène
             Scene scene = new Scene(dashboardRoot);
-            // Ajout des CSS si elles existent
-            String css1 = "/css/theme.css";
-            String css2 = "/css/dashboard.css";
-            URL cssUrl1 = getClass().getResource(css1);
-            if (cssUrl1 != null)
-                scene.getStylesheets().add(cssUrl1.toExternalForm());
-            URL cssUrl2 = getClass().getResource(css2);
-            if (cssUrl2 != null)
-                scene.getStylesheets().add(cssUrl2.toExternalForm());
-            stage.setScene(scene);
+
+            // Application des styles CSS via le ResourceManager
+            ResourceManager.applyStylesheets(scene, DASHBOARD_CSS);
+
+            // Affichage dans le stage actuel
+            Stage stage = (Stage) txtLogin.getScene().getWindow();
             stage.setTitle("Gestion de Parc Automobile - Tableau de bord");
-            stage.show();
+            stage.setScene(scene);
+
+            LOGGER.info("Navigation vers le tableau de bord réussie");
+
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du chargement du dashboard", e);
             showErrorDialog("Erreur lors du chargement du dashboard : " + e.getMessage());
@@ -216,33 +218,15 @@ public class LoginController {
         SessionManager.getInstance().setCurrentUser(user);
 
         try {
-            // Charger le tableau de bord (classpath ou fallback absolu)
-            URL dashboardFxml = getClass().getResource("/fxml/dashboard.fxml");
-            if (dashboardFxml == null) {
-                // Fallback absolu
-                java.nio.file.Path absPath = java.nio.file.Paths.get(System.getProperty("user.dir"), "src", "main",
-                        "resources", "fxml", "dashboard.fxml");
-                if (absPath.toFile().exists()) {
-                    dashboardFxml = absPath.toUri().toURL();
-                } else {
-                    LOGGER.severe("dashboard.fxml introuvable dans le classpath ni en chemin absolu !");
-                    showErrorDialog(
-                            "Erreur critique : le fichier dashboard.fxml est introuvable. Contactez l'administrateur.");
-                    return;
-                }
-            }
-            FXMLLoader loader = new FXMLLoader(dashboardFxml);
+            // Charger le tableau de bord via le ResourceManager
+            FXMLLoader loader = ResourceManager.getFXMLLoader(DASHBOARD_FXML);
             Parent root = loader.load();
 
             // Configuration de la scène
             Scene scene = new Scene(root);
-            // Appliquer le style CSS si disponible
-            URL cssUrl = getClass().getResource("/css/theme.css");
-            if (cssUrl != null) {
-                scene.getStylesheets().add(cssUrl.toExternalForm());
-            } else {
-                LOGGER.warning("Feuille de style theme.css introuvable");
-            }
+
+            // Application des styles CSS via le ResourceManager
+            ResourceManager.applyStylesheets(scene, DASHBOARD_CSS);
 
             // Récupérer le stage actuel
             Stage stage = (Stage) btnConnexion.getScene().getWindow();
@@ -364,12 +348,13 @@ public class LoginController {
         alert.setTitle("Erreur");
         alert.setHeaderText(null);
         alert.setContentText(message);
-        // Ajout d'une CSS custom si elle existe
-        String cssPath = "/css/theme.css";
-        URL cssUrl = getClass().getResource(cssPath);
-        if (cssUrl != null) {
-            alert.getDialogPane().getStylesheets().add(cssUrl.toExternalForm());
+
+        // Ajout d'une CSS custom via le ResourceManager
+        String css = ResourceManager.getStylesheetPath("/css/theme.css");
+        if (css != null) {
+            alert.getDialogPane().getStylesheets().add(css);
         }
+
         alert.showAndWait();
     }
 }
