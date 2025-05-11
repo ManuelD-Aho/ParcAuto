@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.java.com.miage.parcauto.controller.MissionController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+            <Text styleClass="app-title" text="Gestion des Missions" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" onAction="#handleRetour" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <padding>
+                <Insets top="24" right="0" bottom="24" left="0"/>
+            </padding>
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <Button text="Tableau de bord" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Véhicules" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Missions" styleClass="sidebar-menu,active" maxWidth="Infinity" />
+            <Button text="Finances" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Entretiens" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Documents" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Rapports" styleClass="sidebar-menu" maxWidth="Infinity" />
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="24" styleClass="content-area">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <!-- Section formulaire de saisie -->
+            <VBox fx:id="detailPane" spacing="16" styleClass="form-container">
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Véhicule" styleClass="form-label" />
+                        <ComboBox fx:id="comboVehicule" promptText="Sélectionner un véhicule" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Libellé" styleClass="form-label" />
+                        <TextField fx:id="txtLibelle" promptText="Libellé de la mission" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Site" styleClass="form-label" />
+                        <TextField fx:id="txtSite" promptText="Site de destination" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Date de début" styleClass="form-label" />
+                        <DatePicker fx:id="dateDebut" promptText="Sélectionner une date" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Date de fin" styleClass="form-label" />
+                        <DatePicker fx:id="dateFin" promptText="Sélectionner une date" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Kilométrage prévu" styleClass="form-label" />
+                        <TextField fx:id="txtKmPrevu" promptText="Ex: 100" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Kilométrage réel" styleClass="form-label" />
+                        <TextField fx:id="txtKmReel" promptText="À remplir en fin de mission" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Statut" styleClass="form-label" />
+                        <ComboBox fx:id="comboStatut" promptText="Sélectionner un statut" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text=" " styleClass="form-label" />
+                        <HBox spacing="10" alignment="BOTTOM_RIGHT">
+                            <Button fx:id="btnAjouter" text="Ajouter" onAction="#handleAjouter" styleClass="btn,btn-success" />
+                            <Button fx:id="btnModifier" text="Modifier" onAction="#handleModifier" styleClass="btn,btn-primary" />
+                            <Button fx:id="btnSupprimer" text="Supprimer" onAction="#handleSupprimer" styleClass="btn,btn-danger" />
+                            <Button fx:id="btnCloturer" text="Clôturer" onAction="#handleCloturer" styleClass="btn,btn-warning" />
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Section tableau des missions -->
+            <TitledPane text="Liste des missions" expanded="true">
+                <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <TextField promptText="Rechercher..." prefWidth="300" />
+                        <ComboBox promptText="Filtrer par statut" />
+                        <Button text="Rafraîchir" styleClass="btn,btn-secondary" />
+                    </HBox>
+                    <TableView fx:id="tableMissions" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colVehicule" text="Véhicule" prefWidth="120" />
+                            <TableColumn fx:id="colLibelle" text="Libellé" prefWidth="150" />
+                            <TableColumn fx:id="colSite" text="Site" prefWidth="120" />
+                            <TableColumn fx:id="colDateDebut" text="Date début" prefWidth="100" />
+                            <TableColumn fx:id="colDateFin" text="Date fin" prefWidth="100" />
+                            <TableColumn fx:id="colStatut" text="Statut" prefWidth="100" />
+                            <TableColumn fx:id="colKmPrevu" text="Km prévu" prefWidth="80" />
+                            <TableColumn fx:id="colKmReel" text="Km réel" prefWidth="80" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </TitledPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar">
+            <padding>
+                <Insets top="5" right="15" bottom="5" left="15"/>
+            </padding>
+            <Label text="Version 1.1.0" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label text="© 2025 MIAGE Holding - Tous droits réservés" />
+        </HBox>
+    </bottom>
+</BorderPane>

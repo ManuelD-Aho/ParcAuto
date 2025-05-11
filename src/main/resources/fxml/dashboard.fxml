@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.collections.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.java.com.miage.parcauto.controller.DashboardController"
+            stylesheets="/css/dashboard.css">
+
+    <!-- Barre supérieure -->
+    <top>
+        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="top-navbar">
+            <padding><Insets top="15" right="20" bottom="15" left="20" /></padding>
+
+            <!-- Logo et titre de l'application -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <ImageView styleClass="app-logo" fitWidth="40" fitHeight="40" preserveRatio="true">
+                    <Image url="@/images/logo-parcauto.png" />
+                </ImageView>
+                <Text styleClass="app-title" text="Parc Automobile" />
+            </HBox>
+
+            <Pane HBox.hgrow="ALWAYS" />
+
+            <!-- Informations utilisateur -->
+            <VBox alignment="CENTER_RIGHT" spacing="5">
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <ImageView styleClass="user-avatar" fitWidth="32" fitHeight="32" preserveRatio="true">
+                        <Image url="@/images/user-avatar.png" />
+                    </ImageView>
+                    <VBox spacing="2">
+                        <Label fx:id="lblUserName" styleClass="user-name" text="Utilisateur" />
+                        <Label fx:id="lblUserRole" styleClass="user-role" text="Rôle" />
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Bouton de déconnexion -->
+            <Button fx:id="btnDeconnexion" styleClass="btn-logout" text="Déconnexion"
+                    onAction="#handleDeconnexion" />
+        </HBox>
+    </top>
+
+    <!-- Menu latéral -->
+    <left>
+        <VBox styleClass="sidebar">
+            <padding><Insets top="20" right="0" bottom="20" left="0" /></padding>
+
+            <!-- Menu Véhicules -->
+            <MenuButton fx:id="menuVehicules" styleClass="menu-button" text="Véhicules" maxWidth="Infinity">
+                <items>
+                    <MenuItem fx:id="menuItemConsulterVehicules" text="Consulter"
+                              onAction="#handleConsulterVehicules" />
+                    <MenuItem fx:id="menuItemAjouterVehicule" text="Ajouter"
+                              onAction="#handleAjouterVehicule" />
+                    <MenuItem fx:id="menuItemModifierVehicule" text="Modifier" />
+                    <MenuItem fx:id="menuItemSupprimerVehicule" text="Supprimer" />
+                    <MenuItem fx:id="menuItemChangerEtatVehicule" text="Changer état" />
+                    <MenuItem fx:id="menuItemDeclarerPanne" text="Déclarer panne" />
+                </items>
+            </MenuButton>
+
+            <!-- Menu Missions -->
+            <MenuButton fx:id="menuMissions" styleClass="menu-button" text="Missions" maxWidth="Infinity">
+                <items>
+                    <MenuItem text="Consulter les missions" onAction="#handleGererMissions" />
+                    <MenuItem text="Créer une mission" />
+                    <MenuItem text="Planifier une mission" />
+                    <MenuItem text="Missions en cours" />
+                </items>
+            </MenuButton>
+
+            <!-- Menu Entretien -->
+            <MenuButton fx:id="menuEntretien" styleClass="menu-button" text="Entretiens" maxWidth="Infinity">
+                <items>
+                    <MenuItem text="Gérer les entretiens" onAction="#handleGererEntretiens" />
+                    <MenuItem text="Planifier un entretien" />
+                    <MenuItem text="Interventions en cours" />
+                </items>
+            </MenuButton>
+
+            <!-- Menu Finances -->
+            <MenuButton fx:id="menuFinances" styleClass="menu-button" text="Finances" maxWidth="Infinity">
+                <items>
+                    <MenuItem text="Tableau de bord financier" onAction="#handleGererFinances" />
+                    <MenuItem text="Comptes" />
+                    <MenuItem text="Dépôts et retraits" />
+                </items>
+            </MenuButton>
+
+            <!-- Menu Documents -->
+            <MenuButton fx:id="menuDocuments" styleClass="menu-button" text="Documents" maxWidth="Infinity">
+                <items>
+                    <MenuItem text="Bibliothèque de documents" onAction="#handleGererDocuments" />
+                    <MenuItem text="Téléverser un document" />
+                    <MenuItem text="Validation de documents" />
+                </items>
+            </MenuButton>
+
+            <!-- Menu Rapports -->
+            <MenuButton fx:id="menuRapports" styleClass="menu-button" text="Rapports" maxWidth="Infinity">
+                <items>
+                    <MenuItem text="Tableau de bord" onAction="#handleRapports" />
+                    <MenuItem text="Inventaire du parc" />
+                    <MenuItem text="Statistiques d'utilisation" />
+                </items>
+            </MenuButton>
+
+            <!-- Menu Administration -->
+            <MenuButton fx:id="menuAdministration" styleClass="menu-button" text="Administration" maxWidth="Infinity">
+                <items>
+                    <MenuItem text="Utilisateurs" onAction="#handleAdministration" />
+                    <MenuItem text="Droits d'accès" />
+                    <MenuItem text="Paramètres système" />
+                </items>
+            </MenuButton>
+        </VBox>
+    </left>
+
+    <!-- Contenu principal -->
+    <center>
+        <ScrollPane styleClass="main-content" fitToWidth="true">
+            <VBox spacing="20">
+                <padding><Insets top="20" right="20" bottom="20" left="20" /></padding>
+
+                <!-- Titre de la page -->
+                <HBox styleClass="page-header">
+                    <Label text="Tableau de bord" styleClass="page-title" />
+                </HBox>
+
+                <!-- Cartes statistiques -->
+                <HBox spacing="15" alignment="CENTER">
+                    <!-- Statistiques véhicules -->
+                    <GridPane fx:id="gridStatsVehicules" styleClass="stats-card, vehicle-stats">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <Label text="Total véhicules" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
+                        <Label fx:id="lblNbVehicules" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label text="Disponibles" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
+                        <Label fx:id="lblNbVehiculesDisponibles" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                    </GridPane>
+
+                    <!-- Statistiques missions -->
+                    <GridPane fx:id="gridStatsMissions" styleClass="stats-card, mission-stats">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <Label text="Missions en cours" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
+                        <Label fx:id="lblNbMissionsEnCours" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label text="Planifiées" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
+                        <Label fx:id="lblNbMissionsPlanifiees" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                    </GridPane>
+
+                    <!-- Statistiques finances -->
+                    <GridPane fx:id="gridStatsFinances" styleClass="stats-card, finance-stats">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <Label text="Solde global" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
+                        <Label fx:id="lblSoldeGlobal" text="0 €" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label text="Dépenses (mois)" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
+                        <Label fx:id="lblDepensesMois" text="0 €" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                    </GridPane>
+
+                    <!-- Statistiques entretiens -->
+                    <GridPane fx:id="gridStatsEntretien" styleClass="stats-card, maintenance-stats">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="LEFT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="120" />
+                            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100" />
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+                        </rowConstraints>
+                        <Label text="Entretiens à venir" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
+                        <Label fx:id="lblNbEntretiensAVenir" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label text="En cours" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
+                        <Label fx:id="lblNbEntretiensEnCours" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                    </GridPane>
+                </HBox>
+
+                <!-- Graphiques -->
+                <HBox spacing="15">
+                    <!-- Graphique répartition véhicules -->
+                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                        <Label text="Répartition des véhicules par état" styleClass="chart-title" />
+                        <PieChart fx:id="chartVehiculesByState" legendVisible="true" />
+                    </VBox>
+
+                    <!-- Graphique missions par mois -->
+                    <VBox styleClass="chart-container" HBox.hgrow="ALWAYS">
+                        <Label text="Missions par mois" styleClass="chart-title" />
+                        <BarChart fx:id="chartMissionsByMonth">
+                            <xAxis>
+                                <CategoryAxis side="BOTTOM" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis side="LEFT" />
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                </HBox>
+
+                <!-- Alertes et notifications -->
+                <TitledPane text="Alertes et notifications" expanded="true" styleClass="alertes-section">
+                    <Pane fx:id="paneAlertes" styleClass="alertes-container" />
+                </TitledPane>
+
+                <!-- Tableau des véhicules récents -->
+                <TitledPane text="Véhicules récemment ajoutés" expanded="true">
+                    <TableView fx:id="tableRecentVehicles">
+                        <columns>
+                            <TableColumn text="Immatriculation" prefWidth="120" />
+                            <TableColumn text="Marque" prefWidth="100" />
+                            <TableColumn text="Modèle" prefWidth="120" />
+                            <TableColumn text="Date d'ajout" prefWidth="120" />
+                            <TableColumn text="État" prefWidth="100" />
+                            <TableColumn text="Actions" prefWidth="100" />
+                        </columns>
+                    </TableView>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- Barre d'état -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT">
+            <padding><Insets top="5" right="15" bottom="5" left="15" /></padding>
+            <Label text="Version 1.0.0" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label text="Dernière mise à jour: 09/05/2025 12:48:58" />
+        </HBox>
+    </bottom>
+</BorderPane>

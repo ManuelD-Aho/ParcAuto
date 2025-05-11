@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.java.com.miage.parcauto.controller.FinanceController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+            <Text styleClass="app-title" text="Gestion Financière" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" />
+            <Button fx:id="btnAfficherBilan" text="Afficher le bilan" styleClass="btn,btn-primary" onAction="#handleAfficherBilan" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <padding>
+                <Insets top="24" right="0" bottom="24" left="0"/>
+            </padding>
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <Button text="Tableau de bord" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Véhicules" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Missions" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Finances" styleClass="sidebar-menu,active" maxWidth="Infinity" />
+            <Button text="Entretiens" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Documents" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Rapports" styleClass="sidebar-menu" maxWidth="Infinity" />
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="content-scrollpane">
+            <VBox spacing="24" styleClass="content-area">
+                <padding>
+                    <Insets top="24" right="24" bottom="24" left="24"/>
+                </padding>
+
+                <!-- Section bilan financier -->
+                <VBox spacing="16" styleClass="section">
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <Label text="Bilan financier" styleClass="section-title" />
+                    </HBox>
+
+                    <HBox spacing="16" alignment="CENTER_LEFT">
+                        <VBox spacing="8" HBox.hgrow="ALWAYS">
+                            <Label text="Période" styleClass="form-label" />
+                            <HBox spacing="8">
+                                <DatePicker fx:id="dateDebut" promptText="Date de début" />
+                                <DatePicker fx:id="dateFin" promptText="Date de fin" />
+                            </HBox>
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Recettes" styleClass="stat-label" />
+                            <Label fx:id="lblRecettes" text="0.00 €" styleClass="stat-value,positive" />
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Dépenses" styleClass="stat-label" />
+                            <Label fx:id="lblDepenses" text="0.00 €" styleClass="stat-value,negative" />
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Solde" styleClass="stat-label" />
+                            <Label fx:id="lblSolde" text="0.00 €" styleClass="stat-value" />
+                        </VBox>
+
+                        <VBox spacing="8" styleClass="stat-card" HBox.hgrow="ALWAYS">
+                            <Label text="Marge" styleClass="stat-label" />
+                            <Label fx:id="lblMarge" text="0.00 %" styleClass="stat-value" />
+                        </VBox>
+                    </HBox>
+                </VBox>
+
+                <!-- Section évolution mensuelle -->
+                <TitledPane text="Évolution mensuelle" expanded="true">
+                    <VBox spacing="10">
+                        <HBox spacing="16" alignment="CENTER_LEFT">
+                            <Label text="Année:" />
+                            <Spinner fx:id="spinnerAnnee" prefWidth="100" />
+                        </HBox>
+                        <TableView fx:id="tableEvolution">
+                            <columns>
+                                <TableColumn fx:id="colMois" text="Mois" prefWidth="150" />
+                                <TableColumn fx:id="colRecettes" text="Recettes" prefWidth="150" />
+                                <TableColumn fx:id="colDepenses" text="Dépenses" prefWidth="150" />
+                                <TableColumn fx:id="colSolde" text="Solde" prefWidth="150" />
+                            </columns>
+                        </TableView>
+                    </VBox>
+                </TitledPane>
+
+                <!-- Section alertes -->
+                <HBox spacing="16">
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <TitledPane text="Alertes assurance" expanded="true">
+                            <VBox spacing="8">
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <Label text="Alerter pour les échéances dans les" />
+                                    <Spinner fx:id="spinnerJoursAlerte" prefWidth="80" />
+                                    <Label text="jours" />
+                                </HBox>
+                                <TableView fx:id="tableAlertesAssurance" prefHeight="200">
+                                    <!-- Columns will be defined dynamically by the controller -->
+                                </TableView>
+                            </VBox>
+                        </TitledPane>
+                    </VBox>
+
+                    <VBox spacing="10" HBox.hgrow="ALWAYS">
+                        <TitledPane text="Alertes entretien" expanded="true">
+                            <VBox spacing="8">
+                                <HBox spacing="8" alignment="CENTER_LEFT">
+                                    <Label text="Alerter pour les véhicules dépassant" />
+                                    <Spinner fx:id="spinnerKmEntretien" prefWidth="80" />
+                                    <Label text="km depuis le dernier entretien" />
+                                </HBox>
+                                <TableView fx:id="tableAlertesEntretien" prefHeight="200">
+                                    <!-- Columns will be defined dynamically by the controller -->
+                                </TableView>
+                            </VBox>
+                        </TitledPane>
+                    </VBox>
+                </HBox>
+
+                <!-- Section répartition budgétaire -->
+                <TitledPane text="Répartition budgétaire" expanded="true">
+                    <TableView fx:id="tableRepartition">
+                        <!-- Columns will be defined dynamically by the controller -->
+                    </TableView>
+                </TitledPane>
+
+                <!-- Section rentabilité des véhicules -->
+                <TitledPane text="Rentabilité des véhicules" expanded="true">
+                    <TableView fx:id="tableRentabilite">
+                        <!-- Columns will be defined dynamically by the controller -->
+                    </TableView>
+                </TitledPane>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar">
+            <padding>
+                <Insets top="5" right="15" bottom="5" left="15"/>
+            </padding>
+            <Label text="Version 1.1.0" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label text="© 2025 MIAGE Holding - Tous droits réservés" />
+        </HBox>
+    </bottom>
+</BorderPane>

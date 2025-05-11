@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.java.com.miage.parcauto.controller.DocumentController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+            <Text styleClass="app-title" text="Gestion des Documents" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" onAction="#handleRetour" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <padding>
+                <Insets top="24" right="0" bottom="24" left="0"/>
+            </padding>
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <Button text="Tableau de bord" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Véhicules" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Missions" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Finances" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Entretiens" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Documents" styleClass="sidebar-menu,active" maxWidth="Infinity" />
+            <Button text="Rapports" styleClass="sidebar-menu" maxWidth="Infinity" />
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="24" styleClass="content-area">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <!-- Section formulaire de saisie -->
+            <VBox fx:id="detailPane" spacing="16" styleClass="form-container">
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Sociétaire" styleClass="form-label" />
+                        <ComboBox fx:id="comboSocietaire" promptText="Sélectionner un sociétaire" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Type de document" styleClass="form-label" />
+                        <ComboBox fx:id="comboTypeDoc" promptText="Sélectionner un type" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Nom du fichier" styleClass="form-label" />
+                        <TextField fx:id="txtNomFichier" promptText="Nom du fichier" editable="false" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Date d'upload" styleClass="form-label" />
+                        <TextField fx:id="txtDateUpload" promptText="Date d'upload" editable="false" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text=" " styleClass="form-label" />
+                        <HBox spacing="10" alignment="BOTTOM_RIGHT">
+                            <Button fx:id="btnUpload" text="Uploader un document" onAction="#handleUpload" styleClass="btn,btn-success" />
+                            <Button fx:id="btnConsulter" text="Consulter" onAction="#handleConsulter" styleClass="btn,btn-primary" />
+                            <Button fx:id="btnValider" text="Valider" onAction="#handleValider" styleClass="btn,btn-info" />
+                            <Button fx:id="btnSupprimer" text="Supprimer" onAction="#handleSupprimer" styleClass="btn,btn-danger" />
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </VBox>
+
+            <!-- Section tableau des documents -->
+            <TitledPane text="Liste des documents" expanded="true">
+                <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <TextField promptText="Rechercher..." prefWidth="300" />
+                        <ComboBox promptText="Filtrer par type" />
+                        <Button text="Rafraîchir" styleClass="btn,btn-secondary" />
+                    </HBox>
+                    <TableView fx:id="tableDocuments" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colNomFichier" text="Nom du fichier" prefWidth="250" />
+                            <TableColumn fx:id="colSocietaire" text="Sociétaire" prefWidth="200" />
+                            <TableColumn fx:id="colType" text="Type" prefWidth="150" />
+                            <TableColumn fx:id="colDateUpload" text="Date d'upload" prefWidth="150" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </TitledPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar">
+            <padding>
+                <Insets top="5" right="15" bottom="5" left="15"/>
+            </padding>
+            <Label text="Version 1.1.0" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label text="© 2025 MIAGE Holding - Tous droits réservés" />
+        </HBox>
+    </bottom>
+</BorderPane>

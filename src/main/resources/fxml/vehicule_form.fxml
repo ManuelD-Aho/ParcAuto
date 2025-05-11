@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.java.com.miage.parcauto.controller.VehiculeController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+            <Text styleClass="app-title" text="Gestion des Véhicules" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" onAction="#handleRetour" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <padding>
+                <Insets top="24" right="0" bottom="24" left="0"/>
+            </padding>
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <Button text="Tableau de bord" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Véhicules" styleClass="sidebar-menu,active" maxWidth="Infinity" />
+            <Button text="Missions" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Finances" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Entretiens" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Documents" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Rapports" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Paramètres" styleClass="sidebar-menu" maxWidth="Infinity" />
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="24" styleClass="content-area">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <!-- Section formulaire de saisie -->
+            <VBox fx:id="detailPane" spacing="16" styleClass="form-container">
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Immatriculation" styleClass="form-label" />
+                        <TextField fx:id="txtImmatriculation" promptText="Ex: AB-123-CD" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Marque" styleClass="form-label" />
+                        <TextField fx:id="txtMarque" promptText="Ex: Renault" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Modèle" styleClass="form-label" />
+                        <TextField fx:id="txtModele" promptText="Ex: Clio" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Kilométrage" styleClass="form-label" />
+                        <TextField fx:id="txtKilometrage" promptText="Ex: 25000" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Date de mise en circulation" styleClass="form-label" />
+                        <DatePicker fx:id="dateMiseEnCirculation" promptText="Sélectionner une date" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="État du véhicule" styleClass="form-label" />
+                        <ComboBox fx:id="comboEtat" promptText="Sélectionner un état" maxWidth="Infinity" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="10" styleClass="button-bar">
+                    <Button fx:id="btnAjouter" text="Ajouter" onAction="#handleAjouter" styleClass="btn,btn-success" />
+                    <Button fx:id="btnModifier" text="Modifier" onAction="#handleModifier" styleClass="btn,btn-primary" />
+                    <Button fx:id="btnSupprimer" text="Supprimer" onAction="#handleSupprimer" styleClass="btn,btn-danger" />
+                    <Button fx:id="btnDeclarer" text="Déclarer une panne" onAction="#handleDeclarerPanne" styleClass="btn,btn-warning" />
+                </HBox>
+            </VBox>
+
+            <!-- Section tableau des véhicules -->
+            <TitledPane text="Liste des véhicules" expanded="true">
+                <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <TextField promptText="Rechercher..." prefWidth="300" />
+                        <ComboBox promptText="Filtrer par état" />
+                        <Button text="Rafraîchir" styleClass="btn,btn-secondary" />
+                    </HBox>
+                    <TableView fx:id="tableVehicules" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colImmatriculation" text="Immatriculation" prefWidth="120" />
+                            <TableColumn fx:id="colMarque" text="Marque" prefWidth="100" />
+                            <TableColumn fx:id="colModele" text="Modèle" prefWidth="120" />
+                            <TableColumn fx:id="colKilometrage" text="Kilométrage" prefWidth="100" />
+                            <TableColumn fx:id="colEtat" text="État" prefWidth="150" />
+                            <TableColumn fx:id="colDateMiseEnCirculation" text="Mise en circulation" prefWidth="150" />
+                        </columns>
+                    </TableView>
+                    <HBox spacing="5" alignment="CENTER_RIGHT">
+                        <Label text="Page 1 sur 5" />
+                        <Pagination pageCount="5" maxPageIndicatorCount="5" prefHeight="30" />
+                    </HBox>
+                </VBox>
+            </TitledPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar">
+            <padding>
+                <Insets top="5" right="15" bottom="5" left="15"/>
+            </padding>
+            <Label text="Version 1.1.0" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label text="© 2025 MIAGE Holding - Tous droits réservés" />
+        </HBox>
+    </bottom>
+</BorderPane>

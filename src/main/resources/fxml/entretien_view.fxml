@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="main.java.com.miage.parcauto.controller.EntretienController"
+            stylesheets="../css/theme.css"
+            prefWidth="1200" prefHeight="800">
+    <top>
+        <HBox spacing="16" alignment="CENTER_LEFT" styleClass="dashboard-topbar">
+            <padding>
+                <Insets top="10" right="15" bottom="10" left="15"/>
+            </padding>
+            <Text styleClass="app-title" text="Gestion des Entretiens" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnRetour" text="Retour" styleClass="btn,btn-secondary" />
+        </HBox>
+    </top>
+
+    <left>
+        <VBox spacing="8" styleClass="dashboard-sidebar" prefWidth="240">
+            <padding>
+                <Insets top="24" right="0" bottom="24" left="0"/>
+            </padding>
+            <Label styleClass="sidebar-header" text="Menu Principal" />
+            <Button text="Tableau de bord" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Véhicules" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Missions" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Finances" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Entretiens" styleClass="sidebar-menu,active" maxWidth="Infinity" />
+            <Button text="Documents" styleClass="sidebar-menu" maxWidth="Infinity" />
+            <Button text="Rapports" styleClass="sidebar-menu" maxWidth="Infinity" />
+        </VBox>
+    </left>
+
+    <center>
+        <VBox spacing="24" styleClass="content-area">
+            <padding>
+                <Insets top="24" right="24" bottom="24" left="24"/>
+            </padding>
+
+            <!-- Section formulaire de saisie -->
+            <VBox spacing="16" styleClass="form-container">
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Véhicule" styleClass="form-label" />
+                        <ComboBox fx:id="comboVehicule" promptText="Sélectionner un véhicule" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Type d'entretien" styleClass="form-label" />
+                        <ComboBox fx:id="comboType" promptText="Sélectionner un type" maxWidth="Infinity" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Statut" styleClass="form-label" />
+                        <ComboBox fx:id="comboStatut" promptText="Sélectionner un statut" maxWidth="Infinity" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Date d'entrée" styleClass="form-label" />
+                        <DatePicker fx:id="dateEntree" promptText="Sélectionner une date" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Date de sortie" styleClass="form-label" />
+                        <DatePicker fx:id="dateSortie" promptText="Sélectionner une date" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Coût" styleClass="form-label" />
+                        <HBox spacing="5" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtCout" promptText="Coût" />
+                            <Label text="€" />
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Motif" styleClass="form-label" />
+                        <TextField fx:id="txtMotif" promptText="Motif de l'entretien" />
+                    </VBox>
+                    <VBox spacing="8" HBox.hgrow="ALWAYS">
+                        <Label text="Observation" styleClass="form-label" />
+                        <TextField fx:id="txtObservation" promptText="Observations" />
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="10" styleClass="button-bar">
+                    <Button fx:id="btnAjouter" text="Ajouter" styleClass="btn,btn-success" />
+                    <Button fx:id="btnModifier" text="Modifier" styleClass="btn,btn-primary" />
+                    <Button fx:id="btnSupprimer" text="Supprimer" styleClass="btn,btn-danger" />
+                    <Button fx:id="btnCloturer" text="Clôturer" styleClass="btn,btn-warning" />
+                </HBox>
+            </VBox>
+
+            <!-- Section tableau des entretiens -->
+            <TitledPane text="Liste des entretiens" expanded="true">
+                <VBox spacing="10">
+                    <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <TextField promptText="Rechercher..." prefWidth="300" />
+                        <ComboBox promptText="Filtrer par statut" />
+                        <ComboBox promptText="Filtrer par type" />
+                        <Button text="Rafraîchir" styleClass="btn,btn-secondary" />
+                    </HBox>
+                    <TableView fx:id="tableEntretiens" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colVehicule" text="Véhicule" prefWidth="150" />
+                            <TableColumn fx:id="colType" text="Type" prefWidth="120" />
+                            <TableColumn fx:id="colStatut" text="Statut" prefWidth="100" />
+                            <TableColumn fx:id="colDateEntree" text="Date d'entrée" prefWidth="120" />
+                            <TableColumn fx:id="colDateSortie" text="Date de sortie" prefWidth="120" />
+                            <TableColumn fx:id="colCout" text="Coût (€)" prefWidth="100" />
+                            <TableColumn fx:id="colMotif" text="Motif" prefWidth="150" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </TitledPane>
+        </VBox>
+    </center>
+
+    <bottom>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="dashboard-statusbar">
+            <padding>
+                <Insets top="5" right="15" bottom="5" left="15"/>
+            </padding>
+            <Label text="Version 1.1.0" />
+            <Separator orientation="VERTICAL" />
+            <Label text="Système en ligne" />
+            <Pane HBox.hgrow="ALWAYS" />
+            <Label text="Utilisateur: ManuelD-Aho | Date: 09/05/2025 12:32:54" />
+        </HBox>
+    </bottom>
+</BorderPane>
