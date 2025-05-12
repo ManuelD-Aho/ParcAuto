@@ -18,8 +18,10 @@ import java.util.logging.Logger;
 
 /**
  * Service de gestion des entretiens de véhicules.
- * Cette classe implémente la couche service pour toutes les opérations liées aux entretiens.
- * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation (contrôleurs).
+ * Cette classe implémente la couche service pour toutes les opérations liées
+ * aux entretiens.
+ * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation
+ * (contrôleurs).
  *
  * @author MIAGE Holding
  * @version 1.0
@@ -43,7 +45,7 @@ public class EntretienService {
      * Constructeur avec injection de dépendance pour les tests.
      *
      * @param entretienDao Instance de EntretienDao à utiliser
-     * @param vehiculeDao Instance de VehiculeDao à utiliser
+     * @param vehiculeDao  Instance de VehiculeDao à utiliser
      */
     public EntretienService(EntretienDao entretienDao, VehiculeDao vehiculeDao) {
         this.entretienDao = entretienDao;
@@ -89,7 +91,8 @@ public class EntretienService {
         try {
             return entretienDao.findByVehicule(idVehicule);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des entretiens pour le véhicule ID: " + idVehicule, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des entretiens pour le véhicule ID: " + idVehicule,
+                    e);
             return Collections.emptyList();
         }
     }
@@ -170,7 +173,7 @@ public class EntretienService {
      * Récupère les entretiens entre deux dates.
      *
      * @param debut Date de début
-     * @param fin Date de fin
+     * @param fin   Date de fin
      * @return Liste des entretiens dans cette période ou liste vide en cas d'erreur
      */
     public List<Entretien> getEntretiensByPeriode(LocalDateTime debut, LocalDateTime fin) {
@@ -186,8 +189,9 @@ public class EntretienService {
      * Crée un nouvel entretien.
      * Met également à jour l'état du véhicule si demandé.
      *
-     * @param entretien L'entretien à créer
-     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule à "En entretien"
+     * @param entretien          L'entretien à créer
+     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule à "En
+     *                           entretien"
      * @return L'entretien créé avec son ID généré ou null en cas d'erreur
      */
     public Entretien createEntretien(Entretien entretien, boolean updateVehiculeEtat) {
@@ -256,9 +260,10 @@ public class EntretienService {
      * Met à jour le statut d'un entretien.
      * Met également à jour l'état du véhicule si demandé.
      *
-     * @param idEntretien ID de l'entretien
-     * @param statut Nouveau statut
-     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule selon le statut
+     * @param idEntretien        ID de l'entretien
+     * @param statut             Nouveau statut
+     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule selon le
+     *                           statut
      * @return true si la mise à jour a réussi, false sinon
      */
     public boolean updateEntretienStatut(int idEntretien, Entretien.StatutOT statut, boolean updateVehiculeEtat) {
@@ -304,7 +309,7 @@ public class EntretienService {
      * Met à jour le coût d'un entretien.
      *
      * @param idEntretien ID de l'entretien
-     * @param cout Nouveau coût
+     * @param cout        Nouveau coût
      * @return true si la mise à jour a réussi, false sinon
      */
     public boolean updateEntretienCout(int idEntretien, BigDecimal cout) {
@@ -353,7 +358,8 @@ public class EntretienService {
         try {
             return entretienDao.calculateTotalCost(idVehicule);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du calcul du coût total des entretiens pour le véhicule: " + idVehicule, e);
+            LOGGER.log(Level.SEVERE,
+                    "Erreur lors du calcul du coût total des entretiens pour le véhicule: " + idVehicule, e);
             return BigDecimal.ZERO;
         }
     }
@@ -392,13 +398,15 @@ public class EntretienService {
      * Récupère les entretiens à venir (planifiés) pour un véhicule.
      *
      * @param idVehicule ID du véhicule
-     * @return Liste des entretiens planifiés pour ce véhicule ou liste vide en cas d'erreur
+     * @return Liste des entretiens planifiés pour ce véhicule ou liste vide en cas
+     *         d'erreur
      */
     public List<Entretien> getEntretiensAVenir(int idVehicule) {
         try {
             return entretienDao.findEntretiensAVenir(idVehicule);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des entretiens à venir pour le véhicule: " + idVehicule, e);
+            LOGGER.log(Level.SEVERE,
+                    "Erreur lors de la récupération des entretiens à venir pour le véhicule: " + idVehicule, e);
             return Collections.emptyList();
         }
     }
@@ -408,8 +416,8 @@ public class EntretienService {
      *
      * @param idVehicule ID du véhicule
      * @param dateEntree Date d'entrée prévue
-     * @param motif Motif de l'entretien
-     * @param lieu Lieu de l'entretien
+     * @param motif      Motif de l'entretien
+     * @param lieu       Lieu de l'entretien
      * @return L'entretien créé avec son ID généré ou null en cas d'erreur
      */
     public Entretien planifierEntretienPreventif(int idVehicule, LocalDateTime dateEntree, String motif, String lieu) {
@@ -428,13 +436,14 @@ public class EntretienService {
     /**
      * Enregistre un entretien correctif (réparation) pour un véhicule.
      *
-     * @param idVehicule ID du véhicule
-     * @param motif Motif de la réparation
-     * @param lieu Lieu de la réparation
+     * @param idVehicule         ID du véhicule
+     * @param motif              Motif de la réparation
+     * @param lieu               Lieu de la réparation
      * @param updateVehiculeEtat Si true, met à jour l'état du véhicule
      * @return L'entretien créé avec son ID généré ou null en cas d'erreur
      */
-    public Entretien enregistrerEntretienCorrectif(int idVehicule, String motif, String lieu, boolean updateVehiculeEtat) {
+    public Entretien enregistrerEntretienCorrectif(int idVehicule, String motif, String lieu,
+            boolean updateVehiculeEtat) {
         Entretien entretien = new Entretien();
         entretien.setIdVehicule(idVehicule);
         entretien.setDateEntreeEntr(LocalDateTime.now());
@@ -467,7 +476,8 @@ public class EntretienService {
             return false;
         }
 
-        // Vérifier que la date d'entrée n'est pas dans le futur (sauf pour les entretiens planifiés)
+        // Vérifier que la date d'entrée n'est pas dans le futur (sauf pour les
+        // entretiens planifiés)
         if (entretien.getDateEntreeEntr().isAfter(LocalDateTime.now()) &&
                 entretien.getStatutOt() != Entretien.StatutOT.Ouvert) {
             return false;
@@ -489,6 +499,7 @@ public class EntretienService {
 
     /**
      * Retourne le nombre d'entretiens à venir (planifiés).
+     * 
      * @return nombre d'entretiens planifiés, ou 0 en cas d'erreur
      */
     public int getEntretiensAVenirCount() {

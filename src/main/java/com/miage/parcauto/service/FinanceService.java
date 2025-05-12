@@ -33,6 +33,7 @@ public class FinanceService {
 
     /**
      * Constructeur pour l'injection de dépendances (tests).
+     * 
      * @param financeDao DAO à utiliser
      */
     public FinanceService(FinanceDao financeDao) {
@@ -41,8 +42,9 @@ public class FinanceService {
 
     /**
      * Calcule le bilan financier sur une période donnée.
+     * 
      * @param debut Date de début
-     * @param fin Date de fin
+     * @param fin   Date de fin
      * @return BilanFinancier
      * @throws SQLException en cas d'erreur SQL
      */
@@ -52,6 +54,7 @@ public class FinanceService {
 
     /**
      * Calcule l'évolution mensuelle des finances pour une année.
+     * 
      * @param annee Année
      * @return Map<Month, BilanMensuel>
      * @throws SQLException en cas d'erreur SQL
@@ -62,6 +65,7 @@ public class FinanceService {
 
     /**
      * Calcule la répartition budgétaire pour une année.
+     * 
      * @param annee Année
      * @return Map<String, BigDecimal>
      * @throws SQLException en cas d'erreur SQL
@@ -72,6 +76,7 @@ public class FinanceService {
 
     /**
      * Calcule le coût total de possession (TCO) d'un véhicule.
+     * 
      * @param idVehicule identifiant du véhicule
      * @return TCOVehicule
      * @throws SQLException en cas d'erreur SQL
@@ -82,6 +87,7 @@ public class FinanceService {
 
     /**
      * Génère le rapport de rentabilité des véhicules pour une année.
+     * 
      * @param annee Année
      * @return Liste de RentabiliteVehicule
      * @throws SQLException en cas d'erreur SQL
@@ -92,6 +98,7 @@ public class FinanceService {
 
     /**
      * Retourne la liste des alertes d'assurances expirant prochainement.
+     * 
      * @param joursAvantExpiration nombre de jours avant expiration
      * @return Liste d'alertes
      * @throws SQLException en cas d'erreur SQL
@@ -102,6 +109,7 @@ public class FinanceService {
 
     /**
      * Retourne la liste des alertes d'entretiens à prévoir.
+     * 
      * @param kmEntretienPreventif seuil kilométrique
      * @return Liste d'alertes
      * @throws SQLException en cas d'erreur SQL
@@ -112,6 +120,7 @@ public class FinanceService {
 
     /**
      * Retourne le solde global du parc (toutes périodes).
+     * 
      * @return solde global, ou BigDecimal.ZERO en cas d'erreur
      */
     public BigDecimal getSoldeGlobal() {
@@ -122,4 +131,7 @@ public class FinanceService {
             return BigDecimal.ZERO;
         }
     }
+
+    // Pas d'implémentation ici car la méthode est abstraite ou à compléter selon le
+    // DAO
 }

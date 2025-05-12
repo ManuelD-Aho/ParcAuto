@@ -1,0 +1,68 @@
+/* THEME MODERNE - ParcAuto (100% compatible JavaFX 17, ultra-minimaliste, avec propriétés standard) */
+
+.root {
+    -fx-background-color: #181c24;
+    background-color: #181c24;
+    -fx-text-fill: #f5f5f5;
+    color: #f5f5f5;
+}
+
+.login-container, .login-form {
+    -fx-background-color: #232a36;
+    background-color: #232a36;
+    -fx-padding: 32;
+    padding: 32px;
+}
+
+.btn-login, .button, .btn {
+    -fx-background-color: #3e347b;
+    background-color: #3e347b;
+    -fx-text-fill: #fff;
+    color: #fff;
+    -fx-padding: 8 24 8 24;
+    padding: 8px 24px 8px 24px;
+}
+
+.btn-login:hover, .button:hover, .btn:hover {
+    -fx-background-color: #5a47b8;
+    background-color: #5a47b8;
+}
+
+.error-label {
+    -fx-text-fill: #ff6b6b;
+    color: #ff6b6b;
+    -fx-padding: 8 0 0 0;
+    padding: 8px 0 0 0;
+}
+
+.theme-btn {
+    -fx-background-color: #fff;
+    background-color: #fff;
+}
+.theme-default { -fx-background-color: #3e347b; background-color: #3e347b; }
+.theme-dark { -fx-background-color: #232a36; background-color: #232a36; }
+.theme-contrast { -fx-background-color: #ffc107; background-color: #ffc107; }
+.theme-corporate { -fx-background-color: #8cbd3a; background-color: #8cbd3a; }
+.theme-modern { -fx-background-color: #181c24; background-color: #181c24; }
+
+.background-gradient {
+    -fx-background-color: #232a36;
+    background-color: #232a36;
+}
+
+.form-title {
+    -fx-text-fill: #fff;
+    color: #fff;
+}
+
+.form-subtitle {
+    -fx-text-fill: #b0b0b0;
+    color: #b0b0b0;
+}
+
+.version-text {
+    -fx-text-fill: #b0b0b0;
+    color: #b0b0b0;
+    -fx-padding: 12 0 0 0;
+    padding: 12px 0 0 0;
+}

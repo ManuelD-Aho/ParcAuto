@@ -15,8 +15,10 @@ import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
 /**
  * Service de gestion des véhicules.
- * Cette classe implémente la couche service pour toutes les opérations liées aux véhicules.
- * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation (contrôleurs).
+ * Cette classe implémente la couche service pour toutes les opérations liées
+ * aux véhicules.
+ * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation
+ * (contrôleurs).
  *
  * @author MIAGE Holding
  * @version 1.0
@@ -67,7 +69,7 @@ public class VehiculeService {
         try {
             return vehiculeDao.findById(id);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du véhicule par ID: " + id, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du véhicule par ID: " + id, e);
             return Optional.empty();
         }
     }
@@ -82,7 +84,8 @@ public class VehiculeService {
         try {
             return vehiculeDao.findByImmatriculation(immatriculation);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du véhicule par immatriculation: " + immatriculation, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du véhicule par immatriculation: " + immatriculation,
+                    e);
             return Optional.empty();
         }
     }
@@ -97,7 +100,8 @@ public class VehiculeService {
         try {
             return vehiculeDao.findByNumeroChassi(numeroChassis);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du véhicule par numéro de châssis: " + numeroChassis, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du véhicule par numéro de châssis: " + numeroChassis,
+                    e);
             return Optional.empty();
         }
     }
@@ -135,7 +139,8 @@ public class VehiculeService {
      * Recherche des véhicules par critères (marque, modèle, immatriculation...).
      *
      * @param searchTerm Terme de recherche
-     * @return Liste des véhicules correspondant aux critères ou liste vide en cas d'erreur
+     * @return Liste des véhicules correspondant aux critères ou liste vide en cas
+     *         d'erreur
      */
     public List<Vehicule> searchVehicules(String searchTerm) {
         try {
@@ -199,15 +204,18 @@ public class VehiculeService {
                 return false;
             }
 
-            // Vérifier l'unicité du numéro de châssis et de l'immatriculation (sauf pour le même véhicule)
+            // Vérifier l'unicité du numéro de châssis et de l'immatriculation (sauf pour le
+            // même véhicule)
             Optional<Vehicule> byNumeroChassis = vehiculeDao.findByNumeroChassi(vehicule.getNumeroChassi());
-            if (byNumeroChassis.isPresent() && !byNumeroChassis.get().getIdVehicule().equals(vehicule.getIdVehicule())) {
+            if (byNumeroChassis.isPresent()
+                    && !byNumeroChassis.get().getIdVehicule().equals(vehicule.getIdVehicule())) {
                 LOGGER.warning("Numéro de châssis déjà utilisé par un autre véhicule: " + vehicule.getNumeroChassi());
                 return false;
             }
 
             Optional<Vehicule> byImmatriculation = vehiculeDao.findByImmatriculation(vehicule.getImmatriculation());
-            if (byImmatriculation.isPresent() && !byImmatriculation.get().getIdVehicule().equals(vehicule.getIdVehicule())) {
+            if (byImmatriculation.isPresent()
+                    && !byImmatriculation.get().getIdVehicule().equals(vehicule.getIdVehicule())) {
                 LOGGER.warning("Immatriculation déjà utilisée par un autre véhicule: " + vehicule.getImmatriculation());
                 return false;
             }
@@ -223,7 +231,7 @@ public class VehiculeService {
      * Met à jour l'état d'un véhicule.
      *
      * @param idVehicule ID du véhicule
-     * @param idEtat Nouvel état du véhicule
+     * @param idEtat     Nouvel état du véhicule
      * @return true si la mise à jour a réussi, false sinon
      */
     public boolean updateVehiculeEtat(int idVehicule, int idEtat) {
@@ -239,14 +247,16 @@ public class VehiculeService {
      * Met à jour le kilométrage d'un véhicule.
      *
      * @param idVehicule ID du véhicule
-     * @param kmActuels Nouveau kilométrage
+     * @param kmActuels  Nouveau kilométrage
      * @return true si la mise à jour a réussi, false sinon
      */
     public boolean updateVehiculeKilometrage(int idVehicule, int kmActuels) {
         try {
-            // Vérification que le nouveau kilométrage est valide (supérieur ou égal à l'ancien)
+            // Vérification que le nouveau kilométrage est valide (supérieur ou égal à
+            // l'ancien)
             Optional<Vehicule> vehicule = getVehiculeById(idVehicule);
-            if (vehicule.isPresent() && vehicule.get().getKmActuels() != null && kmActuels < vehicule.get().getKmActuels()) {
+            if (vehicule.isPresent() && vehicule.get().getKmActuels() != null
+                    && kmActuels < vehicule.get().getKmActuels()) {
                 LOGGER.warning("Le nouveau kilométrage ne peut pas être inférieur à l'ancien");
                 return false;
             }
@@ -313,7 +323,8 @@ public class VehiculeService {
         try {
             return vehiculeDao.getTCOInfo(idVehicule);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des informations TCO du véhicule: " + idVehicule, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des informations TCO du véhicule: " + idVehicule,
+                    e);
             return Optional.empty();
         }
     }
@@ -336,7 +347,8 @@ public class VehiculeService {
      * Récupère les véhicules nécessitant un entretien préventif.
      *
      * @param intervalleKm Intervalle de kilomètres pour l'entretien préventif
-     * @return Liste des véhicules nécessitant un entretien ou liste vide en cas d'erreur
+     * @return Liste des véhicules nécessitant un entretien ou liste vide en cas
+     *         d'erreur
      */
     public List<Vehicule> getVehiculesNeedingMaintenance(int intervalleKm) {
         try {
@@ -365,10 +377,12 @@ public class VehiculeService {
      * Récupère les véhicules assignés à un utilisateur spécifique.
      *
      * @param idUtilisateur ID de l'utilisateur
-     * @return Liste des véhicules assignés à cet utilisateur ou liste vide en cas d'erreur
+     * @return Liste des véhicules assignés à cet utilisateur ou liste vide en cas
+     *         d'erreur
      */
     public List<Vehicule> getVehiculesByUtilisateur(Integer idUtilisateur) {
-        // Cette méthode doit être implémentée pour récupérer les véhicules assignés à un utilisateur
+        // Cette méthode doit être implémentée pour récupérer les véhicules assignés à
+        // un utilisateur
         // En attendant, on retourne une liste vide
         LOGGER.log(Level.WARNING, "Méthode getVehiculesByUtilisateur non implémentée");
         return Collections.emptyList();
@@ -377,23 +391,25 @@ public class VehiculeService {
     /**
      * Vérifie si un véhicule est assigné à un utilisateur spécifique.
      *
-     * @param idVehicule ID du véhicule
+     * @param idVehicule    ID du véhicule
      * @param idUtilisateur ID de l'utilisateur
      * @return true si le véhicule est assigné à l'utilisateur, false sinon
      */
     public boolean isVehiculeAssignedToUser(Integer idVehicule, Integer idUtilisateur) {
-        // Cette méthode doit être implémentée pour vérifier si un véhicule est assigné à un utilisateur
+        // Cette méthode doit être implémentée pour vérifier si un véhicule est assigné
+        // à un utilisateur
         // En attendant, pour éviter des erreurs, on implémente une version minimale
-        
+
         if (idVehicule == null || idUtilisateur == null) {
             return false;
         }
-        
+
         try {
-            // Cette implémentation devrait normalement consulter une table d'association entre véhicules et utilisateurs
+            // Cette implémentation devrait normalement consulter une table d'association
+            // entre véhicules et utilisateurs
             List<Vehicule> vehiculesUtilisateur = getVehiculesByUtilisateur(idUtilisateur);
             return vehiculesUtilisateur.stream()
-                .anyMatch(v -> v.getIdVehicule() != null && v.getIdVehicule().equals(idVehicule));
+                    .anyMatch(v -> v.getIdVehicule() != null && v.getIdVehicule().equals(idVehicule));
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la vérification de l'assignation du véhicule", e);
             return false;
@@ -402,6 +418,7 @@ public class VehiculeService {
 
     /**
      * Retourne le nombre total de véhicules dans le parc.
+     * 
      * @return nombre de véhicules, ou 0 en cas d'erreur
      */
     public int getVehiculesCount() {
@@ -435,13 +452,15 @@ public class VehiculeService {
             return false;
         }
 
-        // Vérifier que le numéro de châssis a un format valide (alphanumérique de longueur 17)
+        // Vérifier que le numéro de châssis a un format valide (alphanumérique de
+        // longueur 17)
         String numeroChassi = vehicule.getNumeroChassi().trim();
         if (numeroChassi.length() != 17 || !numeroChassi.matches("[A-HJ-NPR-Za-hj-npr-z0-9]{17}")) {
             return false;
         }
 
-        // Vérifier que l'immatriculation a un format valide (format français: AB-123-CD ou ancien format: 123 ABC 45)
+        // Vérifier que l'immatriculation a un format valide (format français: AB-123-CD
+        // ou ancien format: 123 ABC 45)
         String immatriculation = vehicule.getImmatriculation().trim();
         if (!immatriculation.matches("[A-Z]{2}-[0-9]{3}-[A-Z]{2}") &&
                 !immatriculation.matches("[0-9]{1,4} [A-Z]{1,3} [0-9]{1,2}")) {

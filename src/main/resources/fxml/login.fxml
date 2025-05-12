@@ -4,190 +4,83 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.scene.shape.*?>
-<?import javafx.geometry.*?>
+<?import javafx.geometry.Insets?>
 
-<?import java.lang.String?>
-<?import javafx.collections.FXCollections?>
 <StackPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="main.java.com.miage.parcauto.controller.LoginController"
            styleClass="root-pane">
 
-    <!-- Background avec effet de parallaxe -->
-    <StackPane styleClass="background-container">
-        <Rectangle styleClass="background-gradient" width="1280" height="800" />
-
-        <!-- Couche de particules animées -->
-        <Pane styleClass="particles-container" />
-
-        <!-- Forme décorative -->
-        <Pane styleClass="decorative-shapes">
-            <Circle styleClass="shape-circle-1" centerX="150" centerY="250" radius="120" />
-            <Circle styleClass="shape-circle-2" centerX="1000" centerY="600" radius="200" />
-        </Pane>
-    </StackPane>
-
-    <!-- Container principal avec effet de carte -->
-    <HBox styleClass="login-container" alignment="CENTER" maxWidth="1080" maxHeight="640">
-
-        <!-- Côté gauche: Bannière et informations -->
-        <VBox styleClass="login-banner" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <padding><Insets top="40" right="30" bottom="40" left="40" /></padding>
-
-            <VBox alignment="CENTER" spacing="15">
+    <!-- Container principal -->
+    <BorderPane styleClass="login-container" maxWidth="1080" maxHeight="640">
+        <!-- Bannière (Gauche) -->
+        <left>
+            <VBox styleClass="login-banner" alignment="CENTER" spacing="20">
+                <padding><Insets top="40" right="30" bottom="40" left="40" /></padding>
                 <ImageView fx:id="logoImage" styleClass="app-logo" fitWidth="120" fitHeight="120" preserveRatio="true">
-                    <Image url="@../images/logo.png" />
+                    <image>
+                        <Image url="@../images/logo-parcauto.png" />
+                    </image>
                 </ImageView>
-
                 <Label text="ParcAuto" styleClass="app-name">
                     <font>
-                        <Font name="System Bold" size="42" />
+                        <Font name="System Bold" size="28.0" />
                     </font>
                 </Label>
-
-                <Label text="Solution intelligente de gestion de parc automobile"
-                       styleClass="app-tagline" wrapText="true" />
-            </VBox>
-
-            <!-- Liste des fonctionnalités avec icônes améliorées -->
-            <VBox styleClass="features-list" spacing="22" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
-                <padding><Insets top="40" /></padding>
-
-                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="18">
-                    <StackPane styleClass="feature-icon-container">
-                        <Region styleClass="feature-icon, icon-fleet" />
-                    </StackPane>
-                    <VBox spacing="3">
-                        <Label text="Gestion complète de votre flotte" styleClass="feature-title" />
-                        <Label text="Suivi en temps réel de tous vos véhicules" styleClass="feature-subtitle" />
-                    </VBox>
-                </HBox>
-
-                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="18">
-                    <StackPane styleClass="feature-icon-container">
-                        <Region styleClass="feature-icon, icon-mission" />
-                    </StackPane>
-                    <VBox spacing="3">
-                        <Label text="Planification des missions" styleClass="feature-title" />
-                        <Label text="Organisation optimisée et suivi des déplacements" styleClass="feature-subtitle" />
-                    </VBox>
-                </HBox>
-
-                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="18">
-                    <StackPane styleClass="feature-icon-container">
-                        <Region styleClass="feature-icon, icon-finance" />
-                    </StackPane>
-                    <VBox spacing="3">
-                        <Label text="Gestion financière avancée" styleClass="feature-title" />
-                        <Label text="Contrôle des coûts et analyses budgétaires" styleClass="feature-subtitle" />
-                    </VBox>
-                </HBox>
-
-                <HBox styleClass="feature-item" alignment="CENTER_LEFT" spacing="18">
-                    <StackPane styleClass="feature-icon-container">
-                        <Region styleClass="feature-icon, icon-maintenance" />
-                    </StackPane>
-                    <VBox spacing="3">
-                        <Label text="Maintenance prédictive" styleClass="feature-title" />
-                        <Label text="Anticipation des interventions et historique complet" styleClass="feature-subtitle" />
-                    </VBox>
-                </HBox>
-            </VBox>
-
-            <!-- Pied de page avec copyright -->
-            <HBox styleClass="company-info" alignment="CENTER">
+                <Label text="Solution intelligente de gestion de parc automobile" styleClass="app-desc" />
+                <VBox styleClass="features-list" spacing="12" alignment="CENTER_LEFT" VBox.vgrow="ALWAYS">
+                    <Label text="• Gestion complète de votre flotte" />
+                    <Label text="• Suivi en temps réel de tous vos véhicules" />
+                    <Label text="• Planification des missions" />
+                    <Label text="• Organisation optimisée et suivi des déplacements" />
+                    <Label text="• Gestion financière avancée" />
+                    <Label text="• Contrôle des coûts et analyses budgétaires" />
+                    <Label text="• Maintenance prédictive" />
+                    <Label text="• Anticipation des interventions et historique complet" />
+                </VBox>
                 <Label text="© 2025 MIAGE Holding" styleClass="copyright-text" />
-            </HBox>
-        </VBox>
-
-        <!-- Côté droit: Formulaire de connexion avec animation -->
-        <VBox styleClass="login-form" alignment="CENTER" spacing="25">
-            <padding><Insets top="50" right="60" bottom="50" left="60" /></padding>
-
-            <!-- En-tête avec titre et sous-titre -->
-            <VBox alignment="CENTER" spacing="15">
-                <Label text="Authentification" styleClass="form-title">
-                    <font>
-                        <Font name="System Bold" size="28" />
-                    </font>
-                </Label>
-
-                <Label text="Connectez-vous pour gérer votre parc automobile"
-                       styleClass="form-subtitle" wrapText="true" textAlignment="CENTER" />
             </VBox>
-
-            <!-- Formulaire avec effet d'animation au focus -->
-            <VBox styleClass="form-fields-container" spacing="24">
-                <!-- Champ nom d'utilisateur -->
-                <VBox styleClass="input-group" spacing="8">
-                    <Label text="Nom d'utilisateur" styleClass="field-label" />
-                    <StackPane styleClass="input-container">
-                        <TextField fx:id="txtLogin" promptText="Votre identifiant"
-                                   styleClass="input-field" />
-                        <Region styleClass="input-icon, icon-user" />
-                    </StackPane>
+        </left>
+        
+        <!-- Formulaire de connexion (Droite) -->
+        <center>
+            <VBox styleClass="login-form" alignment="CENTER" spacing="25">
+                <padding><Insets top="50" right="60" bottom="50" left="60" /></padding>
+                <VBox alignment="CENTER" spacing="10">
+                    <Label text="Authentification" styleClass="form-title">
+                        <font>
+                            <Font name="System Bold" size="24.0" />
+                        </font>
+                    </Label>
+                    <Label text="Connectez-vous pour gérer votre parc automobile" styleClass="form-subtitle" />
                 </VBox>
-
-                <!-- Champ mot de passe -->
-                <VBox styleClass="input-group" spacing="8">
-                    <Label text="Mot de passe" styleClass="field-label" />
-                    <StackPane styleClass="input-container">
-                        <PasswordField fx:id="txtPassword" promptText="Votre mot de passe"
-                                       styleClass="input-field" />
-                        <Region styleClass="input-icon, icon-password" />
-                    </StackPane>
-                    <HBox alignment="CENTER_RIGHT">
-                        <Hyperlink text="Mot de passe oublié ?" styleClass="forgot-password-link" />
-                    </HBox>
+                <VBox styleClass="form-fields-container" spacing="18">
+                    <Label text="Nom d'utilisateur" />
+                    <TextField fx:id="txtLogin" promptText="Votre identifiant" />
+                    <Label text="Mot de passe" />
+                    <PasswordField fx:id="txtPassword" promptText="Votre mot de passe" />
+                    <Hyperlink text="Mot de passe oublié ?" />
                 </VBox>
-            </VBox>
+                <Button fx:id="btnConnexion" text="Se connecter" onAction="#handleConnexion" styleClass="btn-login" maxWidth="Infinity" />
+                <Label fx:id="lblErreur" styleClass="error-label" visible="false" managed="false" />
+                
+                <!-- Panneau MFA -->
+                <VBox fx:id="mfaPanel" styleClass="mfa-panel" spacing="10" alignment="CENTER" visible="false" managed="false">
+                    <Label text="Code de vérification" />
+                    <TextField fx:id="txtCodeMfa" promptText="Code MFA" />
+                    <Button text="Valider" onAction="#handleValidateMfa" />
+                </VBox>
+                
 
-            <!-- Message d'erreur avec animation -->
-            <StackPane>
-                <Label fx:id="lblErreur" styleClass="error-message" visible="false"
-                       wrapText="true" textAlignment="CENTER" />
-            </StackPane>
-
-            <!-- Bouton de connexion avec effet d'ondulation -->
-            <Button fx:id="btnConnexion" text="Se connecter" styleClass="btn-login"
-                    onAction="#handleConnexion" defaultButton="true" />
-
-            <!-- Panneau MFA (Authentification à deux facteurs) avec animation de transition -->
-            <VBox fx:id="mfaPanel" styleClass="mfa-panel" spacing="18" alignment="CENTER" visible="false">
-                <padding><Insets top="15" bottom="10" /></padding>
-
-                <Label text="Authentification à deux facteurs" styleClass="mfa-title" />
-                <Label text="Veuillez saisir le code de vérification" styleClass="mfa-instruction" />
-
-                <HBox spacing="10" alignment="CENTER">
-                    <StackPane styleClass="input-container, mfa-input-container">
-                        <TextField fx:id="txtCodeMfa" promptText="Code à 6 chiffres"
-                                   styleClass="input-field, mfa-code" maxWidth="180" />
-                    </StackPane>
+                <!-- Sélecteur de thème -->
+                <HBox styleClass="theme-selector" alignment="CENTER" spacing="8">
+                    <Button fx:id="themeDefaultBtn" styleClass="theme-btn" text="D" />
+                    <Button fx:id="themeDarkBtn" styleClass="theme-btn" text="N" />
+                    <Button fx:id="themeContrastBtn" styleClass="theme-btn" text="C" />
+                    <Button fx:id="themeCorporateBtn" styleClass="theme-btn" text="E" />
+                    <Button fx:id="themeModernBtn" styleClass="theme-btn" text="M" />
                 </HBox>
-
-                <Button text="Vérifier" styleClass="btn-verify-mfa" onAction="#handleValidateMfa" />
+                <Label text="ParcAuto v1.0.0" styleClass="version-text" />
             </VBox>
-
-            <!-- Sélecteur d'environnement avec style amélioré -->
-            <VBox styleClass="environment-section" alignment="CENTER" spacing="8">
-                <Label text="Environnement" styleClass="env-label" />
-                <ChoiceBox styleClass="env-dropdown">
-                    <items>
-                        <FXCollections fx:factory="observableArrayList">
-                            <String fx:value="Production" />
-                            <String fx:value="Pré-production" />
-                            <String fx:value="Test" />
-                        </FXCollections>
-                    </items>
-                    <value>
-                        <String fx:value="Production" />
-                    </value>
-                </ChoiceBox>
-            </VBox>
-
-            <!-- Version de l'application -->
-            <Label text="ParcAuto v1.0.0" styleClass="version-text" />
-        </VBox>
-    </HBox>
+        </center>
+    </BorderPane>
 </StackPane>

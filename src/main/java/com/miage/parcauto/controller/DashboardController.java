@@ -30,97 +30,98 @@ import main.java.com.miage.parcauto.dao.FinanceDao;
 
 /**
  * Contrôleur pour la vue du tableau de bord.
- * Affiche différentes informations et options en fonction du rôle de l'utilisateur connecté.
+ * Affiche différentes informations et options en fonction du rôle de
+ * l'utilisateur connecté.
  * 100% JavaFX : alertes dynamiques sans WebView/JS, stylées via theme.css.
  * 
  * @author MIAGE Holding
  * @version 1.1
  */
 public class DashboardController extends BaseController implements Initializable {
-    
+
     private static final Logger LOGGER = Logger.getLogger(DashboardController.class.getName());
-    
+
     // Services
     private final VehiculeService vehiculeService;
     private final MissionService missionService;
     private final FinanceService financeService;
     private final EntretienService entretienService;
-    
+
     @FXML
     private Label lblUserName;
-    
+
     @FXML
     private Label lblUserRole;
-    
+
     @FXML
     private MenuButton menuVehicules;
-    
+
     @FXML
     private MenuItem menuItemConsulterVehicules;
-    
+
     @FXML
     private MenuItem menuItemAjouterVehicule;
-    
+
     @FXML
     private MenuItem menuItemModifierVehicule;
-    
+
     @FXML
     private MenuItem menuItemSupprimerVehicule;
-    
+
     @FXML
     private MenuItem menuItemChangerEtatVehicule;
-    
+
     @FXML
     private MenuItem menuItemDeclarerPanne;
-    
+
     @FXML
     private MenuButton menuMissions;
-    
+
     @FXML
     private MenuButton menuEntretien;
-    
+
     @FXML
     private MenuButton menuFinances;
-    
+
     @FXML
     private MenuButton menuDocuments;
-    
+
     @FXML
     private MenuButton menuRapports;
-    
+
     @FXML
     private MenuButton menuAdministration;
-    
+
     @FXML
     private Button btnDeconnexion;
-    
+
     @FXML
     private GridPane gridStatsVehicules;
-    
+
     @FXML
     private GridPane gridStatsMissions;
-    
+
     @FXML
     private GridPane gridStatsFinances;
-    
+
     @FXML
     private GridPane gridStatsEntretien;
-    
+
     @FXML
     private Pane paneAlertes;
-    
+
     @FXML
     private Label lblNbVehicules;
-    
+
     @FXML
     private Label lblNbMissionsEnCours;
-    
+
     @FXML
     private Label lblSoldeGlobal;
-    
+
     @FXML
     private Label lblNbEntretiensAVenir;
-    
+
     /**
      * Constructeur par défaut.
      */
@@ -130,30 +131,30 @@ public class DashboardController extends BaseController implements Initializable
         this.financeService = new FinanceService();
         this.entretienService = new EntretienService();
     }
-    
+
     /**
      * Constructeur pour l'injection de dépendances (tests).
      * 
-     * @param vehiculeService Service de gestion des véhicules
-     * @param missionService Service de gestion des missions
-     * @param financeService Service de gestion des finances
+     * @param vehiculeService  Service de gestion des véhicules
+     * @param missionService   Service de gestion des missions
+     * @param financeService   Service de gestion des finances
      * @param entretienService Service de gestion des entretiens
      */
-    public DashboardController(VehiculeService vehiculeService, 
-                              MissionService missionService,
-                              FinanceService financeService,
-                              EntretienService entretienService) {
+    public DashboardController(VehiculeService vehiculeService,
+            MissionService missionService,
+            FinanceService financeService,
+            EntretienService entretienService) {
         this.vehiculeService = vehiculeService;
         this.missionService = missionService;
         this.financeService = financeService;
         this.entretienService = entretienService;
     }
-    
+
     /**
      * Initialise le contrôleur.
      * 
      * @param url URL de localisation
-     * @param rb ResourceBundle
+     * @param rb  ResourceBundle
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -164,20 +165,20 @@ public class DashboardController extends BaseController implements Initializable
             });
             return;
         }
-        
+
         // Afficher les informations de l'utilisateur
         updateUserInfo();
-        
+
         // Vérifier les permissions et configurer l'interface
         configureInterface();
-        
+
         // Charger les statistiques
         loadStatistics();
-        
+
         // Charger les alertes
         loadAlertesData();
     }
-    
+
     /**
      * Vérifie les permissions de l'utilisateur pour accéder au tableau de bord.
      * Tous les utilisateurs authentifiés peuvent accéder au tableau de bord.
@@ -188,51 +189,57 @@ public class DashboardController extends BaseController implements Initializable
     protected boolean checkPermissions() {
         return isAuthenticated();
     }
-    
+
     /**
      * Met à jour les informations d'utilisateur affichées.
      */
-    private void updateUserInfo() {
+    public void updateUserInfo() {
         if (getCurrentUser() != null) {
             lblUserName.setText(getCurrentUser().getLogin());
             lblUserRole.setText(getCurrentUser().getRole().getLibelle());
         }
     }
-    
+
     /**
      * Configure l'interface en fonction des permissions de l'utilisateur.
      */
     private void configureInterface() {
         // Configuration du menu Véhicules
         configureVehiculesMenu();
-        
+
         // Configuration du menu Missions
         configureMissionsMenu();
-        
+
         // Configuration du menu Entretien
         configureEntretienMenu();
-        
+
         // Configuration du menu Finances
         configureFinancesMenu();
-        
+
         // Configuration du menu Documents
         configureDocumentsMenu();
-        
+
         // Configuration du menu Rapports
         configureRapportsMenu();
-        
+
         // Configuration du menu Administration
         configureAdministrationMenu();
-        
+
         // Configuration des tableaux de bord statistiques
         configureStatsPanels();
     }
-    
+
     /**
      * Affiche dynamiquement les alertes dans le panneau dédié (100% JavaFX).
      * Les alertes sont issues des services FinanceService (assurances, entretiens).
      */
     private void loadAlertesData() {
+        // Vérifier si le panneau d'alertes est disponible
+        if (paneAlertes == null) {
+            LOGGER.warning("Impossible de charger les alertes : paneAlertes est null");
+            return;
+        }
+
         try {
             paneAlertes.getChildren().clear();
             VBox vbox = new VBox(10);
@@ -248,8 +255,10 @@ public class DashboardController extends BaseController implements Initializable
                 List<FinanceDao.AlerteAssurance> alertesAssurance = financeService.getAlertesAssurances(30);
                 for (FinanceDao.AlerteAssurance a : alertesAssurance) {
                     String titreA = "Assurance à renouveler";
-                    String msg = String.format("%s %s (%s) - expire le %s, coût: %.2f €", a.getMarque(), a.getModele(), a.getImmatriculation(), a.getDateFin().toLocalDate(), a.getCoutAssurance());
-                    alertes.add(new AlerteDashboard(titreA, msg, a.getDateFin().toLocalDate().toString(), "finance-alerte"));
+                    String msg = String.format("%s %s (%s) - expire le %s, coût: %.2f €", a.getMarque(), a.getModele(),
+                            a.getImmatriculation(), a.getDateFin().toLocalDate(), a.getCoutAssurance());
+                    alertes.add(new AlerteDashboard(titreA, msg, a.getDateFin().toLocalDate().toString(),
+                            "finance-alerte"));
                 }
             } catch (Exception e) {
                 LOGGER.log(Level.WARNING, "Erreur lors du chargement des alertes d'assurance", e);
@@ -260,8 +269,11 @@ public class DashboardController extends BaseController implements Initializable
                 List<FinanceDao.AlerteEntretien> alertesEntretien = financeService.getAlertesEntretiens(10000);
                 for (FinanceDao.AlerteEntretien e : alertesEntretien) {
                     String titreE = "Entretien préventif à prévoir";
-                    String msg = String.format("%s %s (%s) - %d km depuis dernier entretien", e.getMarque(), e.getModele(), e.getImmatriculation(), e.getKmDepuisDernierEntretien());
-                    String dateDernier = e.getDateDernierEntretien() != null ? e.getDateDernierEntretien().toLocalDate().toString() : "?";
+                    String msg = String.format("%s %s (%s) - %d km depuis dernier entretien", e.getMarque(),
+                            e.getModele(), e.getImmatriculation(), e.getKmDepuisDernierEntretien());
+                    String dateDernier = e.getDateDernierEntretien() != null
+                            ? e.getDateDernierEntretien().toLocalDate().toString()
+                            : "?";
                     alertes.add(new AlerteDashboard(titreE, msg, dateDernier, "entretien-alerte"));
                 }
             } catch (Exception e) {
@@ -301,6 +313,7 @@ public class DashboardController extends BaseController implements Initializable
         final String message;
         final String date;
         final String cssClass;
+
         AlerteDashboard(String titre, String message, String date, String cssClass) {
             this.titre = titre;
             this.message = message;
@@ -308,7 +321,7 @@ public class DashboardController extends BaseController implements Initializable
             this.cssClass = cssClass;
         }
     }
-    
+
     /**
      * Charge les statistiques à afficher sur le dashboard.
      */
@@ -317,46 +330,46 @@ public class DashboardController extends BaseController implements Initializable
             // Véhicules
             int vehiculesCount = vehiculeService.getVehiculesCount();
             lblNbVehicules.setText(String.valueOf(vehiculesCount));
-            
+
             // Missions en cours
             int missionsEnCours = missionService.getMissionsEnCoursCount();
             lblNbMissionsEnCours.setText(String.valueOf(missionsEnCours));
-            
+
             // Solde global
             java.math.BigDecimal soldeGlobal = financeService.getSoldeGlobal();
             lblSoldeGlobal.setText(soldeGlobal.toString() + " €");
-            
+
             // Entretiens à venir
             int entretiensAVenir = entretienService.getEntretiensAVenirCount();
             lblNbEntretiensAVenir.setText(String.valueOf(entretiensAVenir));
-            
+
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du chargement des statistiques", e);
         }
     }
-    
+
     /**
      * Configure le menu Véhicules en fonction des permissions.
      */
     private void configureVehiculesMenu() {
         // Vérifier les permissions pour chaque action
         boolean canConsult = hasAnyPermission(
-                Permission.CONSULTER_VEHICULES_TOUS, 
+                Permission.CONSULTER_VEHICULES_TOUS,
                 Permission.CONSULTER_VEHICULES_PERSONNEL,
                 Permission.CONSULTER_VEHICULES_LECTURE);
-        
+
         boolean canAdd = hasPermission(Permission.AJOUTER_VEHICULE);
         boolean canModify = hasPermission(Permission.MODIFIER_VEHICULE);
         boolean canDelete = hasPermission(Permission.SUPPRIMER_VEHICULE);
-        
+
         boolean canChangeState = hasAnyPermission(
-                Permission.CHANGER_ETAT_VEHICULE_TOUS, 
+                Permission.CHANGER_ETAT_VEHICULE_TOUS,
                 Permission.CHANGER_ETAT_VEHICULE_LIMITE);
-        
+
         boolean canReportIssue = hasAnyPermission(
-                Permission.DECLARER_PANNE_TOUS, 
+                Permission.DECLARER_PANNE_TOUS,
                 Permission.DECLARER_PANNE_PERSONNEL);
-        
+
         // Configurer la visibilité des éléments de menu
         menuItemConsulterVehicules.setVisible(canConsult);
         menuItemAjouterVehicule.setVisible(canAdd);
@@ -364,11 +377,11 @@ public class DashboardController extends BaseController implements Initializable
         menuItemSupprimerVehicule.setVisible(canDelete);
         menuItemChangerEtatVehicule.setVisible(canChangeState);
         menuItemDeclarerPanne.setVisible(canReportIssue);
-        
+
         // Si aucune permission, cacher le menu entier
         menuVehicules.setVisible(canConsult || canAdd || canModify || canDelete || canChangeState || canReportIssue);
     }
-    
+
     // Autres méthodes de configuration des menus restent inchangées...
     // configureMissionsMenu(), configureEntretienMenu(), etc.
 
@@ -385,10 +398,10 @@ public class DashboardController extends BaseController implements Initializable
                 Permission.ANNULER_MISSION_JUSTIFICATION,
                 Permission.SAISIR_DEPENSES_MISSION,
                 Permission.VALIDER_DEPENSES_MISSION);
-        
+
         menuMissions.setVisible(hasAnyMissionPermission);
     }
-    
+
     /**
      * Configure le menu Entretien en fonction des permissions.
      */
@@ -400,10 +413,10 @@ public class DashboardController extends BaseController implements Initializable
                 Permission.SAISIR_INTERVENTION,
                 Permission.CLOTURER_INTERVENTION,
                 Permission.GERER_PRESTATAIRES);
-        
+
         menuEntretien.setVisible(hasAnyEntretienPermission);
     }
-    
+
     /**
      * Configure le menu Finances en fonction des permissions.
      */
@@ -419,10 +432,10 @@ public class DashboardController extends BaseController implements Initializable
                 Permission.GERER_MENSUALITES,
                 Permission.CONSULTER_MENSUALITES,
                 Permission.CALCULER_AMORTISSEMENT);
-        
+
         menuFinances.setVisible(hasAnyFinancePermission);
     }
-    
+
     /**
      * Configure le menu Documents en fonction des permissions.
      */
@@ -436,10 +449,10 @@ public class DashboardController extends BaseController implements Initializable
                 Permission.CONSULTER_DOCUMENTS_PERSONNEL,
                 Permission.VALIDER_DOCUMENTS,
                 Permission.SUPPRIMER_DOCUMENTS);
-        
+
         menuDocuments.setVisible(hasAnyDocumentPermission);
     }
-    
+
     /**
      * Configure le menu Rapports en fonction des permissions.
      */
@@ -460,10 +473,10 @@ public class DashboardController extends BaseController implements Initializable
                 Permission.EXPORT_DONNEES_LIMITE,
                 Permission.EXPORT_DONNEES_PERSONNEL,
                 Permission.EXPORT_DONNEES_SYSTEM);
-        
+
         menuRapports.setVisible(hasAnyReportPermission);
     }
-    
+
     /**
      * Configure le menu Administration en fonction des permissions.
      */
@@ -477,61 +490,80 @@ public class DashboardController extends BaseController implements Initializable
                 Permission.LOGS_AUDIT_LECTURE,
                 Permission.LOGS_AUDIT_COMPLET,
                 Permission.MAINTENANCE_BDD);
-        
+
         menuAdministration.setVisible(hasAnyAdminPermission);
     }
-    
+
     /**
      * Configure les panneaux de statistiques en fonction des permissions.
      */
     private void configureStatsPanels() {
-        // Définir la visibilité des panneaux de statistiques selon le profil utilisateur
+        // Définir la visibilité des panneaux de statistiques selon le profil
+        // utilisateur
         UtilisateurDao.Role role = getCurrentUser().getRole();
-        
+
+        // Vérifier si les éléments UI sont correctement chargés
+        if (gridStatsVehicules == null || gridStatsMissions == null ||
+                gridStatsFinances == null || gridStatsEntretien == null) {
+            LOGGER.severe("Un ou plusieurs éléments GridPane sont null dans configureStatsPanels");
+            return;
+        }
+
+        // Vérifier si paneAlertes est disponible
+        boolean paneAlertesValid = (paneAlertes != null);
+        if (!paneAlertesValid) {
+            LOGGER.warning("Le panneau d'alertes n'est pas disponible dans le FXML");
+        }
+
         switch (role) {
             case U1: // Responsable Logistique - accès complet
                 gridStatsVehicules.setVisible(true);
                 gridStatsMissions.setVisible(true);
                 gridStatsFinances.setVisible(true);
                 gridStatsEntretien.setVisible(true);
-                paneAlertes.setVisible(true);
+                if (paneAlertesValid)
+                    paneAlertes.setVisible(true);
                 break;
-                
+
             case U2: // Agent Logistique - accès aux statistiques opérationnelles
                 gridStatsVehicules.setVisible(true);
                 gridStatsMissions.setVisible(true);
                 gridStatsFinances.setVisible(false);
                 gridStatsEntretien.setVisible(true);
-                paneAlertes.setVisible(true);
+                if (paneAlertesValid)
+                    paneAlertes.setVisible(true);
                 break;
-                
+
             case U3: // Sociétaire - accès limité à ses véhicules et finances
                 gridStatsVehicules.setVisible(hasPermission(Permission.CONSULTER_VEHICULES_PERSONNEL));
                 gridStatsMissions.setVisible(false);
                 gridStatsFinances.setVisible(hasPermission(Permission.CONSULTER_COMPTES_PERSONNEL));
                 gridStatsEntretien.setVisible(hasPermission(Permission.SUIVI_ENTRETIEN_PERSONNEL));
-                paneAlertes.setVisible(hasPermission(Permission.ALERTES_PERSONNEL));
+                if (paneAlertesValid)
+                    paneAlertes.setVisible(hasPermission(Permission.ALERTES_PERSONNEL));
                 break;
-                
+
             case U4: // Administrateur Système - accès aux statistiques techniques
                 gridStatsVehicules.setVisible(hasPermission(Permission.CONSULTER_VEHICULES_LECTURE));
                 gridStatsMissions.setVisible(false);
                 gridStatsFinances.setVisible(false);
                 gridStatsEntretien.setVisible(false);
-                paneAlertes.setVisible(hasPermission(Permission.ALERTES_SYSTEME));
+                if (paneAlertesValid)
+                    paneAlertes.setVisible(hasPermission(Permission.ALERTES_SYSTEME));
                 break;
-                
+
             default:
                 // Par défaut, masquer tous les panneaux
                 gridStatsVehicules.setVisible(false);
                 gridStatsMissions.setVisible(false);
                 gridStatsFinances.setVisible(false);
                 gridStatsEntretien.setVisible(false);
-                paneAlertes.setVisible(false);
+                if (paneAlertesValid)
+                    paneAlertes.setVisible(false);
                 break;
         }
     }
-    
+
     /**
      * Gère le clic sur le bouton de déconnexion.
      * 
@@ -544,7 +576,7 @@ public class DashboardController extends BaseController implements Initializable
             logout(btnDeconnexion);
         }
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour consulter les véhicules.
      * 
@@ -554,7 +586,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleConsulterVehicules(ActionEvent event) {
         navigateTo(menuVehicules, "/fxml/vehicule_form.fxml", "Gestion de Parc Automobile - Véhicules");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour ajouter un véhicule.
      * 
@@ -564,7 +596,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleAjouterVehicule(ActionEvent event) {
         navigateTo(menuVehicules, "/fxml/vehicule_form.fxml", "Gestion de Parc Automobile - Ajouter un véhicule");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour gérer les missions.
      * 
@@ -574,7 +606,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleGererMissions(ActionEvent event) {
         navigateTo(menuMissions, "/fxml/mission_planner.fxml", "Gestion de Parc Automobile - Missions");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour gérer les entretiens.
      * 
@@ -584,7 +616,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleGererEntretiens(ActionEvent event) {
         navigateTo(menuEntretien, "/fxml/entretien_view.fxml", "Gestion de Parc Automobile - Entretiens");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour gérer les finances.
      * 
@@ -594,7 +626,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleGererFinances(ActionEvent event) {
         navigateTo(menuFinances, "/fxml/finance_view.fxml", "Gestion de Parc Automobile - Finances");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour gérer les documents.
      * 
@@ -604,7 +636,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleGererDocuments(ActionEvent event) {
         navigateTo(menuDocuments, "/fxml/document_view.fxml", "Gestion de Parc Automobile - Documents");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour accéder aux rapports.
      * 
@@ -614,7 +646,7 @@ public class DashboardController extends BaseController implements Initializable
     private void handleRapports(ActionEvent event) {
         navigateTo(menuRapports, "/fxml/report_view.fxml", "Gestion de Parc Automobile - Rapports");
     }
-    
+
     /**
      * Gère le clic sur l'élément de menu pour accéder à l'administration.
      * 

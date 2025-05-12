@@ -36,8 +36,10 @@ import java.math.RoundingMode;
 
 /**
  * Service de génération de rapports.
- * Cette classe implémente la couche service pour la génération de rapports et d'analyses.
- * Elle sert d'intermédiaire entre les différents DAOs et la couche de présentation (contrôleurs).
+ * Cette classe implémente la couche service pour la génération de rapports et
+ * d'analyses.
+ * Elle sert d'intermédiaire entre les différents DAOs et la couche de
+ * présentation (contrôleurs).
  *
  * @author MIAGE Holding
  * @version 1.0
@@ -65,7 +67,7 @@ public class ReportingService {
         this.entretienDao = new EntretienDao();
         this.financeDao = new FinanceDao();
         this.societeCompteDao = new SocieteCompteDao();
-        this.mouvementDao = new MouvementDao();  // Ajouter cette ligne
+        this.mouvementDao = new MouvementDao(); // Ajouter cette ligne
 
         // Initialisation du répertoire des rapports
         initializeReportsDirectory();
@@ -74,21 +76,21 @@ public class ReportingService {
     /**
      * Constructeur avec injection de dépendance pour les tests.
      *
-     * @param vehiculeDao Instance de VehiculeDao à utiliser
-     * @param missionDao Instance de MissionDao à utiliser
-     * @param entretienDao Instance de EntretienDao à utiliser
-     * @param financeDao Instance de FinanceDao à utiliser
+     * @param vehiculeDao      Instance de VehiculeDao à utiliser
+     * @param missionDao       Instance de MissionDao à utiliser
+     * @param entretienDao     Instance de EntretienDao à utiliser
+     * @param financeDao       Instance de FinanceDao à utiliser
      * @param societeCompteDao Instance de SocieteCompteDao à utiliser
      */
     // Modifier également le constructeur avec paramètres
     public ReportingService(VehiculeDao vehiculeDao, MissionDao missionDao, EntretienDao entretienDao,
-                            FinanceDao financeDao, SocieteCompteDao societeCompteDao, MouvementDao mouvementDao) {
+            FinanceDao financeDao, SocieteCompteDao societeCompteDao, MouvementDao mouvementDao) {
         this.vehiculeDao = vehiculeDao;
         this.missionDao = missionDao;
         this.entretienDao = entretienDao;
         this.financeDao = financeDao;
         this.societeCompteDao = societeCompteDao;
-        this.mouvementDao = mouvementDao;  // Ajouter cette ligne
+        this.mouvementDao = mouvementDao; // Ajouter cette ligne
 
         // Initialisation du répertoire des rapports
         initializeReportsDirectory();
@@ -178,7 +180,9 @@ public class ReportingService {
             dashboard.put("nombreAlertesAssurance", alertesAssurance.size());
 
             // Alertes entretiens
-            List<FinanceDao.AlerteEntretien> alertesEntretien = financeDao.verifierEntretiensNecessaires(10000); // 10 000 km
+            List<FinanceDao.AlerteEntretien> alertesEntretien = financeDao.verifierEntretiensNecessaires(10000); // 10
+                                                                                                                 // 000
+                                                                                                                 // km
             dashboard.put("alertesEntretien", alertesEntretien);
             dashboard.put("nombreAlertesEntretien", alertesEntretien.size());
 
@@ -188,7 +192,8 @@ public class ReportingService {
             dashboard.put("nombreMissionsEnCours", missionsEnCours.size());
 
             // Top 5 véhicules par rentabilité
-            List<FinanceDao.RentabiliteVehicule> rentabilites = financeDao.genererRapportRentabilite(LocalDate.now().getYear());
+            List<FinanceDao.RentabiliteVehicule> rentabilites = financeDao
+                    .genererRapportRentabilite(LocalDate.now().getYear());
             List<FinanceDao.RentabiliteVehicule> topRentabilites = rentabilites.stream()
                     .sorted(Comparator.comparingDouble(FinanceDao.RentabiliteVehicule::getRentabilitePct).reversed())
                     .limit(5)
@@ -236,7 +241,7 @@ public class ReportingService {
                 long count = vehicules.stream()
                         .filter(v -> v.getEnergie() == energie)
                         .count();
-                repartitionParEnergie.put(energie.name(), (int)count);
+                repartitionParEnergie.put(energie.name(), (int) count);
             }
             rapport.put("repartitionParEnergie", repartitionParEnergie);
 
@@ -254,14 +259,15 @@ public class ReportingService {
                         tcosParVehicule.put(vehicule.getIdVehicule(), tco.get());
                     }
                 } catch (SQLException e) {
-                    LOGGER.log(Level.WARNING, "Erreur lors du calcul du TCO pour le véhicule ID: " + vehicule.getIdVehicule(), e);
+                    LOGGER.log(Level.WARNING,
+                            "Erreur lors du calcul du TCO pour le véhicule ID: " + vehicule.getIdVehicule(), e);
                 }
             }
             rapport.put("tcosParVehicule", tcosParVehicule);
 
             // Âge moyen du parc
             double ageMoyen = vehicules.stream()
-                    .mapToLong(Vehicule::ageVehicule)  // Utiliser mapToLong au lieu de mapToInt
+                    .mapToLong(Vehicule::ageVehicule) // Utiliser mapToLong au lieu de mapToInt
                     .average()
                     .orElse(0);
             rapport.put("ageMoyenParc", ageMoyen);
@@ -270,8 +276,7 @@ public class ReportingService {
             Map<String, Long> repartitionParMarque = vehicules.stream()
                     .collect(Collectors.groupingBy(
                             Vehicule::getMarque,
-                            Collectors.counting()
-                    ));
+                            Collectors.counting()));
             rapport.put("repartitionParMarque", repartitionParMarque);
 
             return rapport;
@@ -285,7 +290,7 @@ public class ReportingService {
      * Génère un rapport d'activité des missions sur une période donnée.
      *
      * @param debut Date de début de la période
-     * @param fin Date de fin de la période
+     * @param fin   Date de fin de la période
      * @return Map contenant les données du rapport
      */
     public Map<String, Object> genererRapportMissions(LocalDateTime debut, LocalDateTime fin) {
@@ -306,16 +311,14 @@ public class ReportingService {
             Map<String, Long> repartitionParStatut = missions.stream()
                     .collect(Collectors.groupingBy(
                             m -> m.getStatus().name(),
-                            Collectors.counting()
-                    ));
+                            Collectors.counting()));
             rapport.put("repartitionParStatut", repartitionParStatut);
 
             // Répartition par site
             Map<String, Long> repartitionParSite = missions.stream()
                     .collect(Collectors.groupingBy(
                             Mission::getSite,
-                            Collectors.counting()
-                    ));
+                            Collectors.counting()));
             rapport.put("repartitionParSite", repartitionParSite);
 
             // Répartition par mois
@@ -323,8 +326,7 @@ public class ReportingService {
                     .filter(m -> m.getDateDebutMission() != null)
                     .collect(Collectors.groupingBy(
                             m -> m.getDateDebutMission().getMonth(),
-                            Collectors.counting()
-                    ));
+                            Collectors.counting()));
             rapport.put("repartitionParMois", repartitionParMois);
 
             // Durée moyenne des missions
@@ -357,9 +359,9 @@ public class ReportingService {
             rapport.put("coutTotal", coutTotal);
 
             // Coût moyen par mission
-            BigDecimal coutMoyen = missions.size() > 0 ?
-                    coutTotal.divide(BigDecimal.valueOf(missions.size()), 2, RoundingMode.HALF_UP) :
-                    BigDecimal.ZERO;
+            BigDecimal coutMoyen = missions.size() > 0
+                    ? coutTotal.divide(BigDecimal.valueOf(missions.size()), 2, RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
             rapport.put("coutMoyen", coutMoyen);
 
             return rapport;
@@ -407,8 +409,7 @@ public class ReportingService {
             Map<String, Long> repartitionParStatut = entretiens.stream()
                     .collect(Collectors.groupingBy(
                             e -> e.getStatutOt().name(),
-                            Collectors.counting()
-                    ));
+                            Collectors.counting()));
             rapport.put("repartitionParStatut", repartitionParStatut);
 
             // Durée moyenne des entretiens
@@ -426,9 +427,9 @@ public class ReportingService {
             rapport.put("coutTotal", coutTotal);
 
             // Coût moyen par entretien
-            BigDecimal coutMoyen = entretiens.size() > 0 ?
-                    coutTotal.divide(BigDecimal.valueOf(entretiens.size()), 2, RoundingMode.HALF_UP) :
-                    BigDecimal.ZERO;
+            BigDecimal coutMoyen = entretiens.size() > 0
+                    ? coutTotal.divide(BigDecimal.valueOf(entretiens.size()), 2, RoundingMode.HALF_UP)
+                    : BigDecimal.ZERO;
             rapport.put("coutMoyen", coutMoyen);
 
             // Répartition par mois
@@ -436,8 +437,7 @@ public class ReportingService {
                     .filter(e -> e.getDateEntreeEntr() != null)
                     .collect(Collectors.groupingBy(
                             e -> e.getDateEntreeEntr().getMonth(),
-                            Collectors.counting()
-                    ));
+                            Collectors.counting()));
             rapport.put("repartitionParMois", repartitionParMois);
 
             // Top véhicules par coûts d'entretien
@@ -563,7 +563,7 @@ public class ReportingService {
                 // Calculer les jours d'utilisation
                 // Calculer les jours d'utilisation
                 long joursUtilisation = missionsPeriode.stream()
-                        .mapToLong(Mission::getDureeJours)  // Utiliser mapToLong au lieu de mapToInt
+                        .mapToLong(Mission::getDureeJours) // Utiliser mapToLong au lieu de mapToInt
                         .sum();
                 joursUtilisationParVehicule.put(idVehicule, joursUtilisation);
 
@@ -612,13 +612,14 @@ public class ReportingService {
      * Exporte un rapport au format HTML.
      *
      * @param rapport Données du rapport
-     * @param titre Titre du rapport
+     * @param titre   Titre du rapport
      * @return Chemin du fichier HTML généré ou null en cas d'erreur
      */
     public String exporterRapportHTML(Map<String, Object> rapport, String titre) {
         // Génération d'un nom de fichier
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String fileName = REPORTS_DIRECTORY + "/rapport_" + titre.replaceAll("\\s+", "_").toLowerCase() + "_" + timestamp + ".html";
+        String fileName = REPORTS_DIRECTORY + "/rapport_" + titre.replaceAll("\\s+", "_").toLowerCase() + "_"
+                + timestamp + ".html";
 
         try (OutputStream os = new FileOutputStream(fileName)) {
             // Création du contenu HTML
@@ -638,23 +639,29 @@ public class ReportingService {
             html.append("    th { background-color: #f2f2f2; }\n");
             html.append("    tr:nth-child(even) { background-color: #f9f9f9; }\n");
             html.append("    .container { margin-bottom: 30px; }\n");
-            html.append("    .alert { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }\n");
-            html.append("    .success { color: #155724; background-color: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }\n");
-            html.append("    .info { color: #0c5460; background-color: #d1ecf1; padding: 10px; border-radius: 5px; margin: 10px 0; }\n");
+            html.append(
+                    "    .alert { color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 5px; margin: 10px 0; }\n");
+            html.append(
+                    "    .success { color: #155724; background-color: #d4edda; padding: 10px; border-radius: 5px; margin: 10px 0; }\n");
+            html.append(
+                    "    .info { color: #0c5460; background-color: #d1ecf1; padding: 10px; border-radius: 5px; margin: 10px 0; }\n");
             html.append("  </style>\n");
             html.append("</head>\n");
             html.append("<body>\n");
 
             // En-tête
             html.append("  <h1>").append(titre).append("</h1>\n");
-            html.append("  <p>Rapport généré le ").append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss"))).append("</p>\n");
+            html.append("  <p>Rapport généré le ")
+                    .append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm:ss")))
+                    .append("</p>\n");
 
             // Contenu du rapport
             renderReportContent(html, rapport);
 
             // Pied de page
             html.append("  <footer>\n");
-            html.append("    <p style=\"text-align:center; font-size:0.8em; margin-top:50px;\">&copy; ").append(Year.now().getValue()).append(" MIAGE Holding - ParcAuto</p>\n");
+            html.append("    <p style=\"text-align:center; font-size:0.8em; margin-top:50px;\">&copy; ")
+                    .append(Year.now().getValue()).append(" MIAGE Holding - ParcAuto</p>\n");
             html.append("  </footer>\n");
             html.append("</body>\n");
             html.append("</html>");
@@ -674,7 +681,7 @@ public class ReportingService {
     /**
      * Génère le contenu HTML d'un rapport en fonction de ses données.
      *
-     * @param html StringBuilder pour la génération HTML
+     * @param html    StringBuilder pour la génération HTML
      * @param rapport Données du rapport à afficher
      */
     private void renderReportContent(StringBuilder html, Map<String, Object> rapport) {
@@ -702,12 +709,17 @@ public class ReportingService {
 
                 for (Vehicule v : vehicules) {
                     html.append("      <tr>\n");
-                    html.append("        <td>").append(v.getIdVehicule() != null ? v.getIdVehicule() : "").append("</td>\n");
-                    html.append("        <td>").append(v.getImmatriculation() != null ? v.getImmatriculation() : "").append("</td>\n");
+                    html.append("        <td>").append(v.getIdVehicule() != null ? v.getIdVehicule() : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(v.getImmatriculation() != null ? v.getImmatriculation() : "")
+                            .append("</td>\n");
                     html.append("        <td>").append(v.getMarque() != null ? v.getMarque() : "").append("</td>\n");
                     html.append("        <td>").append(v.getModele() != null ? v.getModele() : "").append("</td>\n");
-                    html.append("        <td>").append(v.getEtatVoiture() != null ? v.getEtatVoiture().getLibEtatVoiture() : "").append("</td>\n");
-                    html.append("        <td>").append(v.getKmActuels() != null ? v.getKmActuels() : "").append(" km</td>\n");
+                    html.append("        <td>")
+                            .append(v.getEtatVoiture() != null ? v.getEtatVoiture().getLibEtatVoiture() : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(v.getKmActuels() != null ? v.getKmActuels() : "")
+                            .append(" km</td>\n");
                     html.append("      </tr>\n");
                 }
 
@@ -743,14 +755,26 @@ public class ReportingService {
 
                 for (Mission m : missions) {
                     html.append("      <tr>\n");
-                    html.append("        <td>").append(m.getIdMission() != null ? m.getIdMission() : "").append("</td>\n");
-                    html.append("        <td>").append(m.getLibMission() != null ? m.getLibMission() : "").append("</td>\n");
+                    html.append("        <td>").append(m.getIdMission() != null ? m.getIdMission() : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(m.getLibMission() != null ? m.getLibMission() : "")
+                            .append("</td>\n");
                     html.append("        <td>").append(m.getSite() != null ? m.getSite() : "").append("</td>\n");
-                    html.append("        <td>").append(m.getDateDebutMission() != null ? m.getDateDebutMission().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "").append("</td>\n");
-                    html.append("        <td>").append(m.getDateFinMission() != null ? m.getDateFinMission().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "").append("</td>\n");
-                    html.append("        <td>").append(m.getStatus() != null ? m.getStatus().getLibelle() : "").append("</td>\n");
+                    html.append("        <td>")
+                            .append(m.getDateDebutMission() != null
+                                    ? m.getDateDebutMission().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                    : "")
+                            .append("</td>\n");
+                    html.append("        <td>")
+                            .append(m.getDateFinMission() != null
+                                    ? m.getDateFinMission().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                    : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(m.getStatus() != null ? m.getStatus().getLibelle() : "")
+                            .append("</td>\n");
                     html.append("        <td>").append(m.getKmReel() != null ? m.getKmReel() : "").append(" km</td>\n");
-                    html.append("        <td>").append(m.getCoutTotal() != null ? m.getCoutTotal() : "").append(" €</td>\n");
+                    html.append("        <td>").append(m.getCoutTotal() != null ? m.getCoutTotal() : "")
+                            .append(" €</td>\n");
                     html.append("      </tr>\n");
                 }
 
@@ -786,14 +810,27 @@ public class ReportingService {
 
                 for (Entretien e : entretiens) {
                     html.append("      <tr>\n");
-                    html.append("        <td>").append(e.getIdEntretien() != null ? e.getIdEntretien() : "").append("</td>\n");
-                    html.append("        <td>").append(e.getIdVehicule() != null ? e.getIdVehicule() : "").append("</td>\n");
-                    html.append("        <td>").append(e.getDateEntreeEntr() != null ? e.getDateEntreeEntr().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "").append("</td>\n");
-                    html.append("        <td>").append(e.getDateSortieEntr() != null ? e.getDateSortieEntr().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "").append("</td>\n");
-                    html.append("        <td>").append(e.getMotifEntr() != null ? e.getMotifEntr() : "").append("</td>\n");
+                    html.append("        <td>").append(e.getIdEntretien() != null ? e.getIdEntretien() : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(e.getIdVehicule() != null ? e.getIdVehicule() : "")
+                            .append("</td>\n");
+                    html.append("        <td>")
+                            .append(e.getDateEntreeEntr() != null
+                                    ? e.getDateEntreeEntr().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                    : "")
+                            .append("</td>\n");
+                    html.append("        <td>")
+                            .append(e.getDateSortieEntr() != null
+                                    ? e.getDateSortieEntr().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                                    : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(e.getMotifEntr() != null ? e.getMotifEntr() : "")
+                            .append("</td>\n");
                     html.append("        <td>").append(e.getType() != null ? e.getType().name() : "").append("</td>\n");
-                    html.append("        <td>").append(e.getStatutOt() != null ? e.getStatutOt().name() : "").append("</td>\n");
-                    html.append("        <td>").append(e.getCoutEntr() != null ? e.getCoutEntr() : "").append(" €</td>\n");
+                    html.append("        <td>").append(e.getStatutOt() != null ? e.getStatutOt().name() : "")
+                            .append("</td>\n");
+                    html.append("        <td>").append(e.getCoutEntr() != null ? e.getCoutEntr() : "")
+                            .append(" €</td>\n");
                     html.append("      </tr>\n");
                 }
 
@@ -814,11 +851,16 @@ public class ReportingService {
 
             if (bilan != null) {
                 html.append("    <table>\n");
-                html.append("      <tr><td>Recettes totales:</td><td>").append(bilan.getTotalRecettes()).append(" €</td></tr>\n");
-                html.append("      <tr><td>Dépenses totales:</td><td>").append(bilan.getTotalDepenses()).append(" €</td></tr>\n");
-                html.append("      <tr><td>Dépenses missions:</td><td>").append(bilan.getTotalMissions()).append(" €</td></tr>\n");
-                html.append("      <tr><td>Dépenses entretiens:</td><td>").append(bilan.getTotalEntretiens()).append(" €</td></tr>\n");
-                html.append("      <tr><td>Dépenses assurances:</td><td>").append(bilan.getTotalAssurances()).append(" €</td></tr>\n");
+                html.append("      <tr><td>Recettes totales:</td><td>").append(bilan.getTotalRecettes())
+                        .append(" €</td></tr>\n");
+                html.append("      <tr><td>Dépenses totales:</td><td>").append(bilan.getTotalDepenses())
+                        .append(" €</td></tr>\n");
+                html.append("      <tr><td>Dépenses missions:</td><td>").append(bilan.getTotalMissions())
+                        .append(" €</td></tr>\n");
+                html.append("      <tr><td>Dépenses entretiens:</td><td>").append(bilan.getTotalEntretiens())
+                        .append(" €</td></tr>\n");
+                html.append("      <tr><td>Dépenses assurances:</td><td>").append(bilan.getTotalAssurances())
+                        .append(" €</td></tr>\n");
                 html.append("      <tr><td>Solde:</td><td>").append(bilan.getSolde()).append(" €</td></tr>\n");
                 html.append("      <tr><td>Marge:</td><td>").append(bilan.getMargePct()).append(" %</td></tr>\n");
                 html.append("    </table>\n");
@@ -838,7 +880,8 @@ public class ReportingService {
         // Si le rapport contient des alertes d'assurance
         if (rapport.containsKey("alertesAssurance")) {
             @SuppressWarnings("unchecked")
-            List<FinanceDao.AlerteAssurance> alertes = (List<FinanceDao.AlerteAssurance>) rapport.get("alertesAssurance");
+            List<FinanceDao.AlerteAssurance> alertes = (List<FinanceDao.AlerteAssurance>) rapport
+                    .get("alertesAssurance");
 
             html.append("  <div class=\"container\">\n");
             html.append("    <h2>Alertes d'assurance</h2>\n");
@@ -857,14 +900,17 @@ public class ReportingService {
 
                 for (FinanceDao.AlerteAssurance alerte : alertes) {
                     html.append("      <tr>\n");
-                    html.append("        <td>").append(alerte.getMarque()).append(" ").append(alerte.getModele()).append("</td>\n");
+                    html.append("        <td>").append(alerte.getMarque()).append(" ").append(alerte.getModele())
+                            .append("</td>\n");
                     html.append("        <td>").append(alerte.getImmatriculation()).append("</td>\n");
                     html.append("        <td>").append(alerte.getFormattedDateFin()).append("</td>\n");
 
                     if (alerte.getJoursRestants() <= 7) {
-                        html.append("        <td style=\"color: red; font-weight: bold;\">").append(alerte.getJoursRestants()).append(" jours</td>\n");
+                        html.append("        <td style=\"color: red; font-weight: bold;\">")
+                                .append(alerte.getJoursRestants()).append(" jours</td>\n");
                     } else if (alerte.getJoursRestants() <= 30) {
-                        html.append("        <td style=\"color: orange; font-weight: bold;\">").append(alerte.getJoursRestants()).append(" jours</td>\n");
+                        html.append("        <td style=\"color: orange; font-weight: bold;\">")
+                                .append(alerte.getJoursRestants()).append(" jours</td>\n");
                     } else {
                         html.append("        <td>").append(alerte.getJoursRestants()).append(" jours</td>\n");
                     }
@@ -889,9 +935,11 @@ public class ReportingService {
             html.append("    <table>\n");
 
             for (Map.Entry<String, Object> entry : rapport.entrySet()) {
-                if (entry.getValue() instanceof Number || entry.getValue() instanceof String || entry.getValue() instanceof Boolean) {
+                if (entry.getValue() instanceof Number || entry.getValue() instanceof String
+                        || entry.getValue() instanceof Boolean) {
                     if (!entry.getKey().contains("liste") && !entry.getKey().contains("repartition")) {
-                        html.append("      <tr><td>").append(formatKeyForDisplay(entry.getKey())).append(":</td><td>").append(formatValueForDisplay(entry.getValue())).append("</td></tr>\n");
+                        html.append("      <tr><td>").append(formatKeyForDisplay(entry.getKey())).append(":</td><td>")
+                                .append(formatValueForDisplay(entry.getValue())).append("</td></tr>\n");
                     }
                 }
             }
@@ -940,15 +988,16 @@ public class ReportingService {
     /**
      * Exporte un rapport au format CSV.
      *
-     * @param data Données du rapport sous forme de liste de listes
-     * @param headers En-têtes des colonnes
+     * @param data       Données du rapport sous forme de liste de listes
+     * @param headers    En-têtes des colonnes
      * @param nomFichier Nom du fichier sans extension
      * @return Chemin du fichier CSV généré ou null en cas d'erreur
      */
     public String exporterRapportCSV(List<List<String>> data, List<String> headers, String nomFichier) {
         // Génération d'un nom de fichier
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        String fileName = REPORTS_DIRECTORY + "/" + nomFichier.replaceAll("\\s+", "_").toLowerCase() + "_" + timestamp + ".csv";
+        String fileName = REPORTS_DIRECTORY + "/" + nomFichier.replaceAll("\\s+", "_").toLowerCase() + "_" + timestamp
+                + ".csv";
 
         try (FileOutputStream fos = new FileOutputStream(fileName)) {
             // Écriture des en-têtes
@@ -1037,9 +1086,8 @@ public class ReportingService {
             // Calcul du taux d'utilisation (jours en mission / jours depuis acquisition)
             // Code corrigé
             long joursUtilisation = missions.stream()
-                    .mapToLong(Mission::getDureeJours)  // Utiliser mapToLong au lieu de mapToInt
+                    .mapToLong(Mission::getDureeJours) // Utiliser mapToLong au lieu de mapToInt
                     .sum();
-
 
             int joursDepuisAcquisition = 365; // Par défaut
             if (vehicule.getDateAcquisition() != null) {
@@ -1072,7 +1120,8 @@ public class ReportingService {
 
             // Prochains entretiens prévus
             List<Entretien> entretiensPreventifs = entretiens.stream()
-                    .filter(e -> e.getType() == Entretien.TypeEntretien.Preventif && e.getStatutOt() == Entretien.StatutOT.Ouvert)
+                    .filter(e -> e.getType() == Entretien.TypeEntretien.Preventif
+                            && e.getStatutOt() == Entretien.StatutOT.Ouvert)
                     .collect(Collectors.toList());
             rapport.put("entretiensPreventifsPrevus", entretiensPreventifs);
 
@@ -1132,8 +1181,7 @@ public class ReportingService {
             Map<DepenseMission.NatureDepense, BigDecimal> repartitionDepenses = depenses.stream()
                     .collect(Collectors.groupingBy(
                             DepenseMission::getNature,
-                            Collectors.reducing(BigDecimal.ZERO, DepenseMission::getMontant, BigDecimal::add)
-                    ));
+                            Collectors.reducing(BigDecimal.ZERO, DepenseMission::getMontant, BigDecimal::add)));
             rapport.put("repartitionDepenses", repartitionDepenses);
 
             return rapport;
@@ -1202,7 +1250,8 @@ public class ReportingService {
 
             return rapport;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la génération du rapport pour le compte sociétaire ID: " + idSocietaire, e);
+            LOGGER.log(Level.SEVERE,
+                    "Erreur lors de la génération du rapport pour le compte sociétaire ID: " + idSocietaire, e);
             return Collections.emptyMap();
         }
     }

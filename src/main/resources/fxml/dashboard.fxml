@@ -6,15 +6,14 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
-<?import javafx.collections.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="main.java.com.miage.parcauto.controller.DashboardController"
-            stylesheets="../css/dashboard.css">
+            stylesheets="@../css/theme-default.css, @../css/views/dashboard.css">
 
     <!-- Barre supérieure -->
     <top>
-        <HBox spacing="15" alignment="CENTER_LEFT" styleClass="top-navbar">
+        <HBox styleClass="top-navbar">
             <padding><Insets top="15" right="20" bottom="15" left="20" /></padding>
 
             <!-- Logo et titre de l'application -->
@@ -25,23 +24,29 @@
                 <Text styleClass="app-title" text="Parc Automobile" />
             </HBox>
 
+            <!-- Sélecteur de thème -->
+            <HBox spacing="10" alignment="CENTER" styleClass="theme-selector">
+                <Button styleClass="theme-button, theme-default" userData="default" />
+                <Button styleClass="theme-button, theme-dark" userData="dark" />
+                <Button styleClass="theme-button, theme-contrast" userData="contrast" />
+                <Button styleClass="theme-button, theme-corporate" userData="corporate" />
+                <Button styleClass="theme-button, theme-modern" userData="modern" />
+            </HBox>
+
             <Pane HBox.hgrow="ALWAYS" />
 
             <!-- Informations utilisateur -->
             <VBox alignment="CENTER_RIGHT" spacing="5">
                 <HBox alignment="CENTER_RIGHT" spacing="10">
-                    <ImageView styleClass="user-avatar" fitWidth="32" fitHeight="32" preserveRatio="true">
-                        <Image url="@../images/logo-parcauto.png" />
-                    </ImageView>
                     <VBox spacing="2">
-                        <Label fx:id="lblUserName" styleClass="user-name" text="Utilisateur" />
-                        <Label fx:id="lblUserRole" styleClass="user-role" text="Rôle" />
+                        <Label fx:id="lblUserName" styleClass="user-name" text="Manuel D-Aho" />
+                        <Label fx:id="lblUserRole" styleClass="user-role" text="Responsable Logistique" />
                     </VBox>
                 </HBox>
             </VBox>
 
             <!-- Bouton de déconnexion -->
-            <Button fx:id="btnDeconnexion" styleClass="btn-logout" text="Déconnexion"
+            <Button fx:id="btnDeconnexion" styleClass="btn, btn-secondary" text="Déconnexion"
                     onAction="#handleDeconnexion" />
         </HBox>
     </top>
@@ -133,6 +138,11 @@
                     <Label text="Tableau de bord" styleClass="page-title" />
                 </HBox>
 
+                <!-- Date et heure actuelle -->
+                <HBox alignment="CENTER_RIGHT">
+                    <Label text="2025-05-11 19:46:28 | Manuel D-Aho" styleClass="dashboard-datetime" />
+                </HBox>
+
                 <!-- Cartes statistiques -->
                 <HBox spacing="15" alignment="CENTER">
                     <!-- Statistiques véhicules -->
@@ -146,9 +156,12 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <Label text="Total véhicules" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
-                        <Label fx:id="lblNbVehicules" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label fx:id="lblNbVehicules" text="42" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
                         <Label text="Disponibles" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
-                        <Label fx:id="lblNbVehiculesDisponibles" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <Label fx:id="lblNbVehiculesDisponibles" text="28" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                            <Button text="Voir les détails" styleClass="btn, btn-sm, btn-link" />
+                        </HBox>
                     </GridPane>
 
                     <!-- Statistiques missions -->
@@ -162,9 +175,12 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <Label text="Missions en cours" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
-                        <Label fx:id="lblNbMissionsEnCours" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label fx:id="lblNbMissionsEnCours" text="14" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
                         <Label text="Planifiées" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
-                        <Label fx:id="lblNbMissionsPlanifiees" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <Label fx:id="lblNbMissionsPlanifiees" text="8" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                            <Button text="Voir les détails" styleClass="btn, btn-sm, btn-link" />
+                        </HBox>
                     </GridPane>
 
                     <!-- Statistiques finances -->
@@ -178,9 +194,12 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <Label text="Solde global" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
-                        <Label fx:id="lblSoldeGlobal" text="0 €" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label fx:id="lblSoldeGlobal" text="84 250 €" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
                         <Label text="Dépenses (mois)" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
-                        <Label fx:id="lblDepensesMois" text="0 €" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <Label fx:id="lblDepensesMois" text="12 480 €" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                            <Button text="Voir les détails" styleClass="btn, btn-sm, btn-link" />
+                        </HBox>
                     </GridPane>
 
                     <!-- Statistiques entretiens -->
@@ -194,9 +213,12 @@
                             <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
                         </rowConstraints>
                         <Label text="Entretiens à venir" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="stats-label" />
-                        <Label fx:id="lblNbEntretiensAVenir" text="0" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
+                        <Label fx:id="lblNbEntretiensAVenir" text="6" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="stats-value" />
                         <Label text="En cours" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="stats-label" />
-                        <Label fx:id="lblNbEntretiensEnCours" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <Label fx:id="lblNbEntretiensEnCours" text="3" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="stats-value" />
+                        <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2">
+                            <Button text="Voir les détails" styleClass="btn, btn-sm, btn-link" />
+                        </HBox>
                     </GridPane>
                 </HBox>
 
@@ -224,7 +246,36 @@
 
                 <!-- Alertes et notifications -->
                 <TitledPane text="Alertes et notifications" expanded="true" styleClass="alertes-section">
-                    <Pane fx:id="paneAlertes" styleClass="alertes-container" />
+                    <Pane fx:id="paneAlertes" styleClass="alertes-container">
+                        <VBox spacing="10">
+                            <HBox styleClass="alert, alert-warning" alignment="CENTER_LEFT" spacing="10">
+                                <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
+                                <Region styleClass="alert-icon" />
+                                <VBox spacing="5">
+                                    <Label text="Entretien préventif à planifier" styleClass="alert-title" />
+                                    <Label text="Le véhicule AB-123-CD a dépassé les 30 000 km depuis son dernier entretien." styleClass="alert-message" />
+                                </VBox>
+                            </HBox>
+
+                            <HBox styleClass="alert, alert-error" alignment="CENTER_LEFT" spacing="10">
+                                <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
+                                <Region styleClass="alert-icon" />
+                                <VBox spacing="5">
+                                    <Label text="Assurance à renouveler" styleClass="alert-title" />
+                                    <Label text="L'assurance du véhicule EF-456-GH expire dans 5 jours." styleClass="alert-message" />
+                                </VBox>
+                            </HBox>
+
+                            <HBox styleClass="alert, alert-info" alignment="CENTER_LEFT" spacing="10">
+                                <padding><Insets top="10" right="15" bottom="10" left="15"/></padding>
+                                <Region styleClass="alert-icon" />
+                                <VBox spacing="5">
+                                    <Label text="Nouvelle demande de mission" styleClass="alert-title" />
+                                    <Label text="Une nouvelle demande de mission a été soumise par Sophie Martinez." styleClass="alert-message" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </Pane>
                 </TitledPane>
 
                 <!-- Tableau des véhicules récents -->
@@ -238,6 +289,9 @@
                             <TableColumn text="État" prefWidth="100" />
                             <TableColumn text="Actions" prefWidth="100" />
                         </columns>
+                        <placeholder>
+                            <Label text="Aucun véhicule récemment ajouté" />
+                        </placeholder>
                     </TableView>
                 </TitledPane>
             </VBox>
@@ -248,11 +302,11 @@
     <bottom>
         <HBox styleClass="status-bar" alignment="CENTER_LEFT">
             <padding><Insets top="5" right="15" bottom="5" left="15" /></padding>
-            <Label text="Version 1.0.0" />
+            <Label text="Version 1.2.0" />
             <Separator orientation="VERTICAL" />
             <Label text="Système en ligne" />
             <Pane HBox.hgrow="ALWAYS" />
-            <Label text="Dernière mise à jour: 09/05/2025 12:48:58" />
+            <Label text="Dernière mise à jour: 11/05/2025 19:46:28" />
         </HBox>
     </bottom>
 </BorderPane>

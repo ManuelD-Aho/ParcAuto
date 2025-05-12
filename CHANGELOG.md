@@ -40,9 +40,9 @@ Ce document retrace l'historique des modifications majeures apportées au projet
 - Amélioration de la gestion des permissions
 
 ### Corrections
-- Résolution des problèmes de mémorisation de session
+- Résolution des difficultés de mémorisation de session
 - Correction des erreurs d'affichage sur certains navigateurs
-- Correction des problèmes de calcul kilométrique
+- Correction des erreurs de calcul kilométrique
 - Résolution des conflits de données en édition concurrente
 
 ## Version 1.0.0 (Octobre 2024)

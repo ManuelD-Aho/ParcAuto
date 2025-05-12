@@ -16,6 +16,7 @@ import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -33,24 +34,25 @@ import main.java.com.miage.parcauto.dao.UtilisateurDao;
 import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
 import main.java.com.miage.parcauto.util.ResourceManager;
 import main.java.com.miage.parcauto.util.SessionManager;
+import main.java.com.miage.parcauto.util.ThemeManager;
 
 /**
  * Contrôleur amélioré pour la vue de login.
  * Gère l'authentification des utilisateurs avec animations et transitions.
  *
  * @author MIAGE Holding
- * @version 1.2
+ * @version 1.3
  */
 public class LoginController {
 
     private static final Logger LOGGER = Logger.getLogger(LoginController.class.getName());
     private final UtilisateurDao utilisateurDao;
+    private final ThemeManager themeManager;
 
     // Constantes pour les ressources
     private static final String DASHBOARD_FXML = "/fxml/dashboard.fxml";
     private static final String[] DASHBOARD_CSS = {
-            "/css/theme.css",
-            "/css/dashboard.css"
+            "/css/views/dashboard.css"
     };
 
     @FXML
@@ -63,7 +65,7 @@ public class LoginController {
     private Button btnConnexion;
 
     @FXML
-    private Label lblErreur;
+    private Label lblErreur; // Assurez-vous que fx:id="lblErreur" existe dans login.fxml
 
     @FXML
     private VBox mfaPanel;
@@ -74,12 +76,28 @@ public class LoginController {
     @FXML
     private ImageView logoImage;
 
+    @FXML
+    private Button themeDefaultBtn;
+
+    @FXML
+    private Button themeDarkBtn;
+
+    @FXML
+    private Button themeContrastBtn;
+
+    @FXML
+    private Button themeCorporateBtn;
+
+    @FXML
+    private Button themeModernBtn;
+
     /**
      * Constructeur.
-     * Initialise le DAO utilisateur.
+     * Initialise le DAO utilisateur et le gestionnaire de thèmes.
      */
     public LoginController() {
         this.utilisateurDao = new UtilisateurDao();
+        this.themeManager = ThemeManager.getInstance();
     }
 
     /**
@@ -91,12 +109,15 @@ public class LoginController {
         // Cacher le panneau MFA et message d'erreur par défaut
         if (mfaPanel != null) {
             mfaPanel.setVisible(false);
-            mfaPanel.setOpacity(0);
+            mfaPanel.setManaged(false); // Ne prend pas de place si invisible
         }
 
+        // Correction : gestion de l'affichage du message d'erreur
         if (lblErreur != null) {
             lblErreur.setVisible(false);
-            lblErreur.setOpacity(0);
+            lblErreur.setManaged(false); // Ne prend pas de place si invisible
+        } else {
+            LOGGER.warning("FXML injection manquée : lblErreur est null dans initialize(). Vérifiez le fichier FXML.");
         }
 
         // Animation du logo au chargement
@@ -111,8 +132,57 @@ public class LoginController {
             scaleTransition.play();
         }
 
+        // Configurer les boutons de thème s'ils existent
+        configureThemeButtons();
+
         // Focus sur le champ de login
         txtLogin.requestFocus();
+    }
+
+    /**
+     * Configure les boutons de changement de thème
+     */
+    private void configureThemeButtons() {
+        // Vérifier si les boutons de thème existent
+        if (themeDefaultBtn != null) {
+            themeDefaultBtn.setOnAction(e -> changeTheme("default", e));
+        }
+
+        if (themeDarkBtn != null) {
+            themeDarkBtn.setOnAction(e -> changeTheme("dark", e));
+        }
+
+        if (themeContrastBtn != null) {
+            themeContrastBtn.setOnAction(e -> changeTheme("contrast", e));
+        }
+
+        if (themeCorporateBtn != null) {
+            themeCorporateBtn.setOnAction(e -> changeTheme("corporate", e));
+        }
+
+        if (themeModernBtn != null) {
+            themeModernBtn.setOnAction(e -> changeTheme("modern", e));
+        }
+    }
+
+    /**
+     * Change le thème de l'application
+     *
+     * @param themeName Nom du thème à appliquer
+     * @param event     L'événement de clic
+     */
+    private void changeTheme(String themeName, ActionEvent event) {
+        Scene scene = ((Node) event.getSource()).getScene();
+        themeManager.setTheme(themeName, scene, "/css/views/login.css");
+
+        // Animation du bouton sélectionné
+        Button selectedBtn = (Button) event.getSource();
+        ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(300), selectedBtn);
+        scaleTransition.setToX(1.2);
+        scaleTransition.setToY(1.2);
+        scaleTransition.setCycleCount(2);
+        scaleTransition.setAutoReverse(true);
+        scaleTransition.play();
     }
 
     /**
@@ -124,7 +194,20 @@ public class LoginController {
     private void handleConnexion(ActionEvent event) {
         String login = txtLogin.getText();
         String password = txtPassword.getText();
+
+        // Vérification de nullité pour lblErreur avant utilisation
+        if (lblErreur == null) {
+            LOGGER.severe(
+                    "lblErreur est null dans handleConnexion. L'injection FXML a échoué. Impossible d'afficher les erreurs UI.");
+            // Optionnel: Afficher une alerte système si lblErreur n'est pas disponible
+            Alert alert = new Alert(AlertType.ERROR, "Erreur critique : Composant UI manquant.");
+            alert.showAndWait();
+            return; // Sortir pour éviter d'autres NullPointerExceptions
+        }
+
         lblErreur.setVisible(false);
+        lblErreur.setManaged(false);
+
         if (login == null || login.isBlank() || password == null || password.isBlank()) {
             showErrorDialog("Veuillez saisir votre identifiant et votre mot de passe.");
             return;
@@ -133,9 +216,10 @@ public class LoginController {
             Optional<Utilisateur> userOpt = utilisateurDao.authentifier(login, password);
             if (userOpt.isPresent()) {
                 SessionManager.getInstance().setCurrentUser(userOpt.get());
-                loginSuccessful();
+                loginSuccessful(event);
             } else {
                 showErrorDialog("Identifiant ou mot de passe incorrect.");
+                shakeFields();
             }
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de l'authentification", e);
@@ -145,8 +229,10 @@ public class LoginController {
 
     /**
      * Appelée en cas de succès de connexion. Charge le dashboard.
+     *
+     * @param event L'événement de clic
      */
-    private void loginSuccessful() {
+    private void loginSuccessful(ActionEvent event) {
         try {
             // Chargement du dashboard via le ResourceManager
             FXMLLoader loader = ResourceManager.getFXMLLoader(DASHBOARD_FXML);
@@ -155,13 +241,15 @@ public class LoginController {
             // Configuration de la scène
             Scene scene = new Scene(dashboardRoot);
 
-            // Application des styles CSS via le ResourceManager
-            ResourceManager.applyStylesheets(scene, DASHBOARD_CSS);
+            // Application du thème et des styles CSS via le ThemeManager
+            themeManager.applyTheme(scene, DASHBOARD_CSS);
 
             // Affichage dans le stage actuel
-            Stage stage = (Stage) txtLogin.getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setTitle("Gestion de Parc Automobile - Tableau de bord");
-            stage.setScene(scene);
+
+            // Animation de transition
+            animateTransition(dashboardRoot, scene, stage);
 
             LOGGER.info("Navigation vers le tableau de bord réussie");
 
@@ -169,6 +257,27 @@ public class LoginController {
             LOGGER.log(Level.SEVERE, "Erreur lors du chargement du dashboard", e);
             showErrorDialog("Erreur lors du chargement du dashboard : " + e.getMessage());
         }
+    }
+
+    /**
+     * Anime la transition entre l'écran de login et le dashboard.
+     *
+     * @param dashboardRoot Noeud racine du dashboard
+     * @param newScene      Nouvelle scène à afficher
+     * @param stage         Stage principal
+     */
+    private void animateTransition(Parent dashboardRoot, Scene newScene, Stage stage) {
+        // Opacité initiale à 0 pour l'animation d'entrée
+        dashboardRoot.setOpacity(0);
+
+        // Appliquer la nouvelle scène
+        stage.setScene(newScene);
+
+        // Animation d'entrée pour le tableau de bord
+        FadeTransition fadeIn = new FadeTransition(Duration.millis(800), dashboardRoot);
+        fadeIn.setFromValue(0.0);
+        fadeIn.setToValue(1.0);
+        fadeIn.play();
     }
 
     /**
@@ -196,7 +305,7 @@ public class LoginController {
             Optional<Utilisateur> userOpt = utilisateurDao.authentifierAvecMfa(login, password, mfaCode);
 
             if (userOpt.isPresent()) {
-                loginSuccessful(userOpt.get());
+                loginSuccessful(userOpt.get(), event);
             } else {
                 showError("Code MFA incorrect");
                 shakeField(txtCodeMfa);
@@ -209,51 +318,15 @@ public class LoginController {
     }
 
     /**
-     * Traitement après une connexion réussie avec animation de transition.
+     * Traitement après une connexion réussie avec MFA.
      *
-     * @param user L'utilisateur authentifié
+     * @param user  L'utilisateur authentifié
+     * @param event L'événement de clic
      */
-    private void loginSuccessful(Utilisateur user) {
+    private void loginSuccessful(Utilisateur user, ActionEvent event) {
         // Enregistre l'utilisateur dans la session
         SessionManager.getInstance().setCurrentUser(user);
-
-        try {
-            // Charger le tableau de bord via le ResourceManager
-            FXMLLoader loader = ResourceManager.getFXMLLoader(DASHBOARD_FXML);
-            Parent root = loader.load();
-
-            // Configuration de la scène
-            Scene scene = new Scene(root);
-
-            // Application des styles CSS via le ResourceManager
-            ResourceManager.applyStylesheets(scene, DASHBOARD_CSS);
-
-            // Récupérer le stage actuel
-            Stage stage = (Stage) btnConnexion.getScene().getWindow();
-
-            // Animation de transition
-            FadeTransition fadeOut = new FadeTransition(Duration.millis(600), btnConnexion.getScene().getRoot());
-            fadeOut.setFromValue(1.0);
-            fadeOut.setToValue(0.0);
-            fadeOut.setOnFinished(e -> {
-                stage.setTitle("Gestion de Parc Automobile - Tableau de bord");
-                stage.setScene(scene);
-
-                // Animation d'entrée pour le tableau de bord
-                root.setOpacity(0);
-                FadeTransition fadeIn = new FadeTransition(Duration.millis(800), root);
-                fadeIn.setFromValue(0.0);
-                fadeIn.setToValue(1.0);
-                fadeIn.play();
-            });
-            fadeOut.play();
-
-            LOGGER.info("Connexion réussie pour l'utilisateur: " + user.getLogin());
-
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du chargement du tableau de bord", ex);
-            showError("Impossible de charger le tableau de bord");
-        }
+        loginSuccessful(event);
     }
 
     /**
@@ -262,8 +335,17 @@ public class LoginController {
      * @param message Le message d'erreur à afficher
      */
     private void showError(String message) {
+        // Vérification de nullité pour lblErreur avant utilisation
+        if (lblErreur == null) {
+            LOGGER.severe("lblErreur est null dans showError. L'injection FXML a échoué.");
+            // Optionnel: Afficher une alerte système
+            Alert alert = new Alert(AlertType.ERROR, "Erreur d'affichage : " + message);
+            alert.showAndWait();
+            return;
+        }
         lblErreur.setText(message);
         lblErreur.setVisible(true);
+        lblErreur.setManaged(true); // Rendre managé pour qu'il prenne de la place
 
         // Animation du message d'erreur
         FadeTransition fadeIn = new FadeTransition(Duration.millis(300), lblErreur);
@@ -278,8 +360,15 @@ public class LoginController {
      * Affiche le panneau de saisie du code MFA avec animation.
      */
     private void showMfaPanel() {
+        // Vérification de nullité pour mfaPanel et lblErreur avant utilisation
+        if (mfaPanel == null || lblErreur == null) {
+            LOGGER.severe("mfaPanel ou lblErreur est null dans showMfaPanel. L'injection FXML a échoué.");
+            return;
+        }
         mfaPanel.setVisible(true);
+        mfaPanel.setManaged(true); // Rendre managé
         lblErreur.setVisible(false);
+        lblErreur.setManaged(false);
 
         // Animation d'apparition du panneau MFA
         FadeTransition fadeIn = new FadeTransition(Duration.millis(400), mfaPanel);
@@ -350,7 +439,7 @@ public class LoginController {
         alert.setContentText(message);
 
         // Ajout d'une CSS custom via le ResourceManager
-        String css = ResourceManager.getStylesheetPath("/css/theme.css");
+        String css = ResourceManager.getStylesheetPath("/css/theme-" + themeManager.getCurrentTheme() + ".css");
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }

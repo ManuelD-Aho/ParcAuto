@@ -1,0 +1,185 @@
+/* =========================================
+   THEME DARK - ParcAuto
+   Thème sombre élégant
+   ========================================= */
+
+@import "theme-base.css";
+
+.root {
+    /* Couleurs principales */
+    -fx-primary-color: #6c5ce7;
+    -fx-secondary-color: #00b894;
+    -fx-background-color: #1e1e2e;
+    background-color: #1e1e2e;
+    -fx-text-color: #e2e2e2;
+    color: #e2e2e2;
+    -fx-accent-color: #fd79a8;
+    accent-color: #fd79a8;
+
+    /* Couleurs des états */
+    -fx-success-color: #00b894;
+    -fx-warning-color: #fdcb6e;
+    -fx-error-color: #d63031;
+    -fx-info-color: #0984e3;
+}
+
+/* Styles spécifiques au thème sombre */
+.card {
+    -fx-background-color: #2d2d3f;
+    background-color: #2d2d3f;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    border-radius: 8px;
+    -fx-padding: 16px;
+    padding: 16px;
+}
+
+.top-navbar {
+    -fx-background-color: #252536;
+    background-color: #252536;
+}
+
+.dashboard-sidebar {
+    -fx-background-color: #252536;
+    background-color: #252536;
+}
+
+.sidebar-menu {
+    -fx-text-fill: #e2e2e2;
+    color: #e2e2e2;
+}
+
+.sidebar-menu:hover {
+    -fx-background-color: #323247;
+    background-color: #323247;
+}
+
+.sidebar-menu.active {
+    -fx-background-color: #323247;
+    background-color: #323247;
+    -fx-border-color: #00b894;
+    border-color: #00b894;
+}
+
+.dashboard-statusbar {
+    -fx-background-color: #252536;
+    background-color: #252536;
+    -fx-border-color: #1e1e2e;
+    border-color: #1e1e2e;
+}
+
+.form-container {
+    -fx-background-color: #2d2d3f;
+    background-color: #2d2d3f;
+    -fx-border-color: #3f3f5f;
+    border-color: #3f3f5f;
+}
+
+.text-field, .password-field, .combo-box, .date-picker {
+    -fx-background-color: #323247;
+    background-color: #323247;
+    -fx-text-fill: #e2e2e2;
+    color: #e2e2e2;
+    -fx-prompt-text-fill: #a0a0a0;
+    -fx-border-color: #3f3f5f;
+    border-color: #3f3f5f;
+}
+
+.text-field:focused, .password-field:focused, .combo-box:focused, .date-picker:focused {
+    -fx-border-color: #6c5ce7;
+    border-color: #6c5ce7;
+}
+
+.table-view {
+    -fx-background-color: #2d2d3f;
+    background-color: #2d2d3f;
+    -fx-border-color: #3f3f5f;
+    border-color: #3f3f5f;
+}
+
+.table-view .column-header {
+    -fx-background-color: #252536;
+    background-color: #252536;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #e2e2e2;
+    color: #e2e2e2;
+}
+
+.table-row-cell {
+    -fx-background-color: #2d2d3f;
+    background-color: #2d2d3f;
+    -fx-text-fill: #e2e2e2;
+    color: #e2e2e2;
+    -fx-border-color: #3f3f5f;
+    border-color: #3f3f5f;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #323247;
+    background-color: #323247;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: derive(-fx-primary-color, -20%);
+    -fx-text-fill: #e2e2e2;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: derive(-fx-primary-color, -30%);
+}
+
+/* Charts pour thème sombre */
+.chart {
+    -fx-background-color: transparent;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-vertical-grid-lines {
+    -fx-stroke: #3f3f5f;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #3f3f5f;
+}
+
+/* Style de texte pour le thème sombre */
+.text {
+    -fx-fill: #e2e2e2;
+}
+
+/* Style des accordéons et TitledPane */
+.titled-pane > .title {
+    -fx-background-color: #252536;
+    -fx-text-fill: #e2e2e2;
+}
+
+.titled-pane > .content {
+    -fx-background-color: #2d2d3f;
+}
+
+/* Style des statistiques */
+.stats-card {
+    -fx-background-color: #323247;
+}
+
+.stats-value {
+    -fx-text-fill: #e2e2e2;
+}
+
+.tab-pane > .tab-header-area > .tab-header-background {
+    -fx-background-color: #252536;
+}
+
+.tab {
+    -fx-background-color: #323247;
+}
+
+.tab:selected {
+    -fx-background-color: -fx-primary-color;
+}

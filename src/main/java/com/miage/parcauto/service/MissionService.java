@@ -20,8 +20,10 @@ import java.util.logging.Logger;
 
 /**
  * Service de gestion des missions.
- * Cette classe implémente la couche service pour toutes les opérations liées aux missions.
- * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation (contrôleurs).
+ * Cette classe implémente la couche service pour toutes les opérations liées
+ * aux missions.
+ * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation
+ * (contrôleurs).
  *
  * @author MIAGE Holding
  * @version 1.0
@@ -44,7 +46,7 @@ public class MissionService {
     /**
      * Constructeur avec injection de dépendance pour les tests.
      *
-     * @param missionDao Instance de MissionDao à utiliser
+     * @param missionDao  Instance de MissionDao à utiliser
      * @param vehiculeDao Instance de VehiculeDao à utiliser
      */
     public MissionService(MissionDao missionDao, VehiculeDao vehiculeDao) {
@@ -85,13 +87,15 @@ public class MissionService {
      * Récupère les missions pour un véhicule spécifique.
      *
      * @param idVehicule ID du véhicule
-     * @return Liste des missions associées au véhicule ou liste vide en cas d'erreur
+     * @return Liste des missions associées au véhicule ou liste vide en cas
+     *         d'erreur
      */
     public List<Mission> getMissionsByVehicule(int idVehicule) {
         try {
             return missionDao.findByVehicule(idVehicule);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des missions pour le véhicule ID: " + idVehicule, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des missions pour le véhicule ID: " + idVehicule,
+                    e);
             return Collections.emptyList();
         }
     }
@@ -115,8 +119,9 @@ public class MissionService {
      * Récupère les missions par période.
      *
      * @param debut Date de début de la période
-     * @param fin Date de fin de la période
-     * @return Liste des missions pendant cette période ou liste vide en cas d'erreur
+     * @param fin   Date de fin de la période
+     * @return Liste des missions pendant cette période ou liste vide en cas
+     *         d'erreur
      */
     public List<Mission> getMissionsByPeriode(LocalDateTime debut, LocalDateTime fin) {
         try {
@@ -146,7 +151,8 @@ public class MissionService {
      * Recherche de missions par critères textuels.
      *
      * @param searchTerm Terme de recherche
-     * @return Liste des missions correspondant aux critères ou liste vide en cas d'erreur
+     * @return Liste des missions correspondant aux critères ou liste vide en cas
+     *         d'erreur
      */
     public List<Mission> searchMissions(String searchTerm) {
         try {
@@ -202,7 +208,7 @@ public class MissionService {
     /**
      * Crée une nouvelle mission.
      *
-     * @param mission La mission à créer
+     * @param mission            La mission à créer
      * @param updateVehiculeEtat Si true, met à jour l'état du véhicule
      * @return La mission créée avec son ID généré ou null en cas d'erreur
      */
@@ -227,7 +233,8 @@ public class MissionService {
                 return null;
             }
 
-            // Pour les missions immédiatement en cours, on vérifie que le véhicule est disponible
+            // Pour les missions immédiatement en cours, on vérifie que le véhicule est
+            // disponible
             if (updateVehiculeEtat && mission.getStatus() == Mission.StatusMission.EnCours &&
                     !vehicule.get().estDisponible()) {
                 LOGGER.warning("Le véhicule n'est pas disponible pour démarrer une mission");
@@ -244,8 +251,9 @@ public class MissionService {
     /**
      * Met à jour une mission.
      *
-     * @param mission La mission à mettre à jour
-     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule si nécessaire
+     * @param mission            La mission à mettre à jour
+     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule si
+     *                           nécessaire
      * @return true si la mise à jour a réussi, false sinon
      */
     public boolean updateMission(Mission mission, boolean updateVehiculeEtat) {
@@ -263,7 +271,8 @@ public class MissionService {
                 return false;
             }
 
-            // Si le véhicule a changé, vérifier que le nouveau véhicule existe et est disponible
+            // Si le véhicule a changé, vérifier que le nouveau véhicule existe et est
+            // disponible
             if (!mission.getIdVehicule().equals(existingMission.get().getIdVehicule())) {
                 Optional<Vehicule> vehicule = vehiculeDao.findById(mission.getIdVehicule());
                 if (!vehicule.isPresent()) {
@@ -277,7 +286,8 @@ public class MissionService {
                     return false;
                 }
             } else {
-                // Même véhicule, on vérifie que la période n'entre pas en conflit avec d'autres missions
+                // Même véhicule, on vérifie que la période n'entre pas en conflit avec d'autres
+                // missions
                 if (!isVehiculeDisponiblePourMission(mission)) {
                     LOGGER.warning("Véhicule non disponible pour la période demandée");
                     return false;
@@ -294,13 +304,16 @@ public class MissionService {
     /**
      * Met à jour le statut d'une mission.
      *
-     * @param idMission ID de la mission
-     * @param status Nouveau statut
-     * @param kmReel Kilométrage réel (obligatoire pour les missions clôturées)
-     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule selon le statut
+     * @param idMission          ID de la mission
+     * @param status             Nouveau statut
+     * @param kmReel             Kilométrage réel (obligatoire pour les missions
+     *                           clôturées)
+     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule selon le
+     *                           statut
      * @return true si la mise à jour a réussi, false sinon
      */
-    public boolean updateMissionStatus(int idMission, Mission.StatusMission status, Integer kmReel, boolean updateVehiculeEtat) {
+    public boolean updateMissionStatus(int idMission, Mission.StatusMission status, Integer kmReel,
+            boolean updateVehiculeEtat) {
         try {
             // Vérifier que la mission existe
             Optional<Mission> mission = missionDao.findById(idMission);
@@ -335,7 +348,8 @@ public class MissionService {
             LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du statut de la mission", e);
             return false;
         } catch (IllegalArgumentException e) {
-            LOGGER.log(Level.WARNING, "Argument invalide lors de la mise à jour du statut de la mission: " + e.getMessage(), e);
+            LOGGER.log(Level.WARNING,
+                    "Argument invalide lors de la mise à jour du statut de la mission: " + e.getMessage(), e);
             return false;
         }
     }
@@ -359,7 +373,7 @@ public class MissionService {
      * Clôture une mission (passage au statut "clôturée").
      *
      * @param idMission ID de la mission
-     * @param kmReel Kilométrage réel (obligatoire)
+     * @param kmReel    Kilométrage réel (obligatoire)
      * @return true si le changement d'état a été effectué, false sinon
      */
     public boolean cloturerMission(int idMission, int kmReel) {
@@ -383,7 +397,7 @@ public class MissionService {
     /**
      * Supprime une mission.
      *
-     * @param idMission ID de la mission à supprimer
+     * @param idMission   ID de la mission à supprimer
      * @param forceDelete Si true, supprime la mission même si elle est en cours
      * @return true si la suppression a réussi, false sinon
      */
@@ -431,7 +445,8 @@ public class MissionService {
      * Récupère les dépenses d'une mission.
      *
      * @param idMission ID de la mission
-     * @return Liste des dépenses associées à la mission ou liste vide en cas d'erreur
+     * @return Liste des dépenses associées à la mission ou liste vide en cas
+     *         d'erreur
      */
     public List<DepenseMission> getDepensesByMission(int idMission) {
         try {
@@ -475,17 +490,20 @@ public class MissionService {
     /**
      * Vérifie la disponibilité d'un véhicule pour une période de mission.
      *
-     * @param idVehicule ID du véhicule
-     * @param debut Date de début de la période
-     * @param fin Date de fin de la période
-     * @param exclureMissionId ID d'une mission à exclure (utile pour les mises à jour)
+     * @param idVehicule       ID du véhicule
+     * @param debut            Date de début de la période
+     * @param fin              Date de fin de la période
+     * @param exclureMissionId ID d'une mission à exclure (utile pour les mises à
+     *                         jour)
      * @return true si le véhicule est disponible, false sinon
      */
-    public boolean isVehiculeDisponible(int idVehicule, LocalDateTime debut, LocalDateTime fin, Integer exclureMissionId) {
+    public boolean isVehiculeDisponible(int idVehicule, LocalDateTime debut, LocalDateTime fin,
+            Integer exclureMissionId) {
         try {
             return missionDao.isVehiculeDisponible(idVehicule, debut, fin, exclureMissionId);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification de la disponibilité du véhicule ID: " + idVehicule, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification de la disponibilité du véhicule ID: " + idVehicule,
+                    e);
             return false;
         }
     }
@@ -495,13 +513,14 @@ public class MissionService {
      *
      * @param idVehicule ID du véhicule
      * @param libMission Libellé de la mission
-     * @param site Site de la mission
-     * @param dateDebut Date de début de la mission
-     * @param dateFin Date de fin de la mission
-     * @param kmPrevu Kilométrage prévu
+     * @param site       Site de la mission
+     * @param dateDebut  Date de début de la mission
+     * @param dateFin    Date de fin de la mission
+     * @param kmPrevu    Kilométrage prévu
      * @return La mission créée avec son ID généré ou null en cas d'erreur
      */
-    public Mission planifierMission(int idVehicule, String libMission, String site, LocalDateTime dateDebut, LocalDateTime dateFin, Integer kmPrevu) {
+    public Mission planifierMission(int idVehicule, String libMission, String site, LocalDateTime dateDebut,
+            LocalDateTime dateFin, Integer kmPrevu) {
         Mission mission = new Mission();
         mission.setIdVehicule(idVehicule);
         mission.setLibMission(libMission);
@@ -554,6 +573,7 @@ public class MissionService {
 
     /**
      * Retourne le nombre de missions en cours.
+     * 
      * @return nombre de missions en cours, ou 0 en cas d'erreur
      */
     public int getMissionsEnCoursCount() {
@@ -639,12 +659,12 @@ public class MissionService {
      * Vérifie que la transition de statut est valide.
      *
      * @param currentStatus Statut actuel
-     * @param newStatus Nouveau statut
+     * @param newStatus     Nouveau statut
      * @return true si la transition est valide, false sinon
      */
     private boolean isValidStatusTransition(Mission.StatusMission currentStatus, Mission.StatusMission newStatus) {
         if (currentStatus == newStatus) {
-            return true;  // Même statut, pas de changement
+            return true; // Même statut, pas de changement
         }
 
         switch (currentStatus) {
@@ -663,14 +683,15 @@ public class MissionService {
     }
 
     /**
-     * Vérifie si un véhicule est disponible pour une mission (nouvelle ou mise à jour).
+     * Vérifie si un véhicule est disponible pour une mission (nouvelle ou mise à
+     * jour).
      *
      * @param mission La mission à vérifier
      * @return true si le véhicule est disponible, false sinon
      */
     private boolean isVehiculeDisponiblePourMission(Mission mission) {
         if (mission.getDateDebutMission() == null || mission.getDateFinMission() == null) {
-            return false;  // Dates manquantes, considéré comme non disponible par précaution
+            return false; // Dates manquantes, considéré comme non disponible par précaution
         }
 
         try {
@@ -681,8 +702,7 @@ public class MissionService {
                     mission.getIdVehicule(),
                     mission.getDateDebutMission(),
                     mission.getDateFinMission(),
-                    exclureMissionId
-            );
+                    exclureMissionId);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la vérification de la disponibilité du véhicule", e);
             return false;
@@ -692,7 +712,7 @@ public class MissionService {
     /**
      * Formatte une date selon un format donné.
      *
-     * @param date La date à formatter
+     * @param date   La date à formatter
      * @param format Format de date (ex: "dd/MM/yyyy")
      * @return La date formattée ou chaîne vide si date null
      */
@@ -708,7 +728,7 @@ public class MissionService {
      * Génère un rapport de l'activité des missions sur une période.
      *
      * @param debut Date de début de la période
-     * @param fin Date de fin de la période
+     * @param fin   Date de fin de la période
      * @return Map avec des statistiques d'activité ou map vide en cas d'erreur
      */
     public Map<String, Object> genererRapportActivite(LocalDateTime debut, LocalDateTime fin) {

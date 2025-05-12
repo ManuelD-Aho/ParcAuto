@@ -11,7 +11,8 @@ import java.util.logging.Logger;
 
 /**
  * Gestionnaire centralisé des ressources de l'application.
- * Fournit des méthodes pour accéder aux ressources (CSS, FXML, images) de manière cohérente.
+ * Fournit des méthodes pour accéder aux ressources (CSS, FXML, images) de
+ * manière cohérente.
  */
 public class ResourceManager {
     private static final Logger LOGGER = Logger.getLogger(ResourceManager.class.getName());
@@ -79,11 +80,12 @@ public class ResourceManager {
                 // Essayer avec différents répertoires
                 for (String dir : RESOURCE_DIRS) {
                     String dirPath = dir.startsWith("/") ? dir.substring(1) : dir;
-                    String fileName = resourcePath.startsWith("/") ?
-                            resourcePath.substring(resourcePath.lastIndexOf('/') + 1) :
-                            resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
+                    String fileName = resourcePath.startsWith("/")
+                            ? resourcePath.substring(resourcePath.lastIndexOf('/') + 1)
+                            : resourcePath.substring(resourcePath.lastIndexOf('/') + 1);
 
-                    Path absoluteDirPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", dirPath, fileName);
+                    Path absoluteDirPath = Paths.get(System.getProperty("user.dir"), "src", "main", "resources",
+                            dirPath, fileName);
 
                     if (absoluteDirPath.toFile().exists()) {
                         resource = absoluteDirPath.toUri().toURL();
@@ -108,7 +110,8 @@ public class ResourceManager {
     }
 
     /**
-     * Obtient le chemin externe d'une ressource CSS pour pouvoir l'ajouter aux feuilles de style.
+     * Obtient le chemin externe d'une ressource CSS pour pouvoir l'ajouter aux
+     * feuilles de style.
      *
      * @param cssPath Le chemin de la feuille de style CSS
      * @return Le chemin externe de la feuille de style ou null si introuvable
@@ -121,7 +124,7 @@ public class ResourceManager {
     /**
      * Applique une liste de feuilles de style CSS à une scène JavaFX.
      *
-     * @param scene La scène JavaFX à styliser
+     * @param scene    La scène JavaFX à styliser
      * @param cssPaths Liste des chemins de feuilles de style à appliquer
      */
     public static void applyStylesheets(javafx.scene.Scene scene, String... cssPaths) {

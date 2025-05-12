@@ -15,21 +15,22 @@ import main.java.com.miage.parcauto.dao.DocumentDao.TypeDoc;
 
 /**
  * Service pour la gestion des documents.
- * Implémente la logique métier liée aux documents et fait le lien entre le contrôleur et le DAO.
+ * Implémente la logique métier liée aux documents et fait le lien entre le
+ * contrôleur et le DAO.
  * 
  */
 public class DocumentService {
-    
+
     private static final Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
     private final DocumentDao documentDao;
-    
+
     /**
      * Constructeur par défaut.
      */
     public DocumentService() {
         this.documentDao = new DocumentDao();
     }
-    
+
     /**
      * Constructeur avec injection de dépendance pour les tests.
      * 
@@ -38,7 +39,7 @@ public class DocumentService {
     public DocumentService(DocumentDao documentDao) {
         this.documentDao = documentDao;
     }
-    
+
     /**
      * Récupère tous les documents.
      * 
@@ -52,7 +53,7 @@ public class DocumentService {
             return Collections.emptyList();
         }
     }
-    
+
     /**
      * Récupère un document par son ID.
      * 
@@ -68,7 +69,7 @@ public class DocumentService {
             return null;
         }
     }
-    
+
     /**
      * Récupère les documents d'un sociétaire.
      * 
@@ -83,7 +84,7 @@ public class DocumentService {
             return Collections.emptyList();
         }
     }
-    
+
     /**
      * Récupère les documents d'un type spécifique.
      * 
@@ -98,7 +99,7 @@ public class DocumentService {
             return Collections.emptyList();
         }
     }
-    
+
     /**
      * Récupère les documents de plusieurs types spécifiques.
      * 
@@ -107,7 +108,7 @@ public class DocumentService {
      */
     public List<Document> getDocumentsByTypes(TypeDoc... types) {
         List<Document> result = new java.util.ArrayList<>();
-        
+
         for (TypeDoc type : types) {
             try {
                 List<Document> docs = documentDao.findByType(type);
@@ -116,15 +117,15 @@ public class DocumentService {
                 LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du type: " + type, e);
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * Vérifie si un document d'un type spécifique existe pour un sociétaire.
      * 
      * @param idSocietaire ID du sociétaire
-     * @param typeDoc Type de document
+     * @param typeDoc      Type de document
      * @return true si un document existe, false sinon
      */
     public boolean documentExists(int idSocietaire, TypeDoc typeDoc) {
@@ -135,14 +136,14 @@ public class DocumentService {
             return false;
         }
     }
-    
+
     /**
      * Upload un nouveau document.
      * 
-     * @param sourcePath Chemin du fichier à uploader
+     * @param sourcePath   Chemin du fichier à uploader
      * @param idSocietaire ID du sociétaire associé
-     * @param typeDoc Type du document
-     * @param nomOriginal Nom original du fichier
+     * @param typeDoc      Type du document
+     * @param nomOriginal  Nom original du fichier
      * @return Document créé ou null si erreur
      */
     public Document uploadDocument(Path sourcePath, int idSocietaire, TypeDoc typeDoc, String nomOriginal) {
@@ -153,12 +154,12 @@ public class DocumentService {
             return null;
         }
     }
-    
+
     /**
      * Remplace un document existant.
      * 
-     * @param idDoc ID du document à remplacer
-     * @param sourcePath Chemin du nouveau fichier
+     * @param idDoc       ID du document à remplacer
+     * @param sourcePath  Chemin du nouveau fichier
      * @param nomOriginal Nom original du nouveau fichier
      * @return Document mis à jour ou null si erreur
      */
@@ -170,7 +171,7 @@ public class DocumentService {
             return null;
         }
     }
-    
+
     /**
      * Met à jour les informations d'un document.
      * 
@@ -185,7 +186,7 @@ public class DocumentService {
             return false;
         }
     }
-    
+
     /**
      * Supprime un document.
      * 
@@ -200,7 +201,7 @@ public class DocumentService {
             return false;
         }
     }
-    
+
     /**
      * Récupère le chemin d'un document pour l'afficher.
      * 
@@ -215,7 +216,7 @@ public class DocumentService {
             return Optional.empty();
         }
     }
-    
+
     /**
      * Vérifie si un sociétaire possède tous les documents obligatoires.
      * 
@@ -230,7 +231,7 @@ public class DocumentService {
             return false;
         }
     }
-    
+
     /**
      * Recherche de documents par terme de recherche.
      * 

@@ -1,6 +1,8 @@
 package main.java.com.miage.parcauto.controller;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,14 +11,18 @@ import main.java.com.miage.parcauto.util.Permission;
 import main.java.com.miage.parcauto.util.ResourceManager;
 import main.java.com.miage.parcauto.util.SecurityManager;
 import main.java.com.miage.parcauto.util.SessionManager;
+import main.java.com.miage.parcauto.util.ThemeManager;
 
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 /**
@@ -24,24 +30,50 @@ import javafx.stage.Stage;
  * Fournit des méthodes utilitaires pour la gestion des permissions, la navigation et l'affichage d'alertes.
  *
  * @author MIAGE Holding
- * @version 1.1
+ * @version 1.2
  */
 public abstract class BaseController {
 
     private static final Logger LOGGER = Logger.getLogger(BaseController.class.getName());
     protected final SecurityManager securityManager;
     protected final SessionManager sessionManager;
+    protected final ThemeManager themeManager;
 
     // Constantes pour les ressources CSS
-    protected static final String[] DEFAULT_CSS = {"/css/theme.css"};
+    protected static final String[] DEFAULT_CSS = {"/css/theme-default.css"};
+
+    // Composants qui peuvent être présents dans les vues
+    @FXML
+    protected Label lblCurrentDateTime;
+
+    @FXML
+    protected Label lblUserName;
+
+    @FXML
+    protected Label lblUserRole;
+
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     /**
      * Constructeur.
-     * Initialise les gestionnaires de sécurité et de session.
+     * Initialise les gestionnaires de sécurité, de session et de thème.
      */
     public BaseController() {
         this.securityManager = SecurityManager.getInstance();
         this.sessionManager = SessionManager.getInstance();
+        this.themeManager = ThemeManager.getInstance();
+    }
+
+    /**
+     * Initialise les éléments communs à tous les contrôleurs.
+     * Cette méthode devrait être appelée par les sous-classes dans leur méthode initialize().
+     */
+    protected void initializeBaseComponents() {
+        // Mettre à jour les informations utilisateur
+        updateUserInfo();
+
+        // Mettre à jour la date et l'heure
+        updateDateTime();
     }
 
     /**
@@ -108,7 +140,7 @@ public abstract class BaseController {
 
             // Configuration de la scène
             Scene scene = new Scene(root);
-            ResourceManager.applyStylesheets(scene, DEFAULT_CSS);
+            themeManager.applyTheme(scene, "/css/views/login.css");
 
             // Récupérer le stage actuel
             Stage stage = (Stage) control.getScene().getWindow();
@@ -129,8 +161,9 @@ public abstract class BaseController {
      * @param control Un contrôle JavaFX utilisé pour obtenir la fenêtre actuelle
      * @param fxmlPath Le chemin vers le fichier FXML de la vue
      * @param title Le titre à afficher dans la fenêtre
+     * @param cssPath Chemin vers la feuille de style spécifique à la vue
      */
-    protected void navigateTo(Control control, String fxmlPath, String title) {
+    protected void navigateTo(Control control, String fxmlPath, String title, String cssPath) {
         try {
             // Charger et afficher la nouvelle vue via le ResourceManager
             FXMLLoader loader = ResourceManager.getFXMLLoader(fxmlPath);
@@ -138,7 +171,7 @@ public abstract class BaseController {
 
             // Configuration de la scène
             Scene scene = new Scene(root);
-            ResourceManager.applyStylesheets(scene, DEFAULT_CSS);
+            themeManager.applyTheme(scene, cssPath);
 
             // Récupérer le stage actuel
             Stage stage = (Stage) control.getScene().getWindow();
@@ -150,6 +183,27 @@ public abstract class BaseController {
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la navigation vers " + fxmlPath, ex);
             showErrorAlert("Erreur de navigation", "Impossible de charger la vue : " + fxmlPath);
+        }
+    }
+
+    /**
+     * Surcharge de navigateTo sans CSS spécifique
+     */
+    protected void navigateTo(Control control, String fxmlPath, String title) {
+        navigateTo(control, fxmlPath, title, null);
+    }
+
+    /**
+     * Change le thème de l'application
+     *
+     * @param themeName Nom du thème
+     * @param control Un contrôle JavaFX pour obtenir la scène
+     * @param cssPath Chemin CSS spécifique à la vue
+     */
+    protected void changeTheme(String themeName, Control control, String cssPath) {
+        Scene scene = control.getScene();
+        if (scene != null) {
+            themeManager.setTheme(themeName, scene, cssPath);
         }
     }
 
@@ -166,7 +220,7 @@ public abstract class BaseController {
         alert.setContentText(message);
 
         // Appliquer le style CSS via le ResourceManager
-        String css = ResourceManager.getStylesheetPath("/css/theme.css");
+        String css = ResourceManager.getStylesheetPath("/css/theme-" + themeManager.getCurrentTheme() + ".css");
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }
@@ -187,7 +241,7 @@ public abstract class BaseController {
         alert.setContentText(message);
 
         // Appliquer le style CSS via le ResourceManager
-        String css = ResourceManager.getStylesheetPath("/css/theme.css");
+        String css = ResourceManager.getStylesheetPath("/css/theme-" + themeManager.getCurrentTheme() + ".css");
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }
@@ -209,7 +263,7 @@ public abstract class BaseController {
         alert.setContentText(message);
 
         // Appliquer le style CSS via le ResourceManager
-        String css = ResourceManager.getStylesheetPath("/css/theme.css");
+        String css = ResourceManager.getStylesheetPath("/css/theme-" + themeManager.getCurrentTheme() + ".css");
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }
@@ -230,12 +284,40 @@ public abstract class BaseController {
         alert.setContentText(message);
 
         // Appliquer le style CSS via le ResourceManager
-        String css = ResourceManager.getStylesheetPath("/css/theme.css");
+        String css = ResourceManager.getStylesheetPath("/css/theme-" + themeManager.getCurrentTheme() + ".css");
         if (css != null) {
             alert.getDialogPane().getStylesheets().add(css);
         }
 
         alert.showAndWait();
+    }
+
+    /**
+     * Met à jour les informations utilisateur dans l'interface
+     */
+    protected void updateUserInfo() {
+        Utilisateur currentUser = sessionManager.getCurrentUser();
+
+        if (currentUser != null) {
+            if (lblUserName != null) {
+                lblUserName.setText(currentUser.getLogin());
+            }
+
+            if (lblUserRole != null) {
+                lblUserRole.setText(currentUser.getRole() != null ? currentUser.getRole().toString() : "Non défini");
+            }
+        }
+    }
+
+    /**
+     * Met à jour la date et l'heure dans l'interface
+     */
+    protected void updateDateTime() {
+        if (lblCurrentDateTime != null) {
+            String currentDateTime = LocalDateTime.now().format(dateTimeFormatter);
+            String username = sessionManager.getCurrentUser() != null ? sessionManager.getCurrentUser().getLogin() : "Anonyme";
+            lblCurrentDateTime.setText(currentDateTime + " | " + username);
+        }
     }
 
     /**
@@ -255,6 +337,6 @@ public abstract class BaseController {
      */
     protected void onPermissionDenied(Control control) {
         showErrorAlert("Accès refusé", "Vous n'avez pas les permissions nécessaires pour accéder à cette fonctionnalité.");
-        navigateTo(control, "/fxml/dashboard.fxml", "Gestion de Parc Automobile - Tableau de bord");
+        navigateTo(control, "/fxml/dashboard.fxml", "Gestion de Parc Automobile - Tableau de bord", "/css/views/dashboard.css");
     }
 }

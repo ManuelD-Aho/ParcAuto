@@ -243,4 +243,4 @@ ParcAuto est une application complète de gestion de parc automobile. Ce guide p
 
 ---
 
-Pour plus d'informations ou en cas de problème, contactez le support technique à support.parcauto@miage.fr
+Pour plus d'informations ou pour toute demande d'assistance, contactez le support technique à support.parcauto@miage.fr

@@ -15,8 +15,10 @@ import main.java.com.miage.parcauto.model.rh.Personnel;
 
 /**
  * Service de gestion des sociétaires (comptes sociétaires).
- * Cette classe implémente la couche service pour les opérations liées aux sociétaires.
- * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation (contrôleurs).
+ * Cette classe implémente la couche service pour les opérations liées aux
+ * sociétaires.
+ * Elle sert d'intermédiaire entre la couche DAO et la couche de présentation
+ * (contrôleurs).
  *
  * @author MIAGE Holding
  * @version 1.0
@@ -67,7 +69,7 @@ public class SocietaireService {
         try {
             return societeCompteDao.findById(id);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du sociétaire par ID: " + id, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du compte sociétaire par ID: " + id, e);
             return Optional.empty();
         }
     }
@@ -84,7 +86,8 @@ public class SocietaireService {
             Optional<SocieteCompte> societeCompte = societeCompteDao.findById(idSocietaire);
             return societeCompte.map(SocieteCompte::getIdPersonnel);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de l'ID du personnel pour le sociétaire: " + idSocietaire, e);
+            LOGGER.log(Level.SEVERE,
+                    "Erreur lors de la récupération de l'ID du personnel pour le sociétaire: " + idSocietaire, e);
             return Optional.empty();
         }
     }
@@ -100,7 +103,8 @@ public class SocietaireService {
             Optional<SocieteCompte> societeCompte = societeCompteDao.findById(idSocietaire);
             return societeCompte.map(SocieteCompte::getPersonnel);
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du personnel pour le sociétaire: " + idSocietaire, e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du personnel pour le sociétaire: " + idSocietaire,
+                    e);
             return Optional.empty();
         }
     }
@@ -151,16 +155,18 @@ public class SocietaireService {
     }
 
     /**
-     * Récupère le compte sociétaire (SocieteCompte) associé à un utilisateur (via idPersonnel).
+     * Récupère le compte sociétaire (SocieteCompte) associé à un utilisateur (via
+     * idPersonnel).
      *
      * @param idUtilisateur L'identifiant de l'utilisateur
      * @return Le compte sociétaire associé ou null si non trouvé
      */
     public SocieteCompte getSocieteCompteByIdUtilisateur(Integer idUtilisateur) {
-        if (idUtilisateur == null) return null;
+        if (idUtilisateur == null)
+            return null;
         try {
             // On suppose que l'utilisateur a un idPersonnel associé
-           UtilisateurDao utilisateurDao = new UtilisateurDao();
+            UtilisateurDao utilisateurDao = new UtilisateurDao();
             Optional<UtilisateurDao.Utilisateur> userOpt = utilisateurDao.findById(idUtilisateur);
             if (userOpt.isPresent() && userOpt.get().getIdPersonnel() != null) {
                 Optional<SocieteCompte> compteOpt = societeCompteDao.findByIdPersonnel(userOpt.get().getIdPersonnel());
@@ -173,14 +179,16 @@ public class SocietaireService {
     }
 
     /**
-     * Récupère le sociétaire (objet métier) associé à un utilisateur (via idUtilisateur).
+     * Récupère le sociétaire (objet métier) associé à un utilisateur (via
+     * idUtilisateur).
      *
      * @param idUtilisateur L'identifiant de l'utilisateur
      * @return Le sociétaire associé ou null si non trouvé
      */
     public Societaire getSocietaireByIdUtilisateur(Integer idUtilisateur) {
         SocieteCompte compte = getSocieteCompteByIdUtilisateur(idUtilisateur);
-        if (compte == null) return null;
+        if (compte == null)
+            return null;
         // Conversion SocieteCompte -> Societaire (modèle métier)
         Societaire s = new Societaire();
         s.setIdSocietaire(compte.getIdSocietaire());

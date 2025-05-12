@@ -69,17 +69,23 @@
 .login-container {
     -fx-background-color: rgba(255, 255, 255, 0.9);
     -fx-background-radius: 20px;
+    background-radius: 20px;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 10);
     -fx-border-radius: 20px;
+    border-radius: 20px;
     -fx-border-width: 1px;
+    border-width: 1px;
     -fx-border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* --- PANNEAU GAUCHE (BANNIÈRE) --- */
 .login-banner {
     -fx-background-color: linear-gradient(to bottom right, #3a7bd5, #00d2ff);
     -fx-background-radius: 20px 0 0 20px;
+    background-radius: 20px 0 0 20px;
     -fx-border-radius: 20px 0 0 20px;
+    border-radius: 20px 0 0 20px;
 }
 
 .app-logo {
@@ -263,15 +269,6 @@
     -fx-text-fill: -fx-primary-dark;
 }
 
-/* --- MESSAGE D'ERREUR --- */
-.error-message {
-    -fx-text-fill: -fx-danger;
-    -fx-font-size: 13px;
-    -fx-padding: 10 0;
-    -fx-min-height: 40px;
-    -fx-alignment: center;
-}
-
 /* --- BOUTON DE CONNEXION --- */
 .btn-login {
     -fx-background-color: -fx-primary;
@@ -410,4 +407,18 @@
         -fx-pref-width: 0;
         -fx-visible: false;
     }
+}
+
+/* --- GESTION DES ERREURS --- */
+.error-message {
+    color: #dc3545;
+    font-size: 13px;
+    padding: 10px 0;
+    min-height: 40px;
+    text-align: center;
+    -fx-text-fill: -fx-danger;
+    -fx-font-size: 13px;
+    -fx-padding: 10 0;
+    -fx-min-height: 40px;
+    -fx-alignment: center;
 }

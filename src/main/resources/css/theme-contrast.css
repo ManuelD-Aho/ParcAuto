@@ -1,0 +1,183 @@
+/* =========================================
+   THEME CONTRAST - ParcAuto
+   Thème à fort contraste pour l'accessibilité
+   ========================================= */
+
+@import "theme-base.css";
+
+.root {
+    /* Couleurs principales à fort contraste */
+    -fx-primary-color: #0056b3;
+    -fx-secondary-color: #008000;
+    -fx-background-color: #ffffff;
+    -fx-text-color: #000000;
+    -fx-accent-color: #cc0000;
+
+    /* Couleurs des états */
+    -fx-success-color: #008000;
+    -fx-warning-color: #cc7700;
+    -fx-error-color: #cc0000;
+    -fx-info-color: #0056b3;
+
+    /* Police plus grande pour meilleure lisibilité */
+    -fx-font-size: 14px;
+}
+
+* {
+    -fx-font-family: "Verdana", "Arial", sans-serif;
+}
+
+/* Styles spécifiques au thème à contraste élevé */
+.top-navbar {
+    -fx-background-color: #000000;
+}
+
+.dashboard-sidebar {
+    -fx-background-color: #000000;
+}
+
+.sidebar-menu {
+    -fx-text-fill: #ffffff;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+}
+
+.sidebar-menu:hover {
+    -fx-background-color: #0056b3;
+}
+
+.sidebar-menu.active {
+    -fx-background-color: #0056b3;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0 0 0 6px;
+}
+
+.sidebar-header {
+    -fx-font-size: 18px;
+    -fx-opacity: 1;
+}
+
+/* Formulaires - contrastes élevés */
+.form-container {
+    -fx-border-width: 2px;
+    border-width: 2px;
+    -fx-border-color: #000000;
+    border-color: #000000;
+    -fx-background-radius: 8px;
+    background-radius: 8px;
+    -fx-border-radius: 8px;
+    border-radius: 8px;
+    -fx-padding: 16px;
+    padding: 16px;
+}
+
+.form-label {
+    -fx-font-weight: bold;
+}
+
+.text-field, .password-field, .combo-box, .date-picker {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-border-color: #000000;
+    -fx-border-width: 2;
+}
+
+.text-field:focused, .password-field:focused, .combo-box:focused, .date-picker:focused {
+    -fx-border-color: #0056b3;
+    -fx-border-width: 3;
+}
+
+/* Boutons - contrastes élevés */
+.button {
+    -fx-font-weight: bold;
+    -fx-border-width: 2;
+}
+
+.btn-primary {
+    -fx-background-color: #0056b3;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #000000;
+}
+
+.btn-secondary {
+    -fx-background-color: #008000;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #000000;
+}
+
+.btn-success {
+    -fx-background-color: #008000;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #000000;
+}
+
+.btn-danger {
+    -fx-background-color: #cc0000;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #000000;
+}
+
+.btn-warning {
+    -fx-background-color: #cc7700;
+    -fx-text-fill: #000000;
+    -fx-border-color: #000000;
+}
+
+/* Tableaux - contrastes élevés */
+.table-view {
+    -fx-border-width: 2;
+    -fx-border-color: #000000;
+}
+
+.table-view .column-header {
+    -fx-background-color: #000000;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
+    -fx-border-color: #000000;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f0f0f0;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #0056b3;
+    -fx-text-fill: #ffffff;
+}
+
+/* Titres avec des tailles spécifiques */
+.section-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.chart-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
+
+/* Stats cards avec bordures plus épaisses */
+.stats-card {
+    -fx-border-width: 0 0 0 8px;
+}
+
+.stats-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.stats-value {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+/* Accordéons avec meilleure visibilité */
+.titled-pane > .title {
+    -fx-background-color: #e0e0e0;
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+}

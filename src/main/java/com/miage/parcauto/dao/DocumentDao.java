@@ -32,8 +32,7 @@ public class DocumentDao {
     private static final String BASE_UPLOAD_DIR = "./uploads/documents";
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10Mo
     private static final Set<String> ALLOWED_EXTENSIONS = new HashSet<>(Arrays.asList(
-            "pdf", "jpg", "jpeg", "png", "doc", "docx"
-    ));
+            "pdf", "jpg", "jpeg", "png", "doc", "docx"));
 
     // Instance de DbUtil pour la gestion des connexions
     private final DbUtil dbUtil;
@@ -68,6 +67,7 @@ public class DocumentDao {
             }
         } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la création du répertoire de documents", ex);
+            throw new RuntimeException("Impossible de créer le répertoire de documents", ex);
         }
     }
 
@@ -121,7 +121,7 @@ public class DocumentDao {
 
         // Constructeur complet
         public Document(Integer idDoc, Integer idSocietaire, String nomSocietaire, TypeDoc typeDoc,
-                        String cheminFichier, LocalDateTime dateUpload, String nomOriginal) {
+                String cheminFichier, LocalDateTime dateUpload, String nomOriginal) {
             this.idDoc = idDoc;
             this.idSocietaire = idSocietaire;
             this.nomSocietaire = nomSocietaire;
@@ -332,7 +332,8 @@ public class DocumentDao {
             return documents;
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des documents pour le sociétaire ID: " + idSocietaire, ex);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des documents pour le sociétaire ID: " + idSocietaire,
+                    ex);
             throw ex;
         } finally {
             dbUtil.closeResultSet(rs);
@@ -345,7 +346,7 @@ public class DocumentDao {
      * Récupère les documents d'un sociétaire par type.
      *
      * @param idSocietaire ID du sociétaire
-     * @param typeDoc Type de document recherché
+     * @param typeDoc      Type de document recherché
      * @return Liste des documents du sociétaire du type spécifié
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
@@ -392,7 +393,7 @@ public class DocumentDao {
      * Utile pour vérifier si un type de document existe déjà pour un sociétaire.
      *
      * @param idSocietaire ID du sociétaire
-     * @param typeDoc Type de document recherché
+     * @param typeDoc      Type de document recherché
      * @return Optional contenant le document s'il existe, vide sinon
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
@@ -496,15 +497,16 @@ public class DocumentDao {
     }
 
     /**
-     * Enregistre un nouveau document dans la base de données et sur le système de fichiers.
+     * Enregistre un nouveau document dans la base de données et sur le système de
+     * fichiers.
      *
-     * @param sourcePath Chemin source du fichier à enregistrer
+     * @param sourcePath   Chemin source du fichier à enregistrer
      * @param idSocietaire ID du sociétaire associé au document
-     * @param typeDoc Type du document
-     * @param nomOriginal Nom original du fichier
+     * @param typeDoc      Type du document
+     * @param nomOriginal  Nom original du fichier
      * @return Le document créé
-     * @throws SQLException En cas d'erreur d'accès à la base de données
-     * @throws IOException En cas d'erreur lors de la copie du fichier
+     * @throws SQLException             En cas d'erreur d'accès à la base de données
+     * @throws IOException              En cas d'erreur lors de la copie du fichier
      * @throws IllegalArgumentException Si le fichier est invalide
      */
     public Document save(Path sourcePath, int idSocietaire, TypeDoc typeDoc, String nomOriginal)
@@ -631,12 +633,12 @@ public class DocumentDao {
     /**
      * Remplace un document existant.
      *
-     * @param idDoc ID du document à remplacer
-     * @param sourcePath Chemin source du nouveau fichier
+     * @param idDoc       ID du document à remplacer
+     * @param sourcePath  Chemin source du nouveau fichier
      * @param nomOriginal Nom original du nouveau fichier
      * @return Le document mis à jour
-     * @throws SQLException En cas d'erreur d'accès à la base de données
-     * @throws IOException En cas d'erreur lors de la copie du fichier
+     * @throws SQLException             En cas d'erreur d'accès à la base de données
+     * @throws IOException              En cas d'erreur lors de la copie du fichier
      * @throws IllegalArgumentException Si le fichier est invalide
      */
     public Document replace(int idDoc, Path sourcePath, String nomOriginal)
@@ -758,7 +760,8 @@ public class DocumentDao {
                     return true;
                 } catch (IOException e) {
                     LOGGER.log(Level.WARNING, "Impossible de supprimer le fichier: " + cheminFichier, e);
-                    return true; // On considère que la suppression est réussie même si le fichier n'est pas supprimé
+                    return true; // On considère que la suppression est réussie même si le fichier n'est pas
+                                 // supprimé
                 }
             }
 
@@ -778,7 +781,8 @@ public class DocumentDao {
      * Vérifie l'extension et la taille.
      *
      * @param filePath Chemin du fichier à valider
-     * @throws IOException En cas d'erreur lors de la lecture du fichier
+     * @throws IOException              En cas d'erreur lors de la lecture du
+     *                                  fichier
      * @throws IllegalArgumentException Si le fichier est invalide
      */
     private void validateFile(Path filePath) throws IOException, IllegalArgumentException {
@@ -863,7 +867,7 @@ public class DocumentDao {
      * Vérifie si un document existe déjà pour un sociétaire et un type donné.
      *
      * @param idSocietaire ID du sociétaire
-     * @param typeDoc Type de document
+     * @param typeDoc      Type de document
      * @return true si un document existe déjà, false sinon
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
