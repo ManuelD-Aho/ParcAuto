@@ -1,110 +1,130 @@
-mai 12, 2025 2:46:09 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\login.fxml
-mai 12, 2025 2:46:09 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\images\logo.png
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\theme-base.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\theme-default.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\theme-dark.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\theme-contrast.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\theme-corporate.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\theme-modern.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\images\logo-parcauto.png
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.MainApp initializeSystemComponents
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.MainApp initializeSystemComponents
 INFOS: Initialisation des composants système...
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.MainApp initializeSecurityManager
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.MainApp initializeSecurityManager
 INFOS: Système de sécurité initialisé avec succès
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.dao.DbUtil loadProperties
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.dao.DbUtil loadProperties
 AVERTISSEMENT: Utilisation des paramètres de connexion par défaut
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.dao.DbUtil loadProperties
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.dao.DbUtil loadProperties
 INFOS: URL de connexion configurée: jdbc:mysql://localhost:3306/ParcAuto?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.dao.DbUtil loadProperties
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.dao.DbUtil loadProperties
 INFOS: Utilisateur configuré: root
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.dao.DbUtil <init>
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.dao.DbUtil <init>
 INFOS: Configuration de la base de données chargée avec succès
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.dao.DbUtil getConnection
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.dao.DbUtil getConnection
 INFOS: Nouvelle connexion établie à jdbc:mysql://localhost:3306/ParcAuto?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.dao.DbUtil testConnection
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.dao.DbUtil testConnection
 INFOS: Connexion à la base de données validée
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.MainApp testDatabaseConnection
+mai 13, 2025 3:33:11 PM main.java.com.miage.parcauto.MainApp testDatabaseConnection
 INFOS: Connexion à la base de données établie avec succès
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\views\login.css
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé (spécifique vue): /css/views/login.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/login.css)
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:10 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:46:11 PM main.java.com.miage.parcauto.MainApp start
+mai 13, 2025 3:33:12 PM main.java.com.miage.parcauto.MainApp start
 INFOS: Application démarrée avec succès
-mai 12, 2025 2:46:13 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: dark
-mai 12, 2025 2:46:13 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:13 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-dark.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-dark.css)
-mai 12, 2025 2:46:13 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé (spécifique vue): /css/views/login.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/login.css)
-mai 12, 2025 2:46:15 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:15 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:15 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:15 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé (spécifique vue): /css/views/login.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/login.css)
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.SessionManager setCurrentUser
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.SessionManager setCurrentUser
 INFOS: Utilisateur connecté: admin
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\dashboard.fxml
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\css\views\dashboard.css
-mai 12, 2025 2:46:26 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé (spécifique vue): /css/views/dashboard.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/dashboard.css)
-mai 12, 2025 2:46:27 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:27 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:27 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:27 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:46:27 PM main.java.com.miage.parcauto.controller.LoginController loginSuccessful
+mai 13, 2025 3:33:21 PM main.java.com.miage.parcauto.controller.LoginController loginSuccessful
 INFOS: Navigation vers le tableau de bord réussie
-mai 12, 2025 2:46:38 PM main.java.com.miage.parcauto.util.ResourceManager getResource
-INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\report_view.fxml
-mai 12, 2025 2:46:40 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\vehicule_form.fxml
+mai 13, 2025 3:33:25 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
+AVERTISSEMENT: Resource "../css/theme.css" not found.
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:40 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:40 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:40 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Aucun CSS spécifique à la vue à charger.
+mai 13, 2025 3:33:25 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+INFOS: Navigation vers /fxml/vehicule_form.fxml
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Aucun CSS spécifique à la vue à charger.
+mai 13, 2025 3:33:29 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+INFOS: Navigation vers /fxml/dashboard.fxml
+mai 13, 2025 3:33:31 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\report_view.fxml
+mai 13, 2025 3:33:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé (spécifique vue): /css/views/dashboard.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/dashboard.css)
-mai 12, 2025 2:46:40 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+mai 13, 2025 3:33:33 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
 GRAVE: Erreur lors de la navigation vers /fxml/report_view.fxml
 javafx.fxml.LoadException: 
 /C:/THEBLACK/ParcAuto/src/main/resources/fxml/report_view.fxml
@@ -173,211 +193,186 @@ Caused by: java.lang.NullPointerException: Cannot invoke "javafx.scene.Scene.get
 	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2670)
 	... 55 more
 
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ResourceManager getResource
-INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\vehicule_form.fxml
-mai 12, 2025 2:46:44 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
-AVERTISSEMENT: Resource "../css/theme.css" not found.
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:46:44 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/vehicule_form.fxml
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:46:58 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/dashboard.fxml
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.SessionManager logout
-INFOS: Déconnexion de l'utilisateur: admin
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé (spécifique vue): /css/views/login.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/login.css)
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:14 PM main.java.com.miage.parcauto.controller.BaseController logout
-INFOS: Déconnexion effectuée avec succès
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.SessionManager setCurrentUser
-INFOS: Utilisateur connecté: u1
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé (spécifique vue): /css/views/dashboard.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/dashboard.css)
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:25 PM main.java.com.miage.parcauto.controller.LoginController loginSuccessful
-INFOS: Navigation vers le tableau de bord réussie
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ResourceManager getResource
-INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\mission_planner.fxml
-mai 12, 2025 2:47:33 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
-AVERTISSEMENT: Resource "../css/theme.css" not found.
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:33 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/mission_planner.fxml
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:39 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/dashboard.fxml
-mai 12, 2025 2:47:42 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
-AVERTISSEMENT: Resource "../css/theme.css" not found.
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:42 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/vehicule_form.fxml
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:44 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/dashboard.fxml
-mai 12, 2025 2:47:46 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
-AVERTISSEMENT: Resource "../css/theme.css" not found.
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:46 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/vehicule_form.fxml
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
-INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:47:54 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/dashboard.fxml
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+mai 13, 2025 3:33:36 PM main.java.com.miage.parcauto.util.ResourceManager getResource
 INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\finance_view.fxml
-mai 12, 2025 2:48:08 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
-AVERTISSEMENT: Resource "../css/theme.css" not found.
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:38 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:38 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:38 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:38 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé (spécifique vue): /css/views/dashboard.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/dashboard.css)
+mai 13, 2025 3:33:38 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+GRAVE: Erreur lors de la navigation vers /fxml/finance_view.fxml
+javafx.fxml.LoadException: 
+/C:/THEBLACK/ParcAuto/src/main/resources/fxml/finance_view.fxml
+
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader.constructLoadException(FXMLLoader.java:2722)
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2700)
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2563)
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader.load(FXMLLoader.java:2531)
+	at main.java.com.miage.parcauto.controller.BaseController.navigateTo(BaseController.java:170)
+	at main.java.com.miage.parcauto.controller.BaseController.navigateTo(BaseController.java:193)
+	at main.java.com.miage.parcauto.controller.DashboardController.handleGererFinances(DashboardController.java:627)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at com.sun.javafx.reflect.Trampoline.invoke(MethodUtil.java:72)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at javafx.base@21.0.7/com.sun.javafx.reflect.MethodUtil.invoke(MethodUtil.java:270)
+	at javafx.fxml@21.0.7/com.sun.javafx.fxml.MethodHelper.invoke(MethodHelper.java:84)
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader$MethodHandler.invoke(FXMLLoader.java:1853)
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader$ControllerMethodEventHandler.handle(FXMLLoader.java:1726)
+	at javafx.base@21.0.7/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:86)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189)
+	at javafx.base@21.0.7/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:49)
+	at javafx.base@21.0.7/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.controls@21.0.7/javafx.scene.control.MenuItem.fire(MenuItem.java:459)
+	at javafx.controls@21.0.7/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.doSelect(ContextMenuContent.java:1415)
+	at javafx.controls@21.0.7/com.sun.javafx.scene.control.ContextMenuContent$MenuItemContainer.lambda$createChildren$12(ContextMenuContent.java:1368)
+	at javafx.base@21.0.7/com.sun.javafx.event.CompositeEventHandler$NormalEventHandlerRecord.handleBubblingEvent(CompositeEventHandler.java:247)
+	at javafx.base@21.0.7/com.sun.javafx.event.CompositeEventHandler.dispatchBubblingEvent(CompositeEventHandler.java:80)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:232)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventHandlerManager.dispatchBubblingEvent(EventHandlerManager.java:189)
+	at javafx.base@21.0.7/com.sun.javafx.event.CompositeEventDispatcher.dispatchBubblingEvent(CompositeEventDispatcher.java:59)
+	at javafx.base@21.0.7/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:58)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@21.0.7/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@21.0.7/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@21.0.7/com.sun.javafx.event.BasicEventDispatcher.dispatchEvent(BasicEventDispatcher.java:56)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventDispatchChainImpl.dispatchEvent(EventDispatchChainImpl.java:114)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventUtil.fireEventImpl(EventUtil.java:74)
+	at javafx.base@21.0.7/com.sun.javafx.event.EventUtil.fireEvent(EventUtil.java:54)
+	at javafx.base@21.0.7/javafx.event.Event.fireEvent(Event.java:198)
+	at javafx.graphics@21.0.7/javafx.scene.Scene$MouseHandler.process(Scene.java:3984)
+	at javafx.graphics@21.0.7/javafx.scene.Scene.processMouseEvent(Scene.java:1890)
+	at javafx.graphics@21.0.7/javafx.scene.Scene$ScenePeerListener.mouseEvent(Scene.java:2708)
+	at javafx.graphics@21.0.7/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:411)
+	at javafx.graphics@21.0.7/com.sun.javafx.tk.quantum.GlassViewEventHandler$MouseEventNotification.run(GlassViewEventHandler.java:301)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at javafx.graphics@21.0.7/com.sun.javafx.tk.quantum.GlassViewEventHandler.lambda$handleMouseEvent$2(GlassViewEventHandler.java:450)
+	at javafx.graphics@21.0.7/com.sun.javafx.tk.quantum.QuantumToolkit.runWithoutRenderLock(QuantumToolkit.java:424)
+	at javafx.graphics@21.0.7/com.sun.javafx.tk.quantum.GlassViewEventHandler.handleMouseEvent(GlassViewEventHandler.java:449)
+	at javafx.graphics@21.0.7/com.sun.glass.ui.View.handleMouseEvent(View.java:551)
+	at javafx.graphics@21.0.7/com.sun.glass.ui.View.notifyMouse(View.java:937)
+	at javafx.graphics@21.0.7/com.sun.glass.ui.win.WinApplication._runLoop(Native Method)
+	at javafx.graphics@21.0.7/com.sun.glass.ui.win.WinApplication.lambda$runLoop$3(WinApplication.java:185)
+	at java.base/java.lang.Thread.run(Thread.java:1570)
+Caused by: java.lang.NullPointerException: Cannot invoke "javafx.scene.Scene.getWindow()" because the return value of "javafx.scene.control.Control.getScene()" is null
+	at main.java.com.miage.parcauto.controller.BaseController.navigateTo(BaseController.java:177)
+	at main.java.com.miage.parcauto.controller.BaseController.onPermissionDenied(BaseController.java:340)
+	at main.java.com.miage.parcauto.controller.FinanceController.initialize(FinanceController.java:123)
+	at javafx.fxml@21.0.7/javafx.fxml.FXMLLoader.loadImpl(FXMLLoader.java:2670)
+	... 55 more
+
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.SessionManager logout
+INFOS: Déconnexion de l'utilisateur: admin
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Application des styles à la scène. Thème courant: contrast
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé (spécifique vue): /css/views/login.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/login.css)
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
 INFOS: Aucun CSS spécifique à la vue à charger.
-mai 12, 2025 2:48:08 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
-INFOS: Navigation vers /fxml/finance_view.fxml
-mai 12, 2025 2:48:15 PM main.java.com.miage.parcauto.MainApp stop
+mai 13, 2025 3:33:41 PM main.java.com.miage.parcauto.controller.BaseController logout
+INFOS: Déconnexion effectuée avec succès
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.SessionManager setCurrentUser
+INFOS: Utilisateur connecté: u1
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé (spécifique vue): /css/views/dashboard.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/views/dashboard.css)
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Aucun CSS spécifique à la vue à charger.
+mai 13, 2025 3:33:48 PM main.java.com.miage.parcauto.controller.LoginController loginSuccessful
+INFOS: Navigation vers le tableau de bord réussie
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\mission_planner.fxml
+mai 13, 2025 3:33:51 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
+AVERTISSEMENT: Resource "../css/theme.css" not found.
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Aucun CSS spécifique à la vue à charger.
+mai 13, 2025 3:33:51 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+INFOS: Navigation vers /fxml/mission_planner.fxml
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Aucun CSS spécifique à la vue à charger.
+mai 13, 2025 3:33:54 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+INFOS: Navigation vers /fxml/dashboard.fxml
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ResourceManager getResource
+INFOS: Ressource trouvée en chemin absolu: C:\THEBLACK\ParcAuto\src\main\resources\fxml\entretien_view.fxml
+mai 13, 2025 3:33:57 PM com.sun.javafx.css.StyleManager loadStylesheetUnPrivileged
+AVERTISSEMENT: Resource "../css/theme.css" not found.
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Application des styles à la scène. Thème courant: contrast
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-base.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-base.css)
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Chargé: /css/theme-contrast.css (URL: file:/C:/THEBLACK/ParcAuto/src/main/resources/css/theme-contrast.css)
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.util.ThemeManager applyTheme
+INFOS: Aucun CSS spécifique à la vue à charger.
+mai 13, 2025 3:33:57 PM main.java.com.miage.parcauto.controller.BaseController navigateTo
+INFOS: Navigation vers /fxml/entretien_view.fxml
+mai 13, 2025 3:34:28 PM main.java.com.miage.parcauto.MainApp stop
 INFOS: Fermeture de l'application...
-mai 12, 2025 2:48:15 PM main.java.com.miage.parcauto.dao.DbUtil closeConnection
+mai 13, 2025 3:34:28 PM main.java.com.miage.parcauto.dao.DbUtil closeConnection
 INFOS: Connexion fermée
-mai 12, 2025 2:48:15 PM main.java.com.miage.parcauto.dao.DbUtil shutdown
+mai 13, 2025 3:34:28 PM main.java.com.miage.parcauto.dao.DbUtil shutdown
 INFOS: Ressources de base de données libérées
-mai 12, 2025 2:48:15 PM main.java.com.miage.parcauto.MainApp stop
+mai 13, 2025 3:34:28 PM main.java.com.miage.parcauto.MainApp stop
 INFOS: Application fermée avec succès

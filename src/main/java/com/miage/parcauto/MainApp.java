@@ -1,7 +1,7 @@
 package main.java.com.miage.parcauto;
 
 import java.io.IOException;
-import java.io.PrintStream; // Ajout pour rediriger System.err
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

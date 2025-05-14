@@ -9,9 +9,10 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.DocumentDao;
-import main.java.com.miage.parcauto.dao.DocumentDao.Document;
-import main.java.com.miage.parcauto.dao.DocumentDao.TypeDoc;
+import main.java.com.miage.parcauto.dao.DocumentRepository;
+import main.java.com.miage.parcauto.dao.DocumentRepositoryImpl;
+import main.java.com.miage.parcauto.dao.DocumentRepository.Document;
+import main.java.com.miage.parcauto.dao.DocumentRepository.TypeDoc;
 
 /**
  * Service pour la gestion des documents.
@@ -22,22 +23,22 @@ import main.java.com.miage.parcauto.dao.DocumentDao.TypeDoc;
 public class DocumentService {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
-    private final DocumentDao documentDao;
+    private final DocumentRepository documentRepository;
 
     /**
      * Constructeur par défaut.
      */
     public DocumentService() {
-        this.documentDao = new DocumentDao();
+        this.documentRepository = new DocumentRepositoryImpl();
     }
 
     /**
      * Constructeur avec injection de dépendance pour les tests.
      * 
-     * @param documentDao DAO des documents à utiliser
+     * @param documentRepository DAO des documents à utiliser
      */
-    public DocumentService(DocumentDao documentDao) {
-        this.documentDao = documentDao;
+    public DocumentService(DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
     }
 
     /**
@@ -47,7 +48,7 @@ public class DocumentService {
      */
     public List<Document> getAllDocuments() {
         try {
-            return documentDao.findAll();
+            return documentRepository.findAll();
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les documents", e);
             return Collections.emptyList();
@@ -62,7 +63,7 @@ public class DocumentService {
      */
     public Document getDocumentById(int id) {
         try {
-            Optional<Document> doc = documentDao.findById(id);
+            Optional<Document> doc = documentRepository.findById(id);
             return doc.orElse(null);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du document par ID: " + id, e);
@@ -78,7 +79,7 @@ public class DocumentService {
      */
     public List<Document> getDocumentsBySocietaire(int idSocietaire) {
         try {
-            return documentDao.findBySocietaire(idSocietaire);
+            return documentRepository.findBySocietaire(idSocietaire);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du sociétaire: " + idSocietaire, e);
             return Collections.emptyList();
@@ -93,7 +94,7 @@ public class DocumentService {
      */
     public List<Document> getDocumentsByType(TypeDoc typeDoc) {
         try {
-            return documentDao.findByType(typeDoc);
+            return documentRepository.findByType(typeDoc);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du type: " + typeDoc, e);
             return Collections.emptyList();
@@ -111,7 +112,7 @@ public class DocumentService {
 
         for (TypeDoc type : types) {
             try {
-                List<Document> docs = documentDao.findByType(type);
+                List<Document> docs = documentRepository.findByType(type);
                 result.addAll(docs);
             } catch (SQLException e) {
                 LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du type: " + type, e);
@@ -130,7 +131,7 @@ public class DocumentService {
      */
     public boolean documentExists(int idSocietaire, TypeDoc typeDoc) {
         try {
-            return documentDao.documentExists(idSocietaire, typeDoc);
+            return documentRepository.documentExists(idSocietaire, typeDoc);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la vérification d'existence du document", e);
             return false;
@@ -148,7 +149,7 @@ public class DocumentService {
      */
     public Document uploadDocument(Path sourcePath, int idSocietaire, TypeDoc typeDoc, String nomOriginal) {
         try {
-            return documentDao.save(sourcePath, idSocietaire, typeDoc, nomOriginal);
+            return documentRepository.save(sourcePath, idSocietaire, typeDoc, nomOriginal);
         } catch (SQLException | IOException | IllegalArgumentException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de l'upload du document", e);
             return null;
@@ -165,7 +166,7 @@ public class DocumentService {
      */
     public Document replaceDocument(int idDoc, Path sourcePath, String nomOriginal) {
         try {
-            return documentDao.replace(idDoc, sourcePath, nomOriginal);
+            return documentRepository.replace(idDoc, sourcePath, nomOriginal);
         } catch (SQLException | IOException | IllegalArgumentException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors du remplacement du document", e);
             return null;
@@ -180,7 +181,7 @@ public class DocumentService {
      */
     public boolean updateDocument(Document document) {
         try {
-            return documentDao.update(document);
+            return documentRepository.update(document);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du document", e);
             return false;
@@ -195,7 +196,7 @@ public class DocumentService {
      */
     public boolean deleteDocument(int idDoc) {
         try {
-            return documentDao.delete(idDoc);
+            return documentRepository.delete(idDoc);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la suppression du document", e);
             return false;
@@ -210,7 +211,7 @@ public class DocumentService {
      */
     public Optional<Path> getDocumentPath(int idDoc) {
         try {
-            return documentDao.getDocumentPath(idDoc);
+            return documentRepository.getDocumentPath(idDoc);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du chemin du document", e);
             return Optional.empty();
@@ -225,7 +226,7 @@ public class DocumentService {
      */
     public boolean hasRequiredDocuments(int idSocietaire) {
         try {
-            return documentDao.hasRequiredDocuments(idSocietaire);
+            return documentRepository.hasRequiredDocuments(idSocietaire);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la vérification des documents obligatoires", e);
             return false;
@@ -240,7 +241,7 @@ public class DocumentService {
      */
     public List<Document> searchDocuments(String searchTerm) {
         try {
-            return documentDao.search(searchTerm);
+            return documentRepository.search(searchTerm);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de documents", e);
             return Collections.emptyList();

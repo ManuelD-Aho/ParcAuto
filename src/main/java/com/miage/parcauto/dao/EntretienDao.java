@@ -1,5 +1,10 @@
 package main.java.com.miage.parcauto.dao;
 
+/**
+ * @deprecated Utiliser EntretienRepository et son implémentation EntretienRepositoryImpl.
+ * Cette classe sera supprimée après migration complète vers le pattern Repository.
+ */
+
 import main.java.com.miage.parcauto.model.entretien.Entretien;
 import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
@@ -47,7 +52,7 @@ public class EntretienDao {
     /**
      * Constructeur avec injection de dépendance pour les tests.
      *
-     * @param dbUtil Instance de DbUtil à utiliser
+     * @param dbUtil      Instance de DbUtil à utiliser
      * @param vehiculeDao Instance de VehiculeDao à utiliser
      */
     public EntretienDao(DbUtil dbUtil, VehiculeDao vehiculeDao) {
@@ -169,7 +174,8 @@ public class EntretienDao {
             return entretiens;
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des entretiens pour le véhicule ID: " + idVehicule, ex);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des entretiens pour le véhicule ID: " + idVehicule,
+                    ex);
             throw ex;
         } finally {
             dbUtil.closeResultSet(rs);
@@ -298,7 +304,7 @@ public class EntretienDao {
      * Récupère les entretiens entre deux dates.
      *
      * @param debut Date de début
-     * @param fin Date de fin
+     * @param fin   Date de fin
      * @return Liste des entretiens dans cette période
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
@@ -343,7 +349,7 @@ public class EntretienDao {
      * Crée un nouvel entretien dans la base de données.
      * Met également à jour l'état du véhicule si nécessaire.
      *
-     * @param entretien L'entretien à créer
+     * @param entretien          L'entretien à créer
      * @param updateVehiculeEtat Si true, met à jour l'état du véhicule
      * @return L'entretien créé avec son ID généré
      * @throws SQLException En cas d'erreur d'accès à la base de données
@@ -355,7 +361,7 @@ public class EntretienDao {
 
         try {
             conn = dbUtil.getConnection();
-            conn.setAutoCommit(false);  // Début transaction
+            conn.setAutoCommit(false); // Début transaction
 
             String sql = "INSERT INTO ENTRETIEN (id_vehicule, date_entree_entr, date_sortie_entr, " +
                     "motif_entr, observation, cout_entr, lieu_entr, type, statut_ot) " +
@@ -410,13 +416,13 @@ public class EntretienDao {
                 vehiculeDao.updateEtat(entretien.getIdVehicule(), EtatVoiture.EN_ENTRETIEN);
             }
 
-            conn.commit();  // Valider transaction
+            conn.commit(); // Valider transaction
             return entretien;
 
         } catch (SQLException ex) {
             if (conn != null) {
                 try {
-                    conn.rollback();  // Annuler transaction en cas d'erreur
+                    conn.rollback(); // Annuler transaction en cas d'erreur
                 } catch (SQLException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
                 }
@@ -426,7 +432,7 @@ public class EntretienDao {
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true);  // Rétablir autocommit
+                    conn.setAutoCommit(true); // Rétablir autocommit
                 } catch (SQLException e) {
                     LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
                 }
@@ -454,7 +460,7 @@ public class EntretienDao {
 
         try {
             conn = dbUtil.getConnection();
-            conn.setAutoCommit(false);  // Début transaction
+            conn.setAutoCommit(false); // Début transaction
 
             String sql = "UPDATE ENTRETIEN SET id_vehicule = ?, date_entree_entr = ?, date_sortie_entr = ?, " +
                     "motif_entr = ?, observation = ?, cout_entr = ?, lieu_entr = ?, type = ?, statut_ot = ? " +
@@ -496,23 +502,24 @@ public class EntretienDao {
 
             int affectedRows = pstmt.executeUpdate();
 
-            conn.commit();  // Valider transaction
+            conn.commit(); // Valider transaction
             return affectedRows > 0;
 
         } catch (SQLException ex) {
             if (conn != null) {
                 try {
-                    conn.rollback();  // Annuler transaction en cas d'erreur
+                    conn.rollback(); // Annuler transaction en cas d'erreur
                 } catch (SQLException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
                 }
             }
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de l'entretien ID: " + entretien.getIdEntretien(), ex);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de l'entretien ID: " + entretien.getIdEntretien(),
+                    ex);
             throw ex;
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true);  // Rétablir autocommit
+                    conn.setAutoCommit(true); // Rétablir autocommit
                 } catch (SQLException e) {
                     LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
                 }
@@ -526,20 +533,22 @@ public class EntretienDao {
      * Met à jour le statut d'un entretien.
      * Met également à jour l'état du véhicule si nécessaire.
      *
-     * @param idEntretien ID de l'entretien
-     * @param statut Nouveau statut
-     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule selon le statut
+     * @param idEntretien        ID de l'entretien
+     * @param statut             Nouveau statut
+     * @param updateVehiculeEtat Si true, met à jour l'état du véhicule selon le
+     *                           statut
      * @return true si la mise à jour a réussi, false sinon
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
-    public boolean updateStatut(int idEntretien, Entretien.StatutOT statut, boolean updateVehiculeEtat) throws SQLException {
+    public boolean updateStatut(int idEntretien, Entretien.StatutOT statut, boolean updateVehiculeEtat)
+            throws SQLException {
         Connection conn = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         try {
             conn = dbUtil.getConnection();
-            conn.setAutoCommit(false);  // Début transaction
+            conn.setAutoCommit(false); // Début transaction
 
             // Récupérer d'abord l'ID du véhicule associé
             String sqlSelect = "SELECT id_vehicule FROM ENTRETIEN WHERE id_entretien = ?";
@@ -552,7 +561,7 @@ public class EntretienDao {
             if (rs.next()) {
                 idVehicule = rs.getInt("id_vehicule");
             } else {
-                return false;  // Entretien non trouvé
+                return false; // Entretien non trouvé
             }
 
             // Mise à jour du statut de l'entretien
@@ -584,9 +593,9 @@ public class EntretienDao {
 
                 // Déterminer le nouvel état du véhicule selon le statut de l'entretien
                 if (statut == Entretien.StatutOT.Cloture) {
-                    nouvelEtatVehicule = EtatVoiture.DISPONIBLE;  // 1 = Disponible
+                    nouvelEtatVehicule = EtatVoiture.DISPONIBLE; // 1 = Disponible
                 } else if (statut == Entretien.StatutOT.EnCours) {
-                    nouvelEtatVehicule = EtatVoiture.EN_ENTRETIEN;  // 4 = En entretien
+                    nouvelEtatVehicule = EtatVoiture.EN_ENTRETIEN; // 4 = En entretien
                 } else {
                     // Pour les autres statuts, laisser l'état actuel
                     conn.commit();
@@ -596,13 +605,13 @@ public class EntretienDao {
                 vehiculeDao.updateEtat(idVehicule, nouvelEtatVehicule);
             }
 
-            conn.commit();  // Valider transaction
+            conn.commit(); // Valider transaction
             return affectedRows > 0;
 
         } catch (SQLException ex) {
             if (conn != null) {
                 try {
-                    conn.rollback();  // Annuler transaction en cas d'erreur
+                    conn.rollback(); // Annuler transaction en cas d'erreur
                 } catch (SQLException e) {
                     LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction", e);
                 }
@@ -612,7 +621,7 @@ public class EntretienDao {
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true);  // Rétablir autocommit
+                    conn.setAutoCommit(true); // Rétablir autocommit
                 } catch (SQLException e) {
                     LOGGER.log(Level.WARNING, "Erreur lors du rétablissement de l'autocommit", e);
                 }
@@ -649,7 +658,7 @@ public class EntretienDao {
      * Met à jour le coût d'un entretien.
      *
      * @param idEntretien ID de l'entretien
-     * @param cout Nouveau coût
+     * @param cout        Nouveau coût
      * @return true si la mise à jour a réussi, false sinon
      * @throws SQLException En cas d'erreur d'accès à la base de données
      */
@@ -741,7 +750,8 @@ public class EntretienDao {
             return BigDecimal.ZERO;
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du calcul du coût total des entretiens pour le véhicule ID: " + idVehicule, ex);
+            LOGGER.log(Level.SEVERE,
+                    "Erreur lors du calcul du coût total des entretiens pour le véhicule ID: " + idVehicule, ex);
             throw ex;
         } finally {
             dbUtil.closeResultSet(rs);
@@ -850,16 +860,14 @@ public class EntretienDao {
 
                 EntretienStats stats = new EntretienStats(
                         totalEntretiens, planifies, enCours, termines,
-                        preventifs, correctifs, coutTotal, coutMoyen
-                );
+                        preventifs, correctifs, coutTotal, coutMoyen);
 
                 return stats;
             }
 
             // Par défaut, retourner des stats vides
             return new EntretienStats(
-                    0, 0, 0, 0, 0, 0, BigDecimal.ZERO, BigDecimal.ZERO
-            );
+                    0, 0, 0, 0, 0, 0, BigDecimal.ZERO, BigDecimal.ZERO);
 
         } catch (SQLException ex) {
             LOGGER.log(Level.SEVERE, "Erreur lors du calcul des statistiques d'entretien", ex);
@@ -905,7 +913,8 @@ public class EntretienDao {
             return entretiens;
 
         } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des entretiens à venir pour le véhicule ID: " + idVehicule, ex);
+            LOGGER.log(Level.SEVERE,
+                    "Erreur lors de la recherche des entretiens à venir pour le véhicule ID: " + idVehicule, ex);
             throw ex;
         } finally {
             dbUtil.closeResultSet(rs);
@@ -994,17 +1003,17 @@ public class EntretienDao {
          * Constructeur pour les statistiques d'entretien.
          *
          * @param totalEntretiens Nombre total d'entretiens
-         * @param planifies Nombre d'entretiens planifiés
-         * @param enCours Nombre d'entretiens en cours
-         * @param termines Nombre d'entretiens terminés
-         * @param preventifs Nombre d'entretiens préventifs
-         * @param correctifs Nombre d'entretiens correctifs
-         * @param coutTotal Coût total des entretiens
-         * @param coutMoyen Coût moyen par entretien
+         * @param planifies       Nombre d'entretiens planifiés
+         * @param enCours         Nombre d'entretiens en cours
+         * @param termines        Nombre d'entretiens terminés
+         * @param preventifs      Nombre d'entretiens préventifs
+         * @param correctifs      Nombre d'entretiens correctifs
+         * @param coutTotal       Coût total des entretiens
+         * @param coutMoyen       Coût moyen par entretien
          */
         public EntretienStats(int totalEntretiens, int planifies, int enCours, int termines,
-                              int preventifs, int correctifs,
-                              BigDecimal coutTotal, BigDecimal coutMoyen) {
+                int preventifs, int correctifs,
+                BigDecimal coutTotal, BigDecimal coutMoyen) {
             this.totalEntretiens = totalEntretiens;
             this.planifies = planifies;
             this.enCours = enCours;
@@ -1077,7 +1086,8 @@ public class EntretienDao {
          * @return Pourcentage d'entretiens préventifs
          */
         public double getPourcentagePreventifs() {
-            if (totalEntretiens == 0) return 0;
+            if (totalEntretiens == 0)
+                return 0;
             return (preventifs * 100.0) / totalEntretiens;
         }
 
@@ -1085,7 +1095,8 @@ public class EntretienDao {
          * @return Pourcentage d'entretiens correctifs
          */
         public double getPourcentageCorrectifs() {
-            if (totalEntretiens == 0) return 0;
+            if (totalEntretiens == 0)
+                return 0;
             return (correctifs * 100.0) / totalEntretiens;
         }
 
@@ -1093,7 +1104,8 @@ public class EntretienDao {
          * @return Ratio entre entretiens préventifs et correctifs
          */
         public double getRatioPreventifCorrectif() {
-            if (correctifs == 0) return Double.POSITIVE_INFINITY;
+            if (correctifs == 0)
+                return Double.POSITIVE_INFINITY;
             return (preventifs * 1.0) / correctifs;
         }
     }

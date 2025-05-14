@@ -1,0 +1,150 @@
+# Nouvelle arborescence du projet ParcAuto (optimisée, complète et cohérente)
+
+ParcAuto/
+├── AméliorationsParcAuto.txt
+├── CHANGELOG.md
+├── copilot-instructions-finale.md
+├── instruction.md
+├── arborescence.txt
+├── README.md
+├── README2.md
+├── USER_GUIDE.md
+├── DEVELOPER_GUIDE.md
+├── docker-compose.yml
+├── Dockerfile
+├── ParcAuto.iml
+├── db/
+│   └── ParcAuto.sql
+├── lib/
+│   └── (dépendances JAR)
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/
+│   │   │       └── miage/
+│   │   │           └── parcauto/
+│   │   │               ├── MainApp.java
+│   │   │               ├── controller/
+│   │   │               │   ├── BaseController.java
+│   │   │               │   ├── DashboardController.java
+│   │   │               │   ├── DocumentController.java
+│   │   │               │   ├── EntretienController.java
+│   │   │               │   ├── FinanceController.java
+│   │   │               │   ├── LoginController.java
+│   │   │               │   ├── MissionController.java
+│   │   │               │   ├── ReportController.java
+│   │   │               │   ├── VehiculeController.java
+│   │   │               │   └── NotificationController.java
+│   │   │               ├── dao/
+│   │   │               │   ├── Repository.java
+│   │   │               │   ├── VehiculeRepository.java
+│   │   │               │   ├── EntretienRepository.java
+│   │   │               │   ├── MissionRepository.java
+│   │   │               │   ├── FinanceRepository.java
+│   │   │               │   ├── NotificationRepository.java
+│   │   │               │   ├── ... (autres DAO)
+│   │   │               ├── model/
+│   │   │               │   ├── vehicule/
+│   │   │               │   ├── entretien/
+│   │   │               │   ├── mission/
+│   │   │               │   ├── finance/
+│   │   │               │   ├── utilisateur/
+│   │   │               │   ├── rh/
+│   │   │               │   ├── Societaire.java
+│   │   │               │   ├── Role.java
+│   │   │               │   └── ...
+│   │   │               ├── dto/
+│   │   │               │   ├── VehiculeDTO.java
+│   │   │               │   ├── EntretienDTO.java
+│   │   │               │   ├── MissionDTO.java
+│   │   │               │   ├── DepenseDTO.java
+│   │   │               │   ├── UtilisateurDTO.java
+│   │   │               │   ├── NotificationDTO.java
+│   │   │               │   ├── RapportDTO.java
+│   │   │               │   ├── TcoVehiculeDTO.java
+│   │   │               │   └── BilanFlotteDTO.java
+│   │   │               ├── viewmodel/
+│   │   │               │   ├── VehiculeViewModel.java
+│   │   │               │   ├── EntretienViewModel.java
+│   │   │               │   └── MissionViewModel.java
+│   │   │               ├── service/
+│   │   │               │   ├── VehiculeService.java
+│   │   │               │   ├── EntretienService.java
+│   │   │               │   ├── MissionService.java
+│   │   │               │   ├── ReportingService.java
+│   │   │               │   ├── ValidationService.java
+│   │   │               │   ├── NotificationService.java
+│   │   │               │   ├── SecurityService.java
+│   │   │               │   └── ...
+│   │   │               ├── util/
+│   │   │               │   ├── ErrorHandler.java
+│   │   │               │   ├── SecurityManager.java
+│   │   │               │   ├── SessionManager.java
+│   │   │               │   ├── ThemeManager.java
+│   │   │               │   ├── Validator.java
+│   │   │               │   └── ...
+│   │   └── resources/
+│   │       ├── css/
+│   │       │   ├── theme-base.css
+│   │       │   ├── theme-default.css
+│   │       │   ├── theme-dark.css
+│   │       │   ├── theme-modern.css
+│   │       │   ├── theme-corporate.css
+│   │       │   ├── theme-contrast.css
+│   │       │   ├── dashboard.css
+│   │       │   ├── login-theme.css
+│   │       │   ├── theme.css
+│   │       │   └── views/
+│   │       │       ├── dashboard.css
+│   │       │       ├── vehicules.css
+│   │       │       ├── entretiens.css
+│   │       │       ├── missions.css
+│   │       │       ├── finances.css
+│   │       │       ├── reports.css
+│   │       │       ├── documents.css
+│   │       │       └── ...
+│   │       ├── fxml/
+│   │       │   ├── login.fxml
+│   │       │   ├── dashboard.fxml
+│   │       │   ├── vehicule_list.fxml
+│   │       │   ├── vehicule_detail.fxml
+│   │       │   ├── vehicule_form.fxml
+│   │       │   ├── entretien_calendar.fxml
+│   │       │   ├── entretien_form.fxml
+│   │       │   ├── mission_planner.fxml
+│   │       │   ├── mission_form.fxml
+│   │       │   ├── finance_dashboard.fxml
+│   │       │   ├── report_generator.fxml
+│   │       │   ├── localisation_map.fxml
+│   │       │   └── notification_center.fxml
+│   │       ├── images/
+│   │       │   ├── logo-parcauto.png
+│   │       │   ├── logo.png
+│   │       │   └── ...
+│   │       ├── js/
+│   │       │   ├── dashboard-alerts.js
+│   │       │   ├── login-particles.js
+│   │       │   ├── analytics-vehicules.js
+│   │       │   ├── analytics-entretiens.js
+│   │       │   ├── analytics-missions.js
+│   │       │   ├── analytics-finances.js
+│   │       │   ├── localisation.js
+│   │       │   └── ...
+│   │       └── db.properties
+│   └── test/
+│       └── java/
+│           └── com/
+│               └── miage/
+│                   └── parcauto/
+│                       ├── ... (tests unitaires et d'intégration)
+├── uploads/
+│   └── documents/
+└── system_err.log
+
+# Points clés :
+- Tous les contrôleurs sont connectés à leur FXML respectif.
+- Chaque domaine (véhicule, entretien, mission, finance, reporting, notification, localisation) possède son propre FXML, ViewModel, CSS dédié et scripts JS pour l'analyse avancée.
+- Ajout de `localisation_map.fxml` et `localisation.js` pour la simulation et la visualisation de la localisation des véhicules.
+- Les CSS sont ultra-modernes, beaux, responsives, avec thèmes clair/sombre/contrasté, animations et effets avancés.
+- Les pages FXML intègrent des graphiques analytiques avancés (JavaFX Charts, custom JS) pour chaque domaine.
+- L'arborescence garantit la cohérence totale entre modèles, services, contrôleurs, DTOs, ViewModels, FXML et ressources.
