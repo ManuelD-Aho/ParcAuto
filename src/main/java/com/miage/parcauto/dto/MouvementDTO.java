@@ -1,321 +1,166 @@
 package main.java.com.miage.parcauto.dto;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-/**
- * DTO (Data Transfer Object) pour représenter les mouvements financiers.
- * Cette classe facilite le transfert de données entre les couches Service et
- * Vue.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
 public class MouvementDTO implements Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     private Integer idMouvement;
-    private Integer idCompte;
-    private String numeroCompte;
-    private String libelleCompte;
-    private LocalDate dateMouvement;
+    private Integer idCompteSocietaire; // Renamed for clarity, maps to SOCIETAIRE_COMPTE.id_societaire
+    private String numeroCompteSocietaire;
+    private String libelleCompteSocietaire;
+    private LocalDateTime dateMouvement; // Changed to LocalDateTime to match DB's datetime
     private BigDecimal montant;
-    private String libelle;
-    private String typeMouvement;
+    private String libelleMouvement;
+    private String typeMouvement; // e.g., Depot, Retrait, Mensualite from DB Enum
     private Integer idMission;
     private String referenceMission;
     private Integer idEntretien;
     private String referenceEntretien;
-    private String categorie;
+    private String categorieMouvement;
 
-    /**
-     * Constructeur par défaut.
-     */
     public MouvementDTO() {
     }
 
-    /**
-     * Constructeur avec tous les paramètres.
-     *
-     * @param idMouvement        Identifiant du mouvement
-     * @param idCompte           Identifiant du compte associé
-     * @param numeroCompte       Numéro du compte associé
-     * @param libelleCompte      Libellé du compte associé
-     * @param dateMouvement      Date du mouvement
-     * @param montant            Montant du mouvement
-     * @param libelle            Libellé du mouvement
-     * @param typeMouvement      Type de mouvement (CREDIT ou DEBIT)
-     * @param idMission          Identifiant de la mission associée, si applicable
-     * @param referenceMission   Référence de la mission associée, si applicable
-     * @param idEntretien        Identifiant de l'entretien associé, si applicable
-     * @param referenceEntretien Référence de l'entretien associé, si applicable
-     * @param categorie          Catégorie du mouvement
-     */
-    public MouvementDTO(Integer idMouvement, Integer idCompte, String numeroCompte, String libelleCompte,
-            LocalDate dateMouvement, BigDecimal montant, String libelle, String typeMouvement,
-            Integer idMission, String referenceMission, Integer idEntretien,
-            String referenceEntretien, String categorie) {
+    public MouvementDTO(Integer idMouvement, Integer idCompteSocietaire, String numeroCompteSocietaire, String libelleCompteSocietaire,
+                        LocalDateTime dateMouvement, BigDecimal montant, String libelleMouvement, String typeMouvement,
+                        Integer idMission, String referenceMission, Integer idEntretien,
+                        String referenceEntretien, String categorieMouvement) {
         this.idMouvement = idMouvement;
-        this.idCompte = idCompte;
-        this.numeroCompte = numeroCompte;
-        this.libelleCompte = libelleCompte;
+        this.idCompteSocietaire = idCompteSocietaire;
+        this.numeroCompteSocietaire = numeroCompteSocietaire;
+        this.libelleCompteSocietaire = libelleCompteSocietaire;
         this.dateMouvement = dateMouvement;
         this.montant = montant;
-        this.libelle = libelle;
+        this.libelleMouvement = libelleMouvement;
         this.typeMouvement = typeMouvement;
         this.idMission = idMission;
         this.referenceMission = referenceMission;
         this.idEntretien = idEntretien;
         this.referenceEntretien = referenceEntretien;
-        this.categorie = categorie;
+        this.categorieMouvement = categorieMouvement;
     }
 
-    /**
-     * Retourne l'identifiant du mouvement.
-     *
-     * @return L'identifiant du mouvement
-     */
     public Integer getIdMouvement() {
         return idMouvement;
     }
 
-    /**
-     * Définit l'identifiant du mouvement.
-     *
-     * @param idMouvement L'identifiant du mouvement
-     */
     public void setIdMouvement(Integer idMouvement) {
         this.idMouvement = idMouvement;
     }
 
-    /**
-     * Retourne l'identifiant du compte associé.
-     *
-     * @return L'identifiant du compte
-     */
-    public Integer getIdCompte() {
-        return idCompte;
+    public Integer getIdCompteSocietaire() {
+        return idCompteSocietaire;
     }
 
-    /**
-     * Définit l'identifiant du compte associé.
-     *
-     * @param idCompte L'identifiant du compte
-     */
-    public void setIdCompte(Integer idCompte) {
-        this.idCompte = idCompte;
+    public void setIdCompteSocietaire(Integer idCompteSocietaire) {
+        this.idCompteSocietaire = idCompteSocietaire;
     }
 
-    /**
-     * Retourne le numéro du compte associé.
-     *
-     * @return Le numéro du compte
-     */
-    public String getNumeroCompte() {
-        return numeroCompte;
+    public String getNumeroCompteSocietaire() {
+        return numeroCompteSocietaire;
     }
 
-    /**
-     * Définit le numéro du compte associé.
-     *
-     * @param numeroCompte Le numéro du compte
-     */
-    public void setNumeroCompte(String numeroCompte) {
-        this.numeroCompte = numeroCompte;
+    public void setNumeroCompteSocietaire(String numeroCompteSocietaire) {
+        this.numeroCompteSocietaire = numeroCompteSocietaire;
     }
 
-    /**
-     * Retourne le libellé du compte associé.
-     *
-     * @return Le libellé du compte
-     */
-    public String getLibelleCompte() {
-        return libelleCompte;
+    public String getLibelleCompteSocietaire() {
+        return libelleCompteSocietaire;
     }
 
-    /**
-     * Définit le libellé du compte associé.
-     *
-     * @param libelleCompte Le libellé du compte
-     */
-    public void setLibelleCompte(String libelleCompte) {
-        this.libelleCompte = libelleCompte;
+    public void setLibelleCompteSocietaire(String libelleCompteSocietaire) {
+        this.libelleCompteSocietaire = libelleCompteSocietaire;
     }
 
-    /**
-     * Retourne la date du mouvement.
-     *
-     * @return La date du mouvement
-     */
-    public LocalDate getDateMouvement() {
+    public LocalDateTime getDateMouvement() {
         return dateMouvement;
     }
 
-    /**
-     * Définit la date du mouvement.
-     *
-     * @param dateMouvement La date du mouvement
-     */
-    public void setDateMouvement(LocalDate dateMouvement) {
+    public void setDateMouvement(LocalDateTime dateMouvement) {
         this.dateMouvement = dateMouvement;
     }
 
-    /**
-     * Retourne le montant du mouvement.
-     *
-     * @return Le montant du mouvement
-     */
     public BigDecimal getMontant() {
         return montant;
     }
 
-    /**
-     * Définit le montant du mouvement.
-     *
-     * @param montant Le montant du mouvement
-     */
     public void setMontant(BigDecimal montant) {
         this.montant = montant;
     }
 
-    /**
-     * Retourne le libellé du mouvement.
-     *
-     * @return Le libellé du mouvement
-     */
-    public String getLibelle() {
-        return libelle;
+    public String getLibelleMouvement() {
+        return libelleMouvement;
     }
 
-    /**
-     * Définit le libellé du mouvement.
-     *
-     * @param libelle Le libellé du mouvement
-     */
-    public void setLibelle(String libelle) {
-        this.libelle = libelle;
+    public void setLibelleMouvement(String libelleMouvement) {
+        this.libelleMouvement = libelleMouvement;
     }
 
-    /**
-     * Retourne le type de mouvement (CREDIT ou DEBIT).
-     *
-     * @return Le type de mouvement
-     */
     public String getTypeMouvement() {
         return typeMouvement;
     }
 
-    /**
-     * Définit le type de mouvement.
-     *
-     * @param typeMouvement Le type de mouvement
-     */
     public void setTypeMouvement(String typeMouvement) {
         this.typeMouvement = typeMouvement;
     }
 
-    /**
-     * Retourne l'identifiant de la mission associée.
-     *
-     * @return L'identifiant de la mission
-     */
     public Integer getIdMission() {
         return idMission;
     }
 
-    /**
-     * Définit l'identifiant de la mission associée.
-     *
-     * @param idMission L'identifiant de la mission
-     */
     public void setIdMission(Integer idMission) {
         this.idMission = idMission;
     }
 
-    /**
-     * Retourne la référence de la mission associée.
-     *
-     * @return La référence de la mission
-     */
     public String getReferenceMission() {
         return referenceMission;
     }
 
-    /**
-     * Définit la référence de la mission associée.
-     *
-     * @param referenceMission La référence de la mission
-     */
     public void setReferenceMission(String referenceMission) {
         this.referenceMission = referenceMission;
     }
 
-    /**
-     * Retourne l'identifiant de l'entretien associé.
-     *
-     * @return L'identifiant de l'entretien
-     */
     public Integer getIdEntretien() {
         return idEntretien;
     }
 
-    /**
-     * Définit l'identifiant de l'entretien associé.
-     *
-     * @param idEntretien L'identifiant de l'entretien
-     */
     public void setIdEntretien(Integer idEntretien) {
         this.idEntretien = idEntretien;
     }
 
-    /**
-     * Retourne la référence de l'entretien associé.
-     *
-     * @return La référence de l'entretien
-     */
     public String getReferenceEntretien() {
         return referenceEntretien;
     }
 
-    /**
-     * Définit la référence de l'entretien associé.
-     *
-     * @param referenceEntretien La référence de l'entretien
-     */
     public void setReferenceEntretien(String referenceEntretien) {
         this.referenceEntretien = referenceEntretien;
     }
 
-    /**
-     * Retourne la catégorie du mouvement.
-     *
-     * @return La catégorie du mouvement
-     */
-    public String getCategorie() {
-        return categorie;
+    public String getCategorieMouvement() {
+        return categorieMouvement;
     }
 
-    /**
-     * Définit la catégorie du mouvement.
-     *
-     * @param categorie La catégorie du mouvement
-     */
-    public void setCategorie(String categorie) {
-        this.categorie = categorie;
+    public void setCategorieMouvement(String categorieMouvement) {
+        this.categorieMouvement = categorieMouvement;
     }
 
     @Override
     public String toString() {
         return "MouvementDTO{" +
                 "idMouvement=" + idMouvement +
-                ", idCompte=" + idCompte +
-                ", numeroCompte='" + numeroCompte + '\'' +
+                ", idCompteSocietaire=" + idCompteSocietaire +
+                ", numeroCompteSocietaire='" + numeroCompteSocietaire + '\'' +
                 ", dateMouvement=" + dateMouvement +
-                ", montant=" + montant +
-                ", libelle='" + libelle + '\'' +
+                ", montant=" + (montant != null ? montant.toPlainString() + " FCFA" : "N/A") +
+                ", libelleMouvement='" + libelleMouvement + '\'' +
                 ", typeMouvement='" + typeMouvement + '\'' +
-                ", categorie='" + categorie + '\'' +
+                ", categorieMouvement='" + categorieMouvement + '\'' +
                 '}';
     }
 }

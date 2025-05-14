@@ -3,27 +3,21 @@ package main.java.com.miage.parcauto.dto;
 import main.java.com.miage.parcauto.model.entretien.Entretien.TypeEntretien;
 import main.java.com.miage.parcauto.model.entretien.Entretien.StatutOT;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-/**
- * DTO (Data Transfer Object) pour la classe Entretien.
- * Cette classe est utilisée pour transférer les données d'entretien entre les
- * couches sans exposer les détails d'implémentation du modèle.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
 public class EntretienDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // Attributs correspondant aux données d'entretien nécessaires à l'interface
     private Integer idEntretien;
     private Integer idVehicule;
     private String immatriculationVehicule;
@@ -34,39 +28,19 @@ public class EntretienDTO implements Serializable {
     private String observation;
     private BigDecimal coutEntr;
     private String lieuEntr;
-    private TypeEntretien type;
-    private StatutOT statutOt;
+    private TypeEntretien type; // Matches DB Enum: Preventif, Correctif
+    private StatutOT statutOt; // Matches DB Enum: Ouvert, EnCours, Cloture
 
-    /**
-     * Constructeur par défaut
-     */
     public EntretienDTO() {
-        // Initialisation par défaut
         this.coutEntr = BigDecimal.ZERO;
-        this.type = TypeEntretien.Preventif;
-        this.statutOt = StatutOT.Ouvert;
+        this.type = TypeEntretien.Preventif; // Default value
+        this.statutOt = StatutOT.Ouvert; // Default value
     }
 
-    /**
-     * Constructeur avec tous les paramètres principaux.
-     *
-     * @param idEntretien             ID de l'entretien
-     * @param idVehicule              ID du véhicule
-     * @param immatriculationVehicule Immatriculation du véhicule
-     * @param marqueModeleVehicule    Marque et modèle du véhicule
-     * @param dateEntreeEntr          Date d'entrée en atelier
-     * @param dateSortieEntr          Date de sortie d'atelier
-     * @param motifEntr               Motif de l'entretien
-     * @param observation             Observations techniques
-     * @param coutEntr                Coût de l'entretien
-     * @param lieuEntr                Lieu de l'entretien
-     * @param type                    Type d'entretien
-     * @param statutOt                Statut de l'ordre de travail
-     */
     public EntretienDTO(Integer idEntretien, Integer idVehicule, String immatriculationVehicule,
-            String marqueModeleVehicule, LocalDateTime dateEntreeEntr, LocalDateTime dateSortieEntr,
-            String motifEntr, String observation, BigDecimal coutEntr,
-            String lieuEntr, TypeEntretien type, StatutOT statutOt) {
+                        String marqueModeleVehicule, LocalDateTime dateEntreeEntr, LocalDateTime dateSortieEntr,
+                        String motifEntr, String observation, BigDecimal coutEntr,
+                        String lieuEntr, TypeEntretien type, StatutOT statutOt) {
         this.idEntretien = idEntretien;
         this.idVehicule = idVehicule;
         this.immatriculationVehicule = immatriculationVehicule;
@@ -81,12 +55,6 @@ public class EntretienDTO implements Serializable {
         this.statutOt = statutOt;
     }
 
-    /**
-     * Calcule la durée de l'entretien en heures.
-     *
-     * @return Durée de l'entretien en heures, ou 0 si l'entretien est toujours en
-     *         cours
-     */
     public long getDureeHeures() {
         if (dateEntreeEntr == null || dateSortieEntr == null) {
             return 0L;
@@ -94,40 +62,20 @@ public class EntretienDTO implements Serializable {
         return ChronoUnit.HOURS.between(dateEntreeEntr, dateSortieEntr);
     }
 
-    /**
-     * Formatage de la date d'entrée en atelier.
-     *
-     * @return Date d'entrée formatée, ou "Non planifiée" si null
-     */
     public String getDateEntreeFormatee() {
         return dateEntreeEntr != null ? dateEntreeEntr.format(DATE_FORMATTER) : "Non planifiée";
     }
 
-    /**
-     * Formatage de la date de sortie d'atelier.
-     *
-     * @return Date de sortie formatée, ou "En cours" si null
-     */
     public String getDateSortieFormatee() {
         return dateSortieEntr != null ? dateSortieEntr.format(DATE_FORMATTER) : "En cours";
     }
 
-    /**
-     * Vérifie si l'entretien est terminé.
-     *
-     * @return true si l'entretien est terminé, false sinon
-     */
     public boolean isTermine() {
         return statutOt == StatutOT.Cloture && dateSortieEntr != null;
     }
 
-    /**
-     * Récupère une classe CSS appropriée pour le styling de l'entretien selon son
-     * statut.
-     *
-     * @return Classe CSS à appliquer
-     */
     public String getStatutCssClass() {
+        if (statutOt == null) return "";
         switch (statutOt) {
             case Ouvert:
                 return "entretien-ouvert";
@@ -139,8 +87,6 @@ public class EntretienDTO implements Serializable {
                 return "";
         }
     }
-
-    // Getters et Setters
 
     public Integer getIdEntretien() {
         return idEntretien;
@@ -238,31 +184,16 @@ public class EntretienDTO implements Serializable {
         this.statutOt = statutOt;
     }
 
-    /**
-     * Formate le coût de l'entretien en texte avec le symbole €.
-     *
-     * @return Coût formaté
-     */
     public String getCoutFormate() {
-        return coutEntr + " €";
+        return coutEntr != null ? coutEntr.setScale(2, RoundingMode.HALF_UP) + " FCFA" : "0.00 FCFA";
     }
 
-    /**
-     * Retourne une représentation textuelle du type d'entretien.
-     *
-     * @return Libellé du type d'entretien
-     */
     public String getTypeLibelle() {
-        return type != null ? type.getLibelle() : TypeEntretien.Preventif.getLibelle();
+        return type != null ? type.getLibelle() : (TypeEntretien.Preventif != null ? TypeEntretien.Preventif.getLibelle() : "");
     }
 
-    /**
-     * Retourne une représentation textuelle du statut de l'entretien.
-     *
-     * @return Libellé du statut de l'entretien
-     */
     public String getStatutLibelle() {
-        return statutOt != null ? statutOt.getLibelle() : StatutOT.Ouvert.getLibelle();
+        return statutOt != null ? statutOt.getLibelle() : (StatutOT.Ouvert != null ? StatutOT.Ouvert.getLibelle() : "");
     }
 
     @Override

@@ -1,222 +1,251 @@
 package main.java.com.miage.parcauto.dto;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
-/**
- * DTO (Data Transfer Object) pour représenter les membres du personnel.
- * Cette classe facilite le transfert de données entre les couches Service et
- * Vue.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
 public class PersonnelDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Integer idPersonnel;
+    private String matricule;
     private String nom;
     private String prenom;
     private String nomComplet;
     private String email;
     private String telephone;
-    private String nomUtilisateur;
-    private String role;
-    private boolean actif;
+    private String adresse;
+    private LocalDate dateNaissance;
+    private String sexe; // 'M' or 'F' from DB enum
 
-    /**
-     * Constructeur par défaut.
-     */
+    private Integer idService; // From PERSONNEL.id_service
+    private String libelleService; // Derived from SERVICE table
+    private Integer idFonction; // From PERSONNEL.id_fonction
+    private String libelleFonction; // Derived from FONCTION table
+
+    private Integer idVehiculeAttribution; // From PERSONNEL.id_vehicule
+    private LocalDateTime dateAttributionVehicule; // From PERSONNEL.date_attribution
+
+    // User-related fields, potentially from UTILISATEUR table
+    private Integer idUtilisateur;
+    private String nomUtilisateur; // login from UTILISATEUR
+    private String roleUtilisateur; // role from UTILISATEUR (U1, U2, U3, U4)
+    private boolean actif; // General status, could be app specific or user status
+
     public PersonnelDTO() {
+        this.actif = true;
     }
 
-    /**
-     * Constructeur avec tous les paramètres.
-     *
-     * @param idPersonnel    Identifiant du membre du personnel
-     * @param nom            Nom du membre du personnel
-     * @param prenom         Prénom du membre du personnel
-     * @param email          Email du membre du personnel
-     * @param telephone      Téléphone du membre du personnel
-     * @param nomUtilisateur Nom d'utilisateur du membre du personnel
-     * @param role           Rôle du membre du personnel
-     * @param actif          Indique si le membre du personnel est actif
-     */
-    public PersonnelDTO(Integer idPersonnel, String nom, String prenom, String email, String telephone,
-            String nomUtilisateur, String role, boolean actif) {
+    public PersonnelDTO(Integer idPersonnel, String matricule, String nom, String prenom, String email, String telephone, String adresse, LocalDate dateNaissance, String sexe, Integer idService, String libelleService, Integer idFonction, String libelleFonction, Integer idVehiculeAttribution, LocalDateTime dateAttributionVehicule, Integer idUtilisateur, String nomUtilisateur, String roleUtilisateur, boolean actif) {
         this.idPersonnel = idPersonnel;
+        this.matricule = matricule;
         this.nom = nom;
         this.prenom = prenom;
-        this.nomComplet = prenom + " " + nom;
+        updateNomComplet();
         this.email = email;
         this.telephone = telephone;
+        this.adresse = adresse;
+        this.dateNaissance = dateNaissance;
+        this.sexe = sexe;
+        this.idService = idService;
+        this.libelleService = libelleService;
+        this.idFonction = idFonction;
+        this.libelleFonction = libelleFonction;
+        this.idVehiculeAttribution = idVehiculeAttribution;
+        this.dateAttributionVehicule = dateAttributionVehicule;
+        this.idUtilisateur = idUtilisateur;
         this.nomUtilisateur = nomUtilisateur;
-        this.role = role;
+        this.roleUtilisateur = roleUtilisateur;
         this.actif = actif;
     }
 
-    /**
-     * Retourne l'identifiant du membre du personnel.
-     *
-     * @return L'identifiant du membre du personnel
-     */
+    private void updateNomComplet() {
+        String p = (this.prenom != null && !this.prenom.trim().isEmpty()) ? this.prenom.trim() : "";
+        String n = (this.nom != null && !this.nom.trim().isEmpty()) ? this.nom.trim() : "";
+        this.nomComplet = (p + " " + n).trim();
+    }
+
     public Integer getIdPersonnel() {
         return idPersonnel;
     }
 
-    /**
-     * Définit l'identifiant du membre du personnel.
-     *
-     * @param idPersonnel L'identifiant du membre du personnel
-     */
     public void setIdPersonnel(Integer idPersonnel) {
         this.idPersonnel = idPersonnel;
     }
 
-    /**
-     * Retourne le nom du membre du personnel.
-     *
-     * @return Le nom du membre du personnel
-     */
+    public String getMatricule() {
+        return matricule;
+    }
+
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
+    }
+
     public String getNom() {
         return nom;
     }
 
-    /**
-     * Définit le nom du membre du personnel.
-     *
-     * @param nom Le nom du membre du personnel
-     */
     public void setNom(String nom) {
         this.nom = nom;
-        this.nomComplet = (prenom != null ? prenom + " " : "") + nom;
+        updateNomComplet();
     }
 
-    /**
-     * Retourne le prénom du membre du personnel.
-     *
-     * @return Le prénom du membre du personnel
-     */
     public String getPrenom() {
         return prenom;
     }
 
-    /**
-     * Définit le prénom du membre du personnel.
-     *
-     * @param prenom Le prénom du membre du personnel
-     */
     public void setPrenom(String prenom) {
         this.prenom = prenom;
-        this.nomComplet = prenom + " " + (nom != null ? nom : "");
+        updateNomComplet();
     }
 
-    /**
-     * Retourne le nom complet du membre du personnel.
-     *
-     * @return Le nom complet du membre du personnel
-     */
     public String getNomComplet() {
         return nomComplet;
     }
 
-    /**
-     * Retourne l'email du membre du personnel.
-     *
-     * @return L'email du membre du personnel
-     */
     public String getEmail() {
         return email;
     }
 
-    /**
-     * Définit l'email du membre du personnel.
-     *
-     * @param email L'email du membre du personnel
-     */
     public void setEmail(String email) {
         this.email = email;
     }
 
-    /**
-     * Retourne le téléphone du membre du personnel.
-     *
-     * @return Le téléphone du membre du personnel
-     */
     public String getTelephone() {
         return telephone;
     }
 
-    /**
-     * Définit le téléphone du membre du personnel.
-     *
-     * @param telephone Le téléphone du membre du personnel
-     */
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
 
-    /**
-     * Retourne le nom d'utilisateur du membre du personnel.
-     *
-     * @return Le nom d'utilisateur du membre du personnel
-     */
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public LocalDate getDateNaissance() {
+        return dateNaissance;
+    }
+
+    public void setDateNaissance(LocalDate dateNaissance) {
+        this.dateNaissance = dateNaissance;
+    }
+
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+
+    public Integer getIdService() {
+        return idService;
+    }
+
+    public void setIdService(Integer idService) {
+        this.idService = idService;
+    }
+
+    public String getLibelleService() {
+        return libelleService;
+    }
+
+    public void setLibelleService(String libelleService) {
+        this.libelleService = libelleService;
+    }
+
+    public Integer getIdFonction() {
+        return idFonction;
+    }
+
+    public void setIdFonction(Integer idFonction) {
+        this.idFonction = idFonction;
+    }
+
+    public String getLibelleFonction() {
+        return libelleFonction;
+    }
+
+    public void setLibelleFonction(String libelleFonction) {
+        this.libelleFonction = libelleFonction;
+    }
+
+    public Integer getIdVehiculeAttribution() {
+        return idVehiculeAttribution;
+    }
+
+    public void setIdVehiculeAttribution(Integer idVehiculeAttribution) {
+        this.idVehiculeAttribution = idVehiculeAttribution;
+    }
+
+    public LocalDateTime getDateAttributionVehicule() {
+        return dateAttributionVehicule;
+    }
+
+    public void setDateAttributionVehicule(LocalDateTime dateAttributionVehicule) {
+        this.dateAttributionVehicule = dateAttributionVehicule;
+    }
+
+    public Integer getIdUtilisateur() {
+        return idUtilisateur;
+    }
+
+    public void setIdUtilisateur(Integer idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
+    }
+
     public String getNomUtilisateur() {
         return nomUtilisateur;
     }
 
-    /**
-     * Définit le nom d'utilisateur du membre du personnel.
-     *
-     * @param nomUtilisateur Le nom d'utilisateur du membre du personnel
-     */
     public void setNomUtilisateur(String nomUtilisateur) {
         this.nomUtilisateur = nomUtilisateur;
     }
 
-    /**
-     * Retourne le rôle du membre du personnel.
-     *
-     * @return Le rôle du membre du personnel
-     */
-    public String getRole() {
-        return role;
+    public String getRoleUtilisateur() {
+        return roleUtilisateur;
     }
 
-    /**
-     * Définit le rôle du membre du personnel.
-     *
-     * @param role Le rôle du membre du personnel
-     */
-    public void setRole(String role) {
-        this.role = role;
+    public void setRoleUtilisateur(String roleUtilisateur) {
+        this.roleUtilisateur = roleUtilisateur;
     }
 
-    /**
-     * Indique si le membre du personnel est actif.
-     *
-     * @return true si le membre du personnel est actif, false sinon
-     */
     public boolean isActif() {
         return actif;
     }
 
-    /**
-     * Définit si le membre du personnel est actif.
-     *
-     * @param actif true si le membre du personnel est actif, false sinon
-     */
     public void setActif(boolean actif) {
         this.actif = actif;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PersonnelDTO that = (PersonnelDTO) o;
+        return Objects.equals(idPersonnel, that.idPersonnel) || (matricule != null && Objects.equals(matricule, that.matricule));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idPersonnel, matricule);
     }
 
     @Override
     public String toString() {
         return "PersonnelDTO{" +
                 "idPersonnel=" + idPersonnel +
+                ", matricule='" + matricule + '\'' +
                 ", nomComplet='" + nomComplet + '\'' +
                 ", email='" + email + '\'' +
                 ", nomUtilisateur='" + nomUtilisateur + '\'' +
-                ", role='" + role + '\'' +
+                ", roleUtilisateur='" + roleUtilisateur + '\'' +
                 ", actif=" + actif +
                 '}';
     }
