@@ -3,7 +3,6 @@ package main.java.com.miage.parcauto.mapper;
 import main.java.com.miage.parcauto.dto.EntretienDTO;
 import main.java.com.miage.parcauto.model.entretien.Entretien;
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
-import main.java.com.miage.parcauto.dao.VehiculeRepositoryImpl;
 
 import java.util.List;
 import java.util.Optional;

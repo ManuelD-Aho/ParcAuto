@@ -1,6 +1,5 @@
 package main.java.com.miage.parcauto.service;
 
-import main.java.com.miage.parcauto.dao.DocumentRepository;
 import main.java.com.miage.parcauto.model.document.DocumentSocietaire;
 
 import java.io.File;

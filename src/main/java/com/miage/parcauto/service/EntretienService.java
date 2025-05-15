@@ -1,7 +1,5 @@
 package main.java.com.miage.parcauto.service;
 
-import main.java.com.miage.parcauto.dao.EntretienRepositoryImpl;
-import main.java.com.miage.parcauto.dao.VehiculeRepositoryImpl;
 import main.java.com.miage.parcauto.dto.EntretienDTO;
 import main.java.com.miage.parcauto.exception.DatabaseException;
 import main.java.com.miage.parcauto.exception.ValidationException;

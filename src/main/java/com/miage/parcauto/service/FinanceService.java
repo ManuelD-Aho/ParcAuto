@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.FinanceRepositoryImpl;
 import main.java.com.miage.parcauto.dto.BilanFinancierDTO;
 import main.java.com.miage.parcauto.dto.BilanMensuelDTO;
 import main.java.com.miage.parcauto.dto.TcoVehiculeDTO;
