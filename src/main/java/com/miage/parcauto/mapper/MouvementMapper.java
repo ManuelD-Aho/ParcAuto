@@ -2,9 +2,6 @@ package main.java.com.miage.parcauto.mapper;
 
 import main.java.com.miage.parcauto.dto.MouvementDTO;
 import main.java.com.miage.parcauto.model.finance.Mouvement;
-import main.java.com.miage.parcauto.dao.SocieteCompteRepository;
-import main.java.com.miage.parcauto.dao.MissionRepository;
-import main.java.com.miage.parcauto.dao.EntretienRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -1,6 +1,5 @@
 package main.java.com.miage.parcauto.controller;
 
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URL;
 import java.time.LocalDate;
@@ -11,9 +10,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.FinanceDao.BilanFinancier;
-import main.java.com.miage.parcauto.dao.FinanceDao.BilanMensuel;
-import main.java.com.miage.parcauto.dao.FinanceDao.RentabiliteVehicule;
 import main.java.com.miage.parcauto.service.FinanceService;
 import main.java.com.miage.parcauto.util.Permission;
 

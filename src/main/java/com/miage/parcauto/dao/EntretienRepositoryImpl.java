@@ -1,238 +1,367 @@
 package main.java.com.miage.parcauto.dao;
 
 import main.java.com.miage.parcauto.model.entretien.Entretien;
+import main.java.com.miage.parcauto.model.vehicule.StatutOT; // Assurez-vous que ce fichier existe et correspond à l'ENUM de la DB
+import main.java.com.miage.parcauto.model.entretien.TypeEntretien; // Assurez-vous que ce fichier existe et correspond à l'ENUM de la DB
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
-import java.sql.*;
+
+import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
-import java.util.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implémentation concrète du repository pour la gestion des entretiens.
- * Cette classe encapsule la logique JDBC pour l'accès aux données des
- * entretiens.
- *
- * @author MIAGE Holding
- * @version 1.0
+ * Implémentation du Repository pour l'entité {@link Entretien}.
+ * Gère les opérations CRUD et les requêtes spécifiques pour les entretiens de véhicules.
  */
-public class EntretienRepositoryImpl implements EntretienRepository {
+public class EntretienRepositoryImpl implements Repository<Entretien, Integer> {
+
     private static final Logger LOGGER = Logger.getLogger(EntretienRepositoryImpl.class.getName());
-    private final DbUtil dbUtil;
-    private final VehiculeRepository vehiculeRepository;
+
+    private static final String SQL_SELECT_BASE = "SELECT e.id_ot, e.date_debut_ot, e.date_fin_ot, e.cout_reel, e.observations, " +
+            "e.type_entretien, e.statut_ot, e.id_vehicule " +
+            "FROM ENTRETIEN e ";
+
+    private static final String SQL_FIND_BY_ID = SQL_SELECT_BASE + "WHERE e.id_ot = ?";
+    private static final String SQL_FIND_ALL = SQL_SELECT_BASE + "ORDER BY e.date_debut_ot DESC";
+    private static final String SQL_FIND_ALL_PAGED = SQL_SELECT_BASE + "ORDER BY e.date_debut_ot DESC LIMIT ? OFFSET ?";
+    private static final String SQL_SAVE = "INSERT INTO ENTRETIEN (id_vehicule, date_debut_ot, date_fin_ot, cout_reel, observations, type_entretien, statut_ot) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE ENTRETIEN SET id_vehicule = ?, date_debut_ot = ?, date_fin_ot = ?, cout_reel = ?, " +
+            "observations = ?, type_entretien = ?, statut_ot = ? WHERE id_ot = ?";
+    private static final String SQL_DELETE = "DELETE FROM ENTRETIEN WHERE id_ot = ?";
+    private static final String SQL_COUNT = "SELECT COUNT(*) FROM ENTRETIEN";
+    private static final String SQL_FIND_BY_VEHICULE_ID = SQL_SELECT_BASE + "WHERE e.id_vehicule = ? ORDER BY e.date_debut_ot DESC";
+    private static final String SQL_FIND_SCHEDULED_BETWEEN = SQL_SELECT_BASE + "WHERE e.date_debut_ot >= ? AND e.date_debut_ot < ? ORDER BY e.date_debut_ot ASC";
+
 
     /**
-     * Constructeur par défaut.
+     * {@inheritDoc}
      */
-    public EntretienRepositoryImpl() {
-        this.dbUtil = DbUtil.getInstance();
-        this.vehiculeRepository = new VehiculeRepositoryImpl();
-    }
-
-    /**
-     * Constructeur avec injection de dépendance (pour tests).
-     */
-    public EntretienRepositoryImpl(DbUtil dbUtil, VehiculeRepository vehiculeRepository) {
-        this.dbUtil = dbUtil;
-        this.vehiculeRepository = vehiculeRepository;
-    }
-
     @Override
     public Optional<Entretien> findById(Integer id) {
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn.prepareStatement("SELECT * FROM ENTRETIEN WHERE id_entretien = ?")) {
+        if (id == null) return Optional.empty();
+        Entretien entretien = null;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_ID)) {
             pstmt.setInt(1, id);
-            try (var rs = pstmt.executeQuery()) {
+            try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapResultSetToEntretien(rs));
+                    entretien = mapResultSetToEntretien(rs);
                 }
             }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de l'entretien par ID", ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de Entretien par ID: " + id, e);
         }
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Entretien> findAll() {
-        List<Entretien> result = new ArrayList<>();
-        try (var conn = dbUtil.getConnection();
-                var stmt = conn.createStatement();
-                var rs = stmt.executeQuery("SELECT * FROM ENTRETIEN ORDER BY date_entree_entr DESC")) {
-            while (rs.next()) {
-                result.add(mapResultSetToEntretien(rs));
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les entretiens", ex);
-        }
-        return result;
-    }
-
-    @Override
-    public List<Entretien> findAll(int page, int size) {
-        List<Entretien> result = new ArrayList<>();
-        int offset = page * size;
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn
-                        .prepareStatement("SELECT * FROM ENTRETIEN ORDER BY date_entree_entr DESC LIMIT ? OFFSET ?")) {
-            pstmt.setInt(1, size);
-            pstmt.setInt(2, offset);
-            try (var rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    result.add(mapResultSetToEntretien(rs));
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération paginée des entretiens", ex);
-        }
-        return result;
-    }
-
-    @Override
-    public Entretien save(Entretien entity) {
-        String sql = "INSERT INTO ENTRETIEN (id_vehicule, date_entree_entr, date_sortie_entr, motif_entr, observation, cout_entr, lieu_entr, type, statut_ot) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setInt(1, entity.getIdVehicule());
-            pstmt.setTimestamp(2,
-                    entity.getDateEntreeEntr() != null ? java.sql.Timestamp.valueOf(entity.getDateEntreeEntr()) : null);
-            pstmt.setTimestamp(3,
-                    entity.getDateSortieEntr() != null ? java.sql.Timestamp.valueOf(entity.getDateSortieEntr()) : null);
-            pstmt.setString(4, entity.getMotifEntr());
-            pstmt.setString(5, entity.getObservation());
-            pstmt.setBigDecimal(6, entity.getCoutEntr());
-            pstmt.setString(7, entity.getLieuEntr());
-            pstmt.setString(8, entity.getType() != null ? entity.getType().name() : null);
-            pstmt.setString(9, entity.getStatutOt() != null ? entity.getStatutOt().name() : null);
-            int affected = pstmt.executeUpdate();
-            if (affected == 0)
-                throw new SQLException("Aucune ligne insérée");
-            try (var rs = pstmt.getGeneratedKeys()) {
-                if (rs.next())
-                    entity.setIdEntretien(rs.getInt(1));
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la création de l'entretien", ex);
-        }
-        return entity;
-    }
-
-    @Override
-    public Entretien update(Entretien entity) {
-        String sql = "UPDATE ENTRETIEN SET id_vehicule=?, date_entree_entr=?, date_sortie_entr=?, motif_entr=?, observation=?, cout_entr=?, lieu_entr=?, type=?, statut_ot=? WHERE id_entretien=?";
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, entity.getIdVehicule());
-            pstmt.setTimestamp(2,
-                    entity.getDateEntreeEntr() != null ? java.sql.Timestamp.valueOf(entity.getDateEntreeEntr()) : null);
-            pstmt.setTimestamp(3,
-                    entity.getDateSortieEntr() != null ? java.sql.Timestamp.valueOf(entity.getDateSortieEntr()) : null);
-            pstmt.setString(4, entity.getMotifEntr());
-            pstmt.setString(5, entity.getObservation());
-            pstmt.setBigDecimal(6, entity.getCoutEntr());
-            pstmt.setString(7, entity.getLieuEntr());
-            pstmt.setString(8, entity.getType() != null ? entity.getType().name() : null);
-            pstmt.setString(9, entity.getStatutOt() != null ? entity.getStatutOt().name() : null);
-            pstmt.setInt(10, entity.getIdEntretien());
-            pstmt.executeUpdate();
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de l'entretien", ex);
-        }
-        return entity;
-    }
-
-    @Override
-    public boolean delete(Integer id) {
-        String sql = "DELETE FROM ENTRETIEN WHERE id_entretien = ?";
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            int affected = pstmt.executeUpdate();
-            return affected > 0;
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de l'entretien", ex);
-            return false;
-        }
-    }
-
-    @Override
-    public long count() {
-        String sql = "SELECT COUNT(*) FROM ENTRETIEN";
-        try (var conn = dbUtil.getConnection();
-                var stmt = conn.createStatement();
-                var rs = stmt.executeQuery(sql)) {
-            if (rs.next())
-                return rs.getLong(1);
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des entretiens", ex);
-        }
-        return 0;
-    }
-
-    @Override
-    public List<Entretien> findByVehicule(int idVehicule) {
-        List<Entretien> result = new ArrayList<>();
-        String sql = "SELECT * FROM ENTRETIEN WHERE id_vehicule = ? ORDER BY date_entree_entr DESC";
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, idVehicule);
-            try (var rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    result.add(mapResultSetToEntretien(rs));
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des entretiens par véhicule", ex);
-        }
-        return result;
-    }
-
-    @Override
-    public List<Entretien> findScheduledBetween(LocalDate debut, LocalDate fin) {
-        List<Entretien> result = new ArrayList<>();
-        String sql = "SELECT * FROM ENTRETIEN WHERE date_entree_entr BETWEEN ? AND ? AND statut_ot = 'Ouvert' ORDER BY date_entree_entr ASC";
-        try (var conn = dbUtil.getConnection();
-                var pstmt = conn.prepareStatement(sql)) {
-            pstmt.setTimestamp(1, java.sql.Timestamp.valueOf(debut.atStartOfDay()));
-            pstmt.setTimestamp(2, java.sql.Timestamp.valueOf(fin.atTime(23, 59, 59)));
-            try (var rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    result.add(mapResultSetToEntretien(rs));
-                }
-            }
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des entretiens planifiés entre deux dates", ex);
-        }
-        return result;
+        return Optional.ofNullable(entretien);
     }
 
     /**
-     * Méthode utilitaire pour mapper un ResultSet vers un objet Entretien.
-     * 
-     * @param rs ResultSet positionné sur une ligne
-     * @return Entretien mappé
-     * @throws SQLException en cas d'erreur d'accès
+     * {@inheritDoc}
      */
-    private Entretien mapResultSetToEntretien(java.sql.ResultSet rs) throws java.sql.SQLException {
-        Entretien e = new Entretien();
-        e.setIdEntretien(rs.getInt("id_entretien"));
-        e.setIdVehicule(rs.getInt("id_vehicule"));
-        var entree = rs.getTimestamp("date_entree_entr");
-        if (entree != null)
-            e.setDateEntreeEntr(entree.toLocalDateTime());
-        var sortie = rs.getTimestamp("date_sortie_entr");
-        if (sortie != null)
-            e.setDateSortieEntr(sortie.toLocalDateTime());
-        e.setMotifEntr(rs.getString("motif_entr"));
-        e.setObservation(rs.getString("observation"));
-        e.setCoutEntr(rs.getBigDecimal("cout_entr"));
-        e.setLieuEntr(rs.getString("lieu_entr"));
-        String type = rs.getString("type");
-        if (type != null)
-            e.setType(Entretien.TypeEntretien.fromString(type));
-        String statut = rs.getString("statut_ot");
-        if (statut != null)
-            e.setStatutOt(Entretien.StatutOT.fromString(statut));
-        return e;
+    @Override
+    public List<Entretien> findAll() {
+        List<Entretien> entretiens = new ArrayList<>();
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ALL);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                entretiens.add(mapResultSetToEntretien(rs));
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les Entretiens", e);
+        }
+        return entretiens;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Entretien> findAll(int page, int size) {
+        if (page < 0 || size <= 0) {
+            LOGGER.log(Level.WARNING, "Pagination invalide : page={0}, size={1}", new Object[]{page, size});
+            return new ArrayList<>();
+        }
+        List<Entretien> entretiens = new ArrayList<>();
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ALL_PAGED)) {
+            pstmt.setInt(1, size);
+            pstmt.setInt(2, page * size);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    entretiens.add(mapResultSetToEntretien(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération paginée des Entretiens", e);
+        }
+        return entretiens;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entretien save(Entretien entity) {
+        if (entity == null || entity.getVehicule() == null || entity.getVehicule().getIdVehicule() == null) {
+            LOGGER.log(Level.WARNING, "Tentative de sauvegarde d'un Entretien nul ou sans véhicule associé.");
+            return null; // id_vehicule est NOT NULL
+        }
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet generatedKeys = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_SAVE, Statement.RETURN_GENERATED_KEYS);
+            mapEntretienToPreparedStatement(entity, pstmt, false);
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                conn.rollback();
+                throw new SQLException("La création de Entretien a échoué, aucune ligne affectée.");
+            }
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                entity.setIdOt(generatedKeys.getInt(1));
+            } else {
+                conn.rollback();
+                throw new SQLException("La création de Entretien a échoué, aucun ID généré retourné.");
+            }
+            conn.commit();
+            return entity;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde de Entretien pour véhicule ID: " + entity.getVehicule().getIdVehicule(), e);
+            dbUtilRollback(conn);
+            return null;
+        } finally {
+            DbUtil.closeQuietly(null, pstmt, generatedKeys);
+            DbUtil.closeQuietly(conn, null, null);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Entretien update(Entretien entity) {
+        if (entity == null || entity.getIdOt() == null || entity.getVehicule() == null || entity.getVehicule().getIdVehicule() == null) {
+            LOGGER.log(Level.WARNING, "Tentative de mise à jour d'un Entretien nul, sans ID OT, ou sans véhicule associé.");
+            return null;
+        }
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_UPDATE);
+            mapEntretienToPreparedStatement(entity, pstmt, true);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                conn.commit();
+                return entity;
+            } else {
+                conn.rollback();
+                LOGGER.log(Level.WARNING, "Aucune ligne mise à jour pour Entretien ID: {0}", entity.getIdOt());
+                return null;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de Entretien ID: " + entity.getIdOt(), e);
+            dbUtilRollback(conn);
+            return null;
+        } finally {
+            DbUtil.closeQuietly(conn, pstmt);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean delete(Integer id) {
+        if (id == null) return false;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_DELETE);
+            pstmt.setInt(1, id);
+            int affectedRows = pstmt.executeUpdate();
+            conn.commit();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de Entretien ID: " + id, e);
+            dbUtilRollback(conn);
+            return false;
+        } finally {
+            DbUtil.closeQuietly(conn, pstmt);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long count() {
+        long count = 0;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_COUNT);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                count = rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des Entretiens", e);
+        }
+        return count;
+    }
+
+    /**
+     * Recherche les entretiens pour un véhicule spécifique.
+     * @param idVehicule L'ID du véhicule.
+     * @return Une liste d'entretiens pour le véhicule.
+     */
+    public List<Entretien> findByVehiculeId(int idVehicule) {
+        List<Entretien> entretiens = new ArrayList<>();
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_VEHICULE_ID)) {
+            pstmt.setInt(1, idVehicule);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    entretiens.add(mapResultSetToEntretien(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche d'Entretiens pour le véhicule ID: " + idVehicule, e);
+        }
+        return entretiens;
+    }
+
+    /**
+     * Recherche les entretiens planifiés (date de début) entre deux dates.
+     * @param debut La date de début de la période.
+     * @param fin La date de fin de la période.
+     * @return Une liste d'entretiens planifiés dans l'intervalle.
+     */
+    public List<Entretien> findScheduledBetween(LocalDate debut, LocalDate fin) {
+        if (debut == null || fin == null) return new ArrayList<>();
+        List<Entretien> entretiens = new ArrayList<>();
+        LocalDateTime debutDateTime = debut.atStartOfDay();
+        LocalDateTime finDateTime = fin.plusDays(1).atStartOfDay();
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_SCHEDULED_BETWEEN)) {
+            pstmt.setTimestamp(1, Timestamp.valueOf(debutDateTime));
+            pstmt.setTimestamp(2, Timestamp.valueOf(finDateTime));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    entretiens.add(mapResultSetToEntretien(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche d'Entretiens planifiés entre " + debut + " et " + fin, e);
+        }
+        return entretiens;
+    }
+
+
+    private Entretien mapResultSetToEntretien(ResultSet rs) throws SQLException {
+        Entretien entretien = new Entretien();
+        entretien.setIdOt(rs.getInt("id_ot"));
+
+        int idVehicule = rs.getInt("id_vehicule");
+        if (!rs.wasNull()) {
+            Vehicule vehicule = new Vehicule();
+            vehicule.setIdVehicule(idVehicule);
+            entretien.setVehicule(vehicule);
+        }
+
+        Timestamp dateDebutOtTs = rs.getTimestamp("date_debut_ot");
+        if (dateDebutOtTs != null) {
+            entretien.setDateDebutOt(dateDebutOtTs.toLocalDateTime());
+        }
+        Timestamp dateFinOtTs = rs.getTimestamp("date_fin_ot");
+        if (dateFinOtTs != null) {
+            entretien.setDateFinOt(dateFinOtTs.toLocalDateTime());
+        }
+        entretien.setCoutReel(rs.getBigDecimal("cout_reel"));
+        entretien.setObservations(rs.getString("observations"));
+
+        String typeEntretienDb = rs.getString("type_entretien");
+        if (typeEntretienDb != null) {
+            try {
+                entretien.setTypeEntretien(TypeEntretien.fromString(typeEntretienDb));
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, "Type d'entretien inconnu '" + typeEntretienDb + "' pour Entretien ID: " + entretien.getIdOt() + ". Valeurs attendues: " + TypeEntretien.getValidValues(), e);
+            }
+        }
+
+        String statutOtDb = rs.getString("statut_ot");
+        if (statutOtDb != null) {
+            try {
+                entretien.setStatutOt(StatutOT.fromString(statutOtDb));
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, "Statut OT inconnu '" + statutOtDb + "' pour Entretien ID: " + entretien.getIdOt() + ". Valeurs attendues: " + StatutOT.getValidValues(), e);
+            }
+        }
+        return entretien;
+    }
+
+    private void mapEntretienToPreparedStatement(Entretien entity, PreparedStatement pstmt, boolean isUpdate) throws SQLException {
+        int paramIndex = 1;
+
+        // id_vehicule est NOT NULL dans la DB
+        pstmt.setInt(paramIndex++, entity.getVehicule().getIdVehicule());
+
+        if (entity.getDateDebutOt() != null) {
+            pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateDebutOt()));
+        } else {
+            pstmt.setNull(paramIndex++, Types.TIMESTAMP); // date_debut_ot est NOT NULL
+        }
+        if (entity.getDateFinOt() != null) {
+            pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateFinOt()));
+        } else {
+            pstmt.setNull(paramIndex++, Types.TIMESTAMP);
+        }
+        pstmt.setBigDecimal(paramIndex++, entity.getCoutReel());
+        pstmt.setString(paramIndex++, entity.getObservations());
+
+        if (entity.getTypeEntretien() != null) {
+            pstmt.setString(paramIndex++, entity.getTypeEntretien().getValeurDb());
+        } else {
+            pstmt.setNull(paramIndex++, Types.VARCHAR); // type_entretien est NOT NULL
+        }
+        if (entity.getStatutOt() != null) {
+            pstmt.setString(paramIndex++, entity.getStatutOt().getValeurDb());
+        } else {
+            pstmt.setNull(paramIndex++, Types.VARCHAR); // statut_ot est NOT NULL
+        }
+
+        if (isUpdate) {
+            pstmt.setInt(paramIndex, entity.getIdOt());
+        }
+    }
+
+    private void dbUtilRollback(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction Entretien.", ex);
+            }
+        }
     }
 }

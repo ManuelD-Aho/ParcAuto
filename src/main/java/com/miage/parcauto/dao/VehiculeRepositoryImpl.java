@@ -30,23 +30,23 @@ public class VehiculeRepositoryImpl implements Repository<Vehicule, Integer> {
 
     private static final String SQL_SELECT_BASE = "SELECT v.id_vehicule, v.immatriculation, v.marque, v.modele, v.couleur, v.km_actuels, " +
             "v.date_acquisition, v.numero_chassi, v.nb_places, v.date_ammortissement, v.date_mise_en_service, " +
-            "v.puissance, v.prix_vehicule, v.date_etat, " +
-            "ev.id_etat_voiture as ev_id, ev.lib_etat_voiture as ev_lib, " +
-            "te.id_type_energie as te_id, te.lib_type_energie as te_lib " +
+            "v.puissance_vehicule, v.prix_vehicule, v.date_etat, " +
+            "v.id_etat_voiture as ev_db_id, ev.lib_etat_voiture as ev_lib, " +
+            "v.id_type_energie as te_db_id, te.lib_type_energie as te_lib " +
             "FROM VEHICULES v " +
             "LEFT JOIN ETAT_VOITURE ev ON v.id_etat_voiture = ev.id_etat_voiture " +
             "LEFT JOIN TYPE_ENERGIE te ON v.id_type_energie = te.id_type_energie ";
 
     private static final String SQL_FIND_BY_ID = SQL_SELECT_BASE + "WHERE v.id_vehicule = ?";
-    private static final String SQL_FIND_ALL = SQL_SELECT_BASE;
+    private static final String SQL_FIND_ALL = SQL_SELECT_BASE + "ORDER BY v.id_vehicule ASC";
     private static final String SQL_FIND_ALL_PAGED = SQL_SELECT_BASE + "ORDER BY v.id_vehicule ASC LIMIT ? OFFSET ?";
     private static final String SQL_SAVE = "INSERT INTO VEHICULES (immatriculation, marque, modele, couleur, km_actuels, date_acquisition, " +
             "numero_chassi, id_etat_voiture, id_type_energie, nb_places, date_ammortissement, " +
-            "date_mise_en_service, puissance, prix_vehicule, date_etat) " +
+            "date_mise_en_service, puissance_vehicule, prix_vehicule, date_etat) " +
             "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE VEHICULES SET immatriculation = ?, marque = ?, modele = ?, couleur = ?, km_actuels = ?, " +
             "date_acquisition = ?, numero_chassi = ?, id_etat_voiture = ?, id_type_energie = ?, " +
-            "nb_places = ?, date_ammortissement = ?, date_mise_en_service = ?, puissance = ?, " +
+            "nb_places = ?, date_ammortissement = ?, date_mise_en_service = ?, puissance_vehicule = ?, " +
             "prix_vehicule = ?, date_etat = ? WHERE id_vehicule = ?";
     private static final String SQL_DELETE = "DELETE FROM VEHICULES WHERE id_vehicule = ?";
     private static final String SQL_COUNT = "SELECT COUNT(*) FROM VEHICULES";
@@ -148,7 +148,7 @@ public class VehiculeRepositoryImpl implements Repository<Vehicule, Integer> {
             conn.commit();
             return entity;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde de Vehicule", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde de Vehicule: " + entity.getImmatriculation(), e);
             dbUtilRollback(conn);
             return null;
         } finally {
@@ -289,30 +289,30 @@ public class VehiculeRepositoryImpl implements Repository<Vehicule, Integer> {
         }
         vehicule.setNumeroChassi(rs.getString("numero_chassi"));
 
-        int idEtatVoiture = rs.getInt("ev_id");
+        int idEtatVoitureDb = rs.getInt("ev_db_id");
         if (!rs.wasNull()) {
             EtatVoiture etat = new EtatVoiture();
-            etat.setIdEtatVoiture(idEtatVoiture);
+            etat.setIdEtatVoiture(idEtatVoitureDb);
             etat.setLibEtatVoiture(rs.getString("ev_lib"));
             vehicule.setEtatVoiture(etat);
         }
 
-        int idTypeEnergieDb = rs.getInt("te_id");
+        int idTypeEnergieDb = rs.getInt("te_db_id");
         if (!rs.wasNull()) {
             TypeEnergie typeEnergieMapped = null;
             for(TypeEnergie te : TypeEnergie.values()){
-                if(te.getId() == idTypeEnergieDb){ // Assumes TypeEnergie has getId()
+                if(te.getId() == idTypeEnergieDb){
                     typeEnergieMapped = te;
                     break;
                 }
             }
-            if (typeEnergieMapped == null) {
+            if (typeEnergieMapped == null && idTypeEnergieDb != 0) { // id_type_energie can be 0 if not set and not nullable
                 LOGGER.log(Level.WARNING, "TypeEnergie non trouvé en base pour ID: " + idTypeEnergieDb + " pour véhicule ID: " + vehicule.getIdVehicule());
             }
-            vehicule.setEnergie(typeEnergieMapped); // Uses setEnergie
+            vehicule.setEnergie(typeEnergieMapped);
         }
 
-        vehicule.setNbPlaces(rs.getInt("nb_places"));
+        vehicule.setNbPlaces(rs.getObject("nb_places", Integer.class)); // Handles SQL NULL for Integer
         Timestamp dateAmortissementTs = rs.getTimestamp("date_ammortissement");
         if (dateAmortissementTs != null) {
             vehicule.setDateAmortissement(dateAmortissementTs.toLocalDateTime());
@@ -321,7 +321,7 @@ public class VehiculeRepositoryImpl implements Repository<Vehicule, Integer> {
         if (dateMiseEnServiceTs != null) {
             vehicule.setDateMiseEnService(dateMiseEnServiceTs.toLocalDateTime());
         }
-        vehicule.setPuissance(rs.getInt("puissance"));
+        vehicule.setPuissance(rs.getObject("puissance_vehicule", Integer.class));
         vehicule.setPrixVehicule(rs.getBigDecimal("prix_vehicule"));
         Timestamp dateEtatTs = rs.getTimestamp("date_etat");
         if (dateEtatTs != null) {
@@ -339,25 +339,25 @@ public class VehiculeRepositoryImpl implements Repository<Vehicule, Integer> {
         pstmt.setString(paramIndex++, entity.getCouleur());
         pstmt.setInt(paramIndex++, entity.getKmActuels());
 
-        if (entity.getDateAcquisition() != null) { // Uses getDateAcquisition
+        if (entity.getDateAcquisition() != null) {
             pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateAcquisition()));
         } else {
             pstmt.setNull(paramIndex++, Types.TIMESTAMP);
         }
-        pstmt.setString(paramIndex++, entity.getNumeroChassi()); // Uses getNumeroChassi
+        pstmt.setString(paramIndex++, entity.getNumeroChassi());
 
         if (entity.getEtatVoiture() != null && entity.getEtatVoiture().getIdEtatVoiture() != null) {
             pstmt.setInt(paramIndex++, entity.getEtatVoiture().getIdEtatVoiture());
         } else {
             pstmt.setNull(paramIndex++, Types.INTEGER);
         }
-        if (entity.getEnergie() != null) { // Uses getEnergie
-            pstmt.setInt(paramIndex++, entity.getEnergie().getId()); // Assumes TypeEnergie has getId()
+        if (entity.getEnergie() != null) {
+            pstmt.setInt(paramIndex++, entity.getEnergie().getId());
         } else {
             pstmt.setNull(paramIndex++, Types.INTEGER);
         }
 
-        pstmt.setObject(paramIndex++, entity.getNbPlaces(), Types.INTEGER); // Use setObject for potential null Integers
+        pstmt.setObject(paramIndex++, entity.getNbPlaces(), Types.INTEGER);
 
         if (entity.getDateAmortissement() != null) {
             pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateAmortissement()));
@@ -369,7 +369,7 @@ public class VehiculeRepositoryImpl implements Repository<Vehicule, Integer> {
         } else {
             pstmt.setNull(paramIndex++, Types.TIMESTAMP);
         }
-        pstmt.setObject(paramIndex++, entity.getPuissance(), Types.INTEGER);
+        pstmt.setObject(paramIndex++, entity.getPuissance(), Types.INTEGER); // puissance_vehicule in DB
         pstmt.setBigDecimal(paramIndex++, entity.getPrixVehicule());
 
         if (entity.getDateEtat() != null) {

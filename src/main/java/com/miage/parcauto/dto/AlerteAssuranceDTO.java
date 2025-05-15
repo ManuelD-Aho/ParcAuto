@@ -10,6 +10,7 @@ import java.time.LocalDate;
  * @version 1.0
  */
 public class AlerteAssuranceDTO {
+
     private Integer idVehicule;
     private String marque;
     private String modele;
@@ -24,12 +25,14 @@ public class AlerteAssuranceDTO {
      * Constructeur par défaut.
      */
     public AlerteAssuranceDTO() {
+        this.joursRestants = 0;
     }
 
     /**
      * Constructeur complet.
      */
-    public AlerteAssuranceDTO(Integer idVehicule, String marque, String modele, String immatriculation, LocalDate dateFinAssurance, int joursRestants, String statut, String numeroContrat, String compagnie) {
+    public AlerteAssuranceDTO(Integer idVehicule, String marque, String modele, String immatriculation,
+            LocalDate dateFinAssurance, int joursRestants, String statut, String numeroContrat, String compagnie) {
         this.idVehicule = idVehicule;
         this.marque = marque;
         this.modele = modele;
@@ -56,7 +59,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @return la marque
+     * @return la marque du véhicule
      */
     public String getMarque() {
         return marque;
@@ -70,7 +73,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @return le modèle
+     * @return le modèle du véhicule
      */
     public String getModele() {
         return modele;
@@ -84,7 +87,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @return l'immatriculation
+     * @return l'immatriculation du véhicule
      */
     public String getImmatriculation() {
         return immatriculation;
@@ -112,7 +115,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @return le nombre de jours restants
+     * @return le nombre de jours restants avant expiration
      */
     public int getJoursRestants() {
         return joursRestants;
@@ -126,7 +129,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @return le statut
+     * @return le statut de l'assurance (ex: "Alerte", "OK")
      */
     public String getStatut() {
         return statut;
@@ -140,7 +143,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @return le numéro de contrat
+     * @return le numéro du contrat d'assurance
      */
     public String getNumeroContrat() {
         return numeroContrat;
@@ -161,7 +164,7 @@ public class AlerteAssuranceDTO {
     }
 
     /**
-     * @param compagnie la compagnie d'assurance à définir
+     * @param compagnie la compagnie à définir
      */
     public void setCompagnie(String compagnie) {
         this.compagnie = compagnie;

@@ -1,468 +1,373 @@
 package main.java.com.miage.parcauto.dao;
 
 import main.java.com.miage.parcauto.model.mission.Mission;
-import main.java.com.miage.parcauto.model.mission.Mission.StatutMission;
+import main.java.com.miage.parcauto.model.mission.StatutMission; // Assurez-vous que ce fichier existe et correspond à l'ENUM de la DB
+import main.java.com.miage.parcauto.model.rh.Personnel;
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implémentation concrète du repository pour la gestion des missions.
- * Cette classe encapsule la logique JDBC pour l'accès aux données des missions.
- *
- * @author MIAGE Holding
- * @version 1.0
+ * Implémentation du Repository pour l'entité {@link Mission}.
+ * Gère les opérations CRUD et les requêtes spécifiques pour les missions.
  */
-public class MissionRepositoryImpl implements MissionRepository {
+public class MissionRepositoryImpl implements Repository<Mission, Integer> {
 
     private static final Logger LOGGER = Logger.getLogger(MissionRepositoryImpl.class.getName());
 
-    private final DbUtil dbUtil;
-    private final VehiculeRepository vehiculeRepository;
+    private static final String SQL_SELECT_BASE = "SELECT m.id_mission, m.date_debut_mission, m.date_fin_mission, m.lieu_depart, m.lieu_arrivee, " +
+            "m.km_prevu, m.km_reel, m.motif, m.statut_mission, m.id_vehicule, m.id_personnel " +
+            "FROM MISSION m ";
+
+    private static final String SQL_FIND_BY_ID = SQL_SELECT_BASE + "WHERE m.id_mission = ?";
+    private static final String SQL_FIND_ALL = SQL_SELECT_BASE + "ORDER BY m.date_debut_mission DESC";
+    private static final String SQL_FIND_ALL_PAGED = SQL_SELECT_BASE + "ORDER BY m.date_debut_mission DESC LIMIT ? OFFSET ?";
+    private static final String SQL_SAVE = "INSERT INTO MISSION (id_vehicule, id_personnel, date_debut_mission, date_fin_mission, lieu_depart, lieu_arrivee, km_prevu, km_reel, motif, statut_mission) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE MISSION SET id_vehicule = ?, id_personnel = ?, date_debut_mission = ?, date_fin_mission = ?, lieu_depart = ?, " +
+            "lieu_arrivee = ?, km_prevu = ?, km_reel = ?, motif = ?, statut_mission = ? WHERE id_mission = ?";
+    private static final String SQL_DELETE = "DELETE FROM MISSION WHERE id_mission = ?";
+    private static final String SQL_COUNT = "SELECT COUNT(*) FROM MISSION";
+    private static final String SQL_FIND_ACTIVE_FOR_VEHICULE_ID = SQL_SELECT_BASE + "WHERE m.id_vehicule = ? AND m.statut_mission = 'EnCours' ORDER BY m.date_debut_mission DESC";
+    private static final String SQL_FIND_BY_PERIOD = SQL_SELECT_BASE + "WHERE m.date_debut_mission >= ? AND m.date_debut_mission < ? ORDER BY m.date_debut_mission ASC";
+
 
     /**
-     * Constructeur par défaut.
+     * {@inheritDoc}
      */
-    public MissionRepositoryImpl() {
-        this.dbUtil = DbUtil.getInstance();
-        this.vehiculeRepository = new VehiculeRepositoryImpl();
-    }
-
-    /**
-     * Constructeur avec injection de dépendance (pour tests).
-     *
-     * @param dbUtil             Instance de DbUtil à utiliser
-     * @param vehiculeRepository Instance de VehiculeRepository à utiliser
-     */
-    public MissionRepositoryImpl(DbUtil dbUtil, VehiculeRepository vehiculeRepository) {
-        this.dbUtil = dbUtil;
-        this.vehiculeRepository = vehiculeRepository;
-    }
-
     @Override
     public Optional<Mission> findById(Integer id) {
-        String sql = "SELECT m.*, v.MARQUE, v.MODELE, v.IMMATRICULATION, " +
-                "s.NOM as NOM_SOCIETAIRE, s.PRENOM as PRENOM_SOCIETAIRE " +
-                "FROM MISSION m " +
-                "LEFT JOIN VEHICULE v ON m.ID_VEHICULE = v.ID_VEHICULE " +
-                "LEFT JOIN SOCIETAIRE s ON m.ID_SOCIETAIRE = s.ID_SOCIETAIRE " +
-                "WHERE m.ID_MISSION = ?";
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-
-            try (ResultSet rs = stmt.executeQuery()) {
+        if (id == null) return Optional.empty();
+        Mission mission = null;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_ID)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(buildMissionFromResultSet(rs));
+                    mission = mapResultSetToMission(rs);
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de la mission par ID", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de Mission par ID: " + id, e);
         }
-
-        return Optional.empty();
+        return Optional.ofNullable(mission);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Mission> findAll() {
-        String sql = "SELECT m.*, v.MARQUE, v.MODELE, v.IMMATRICULATION, " +
-                "s.NOM as NOM_SOCIETAIRE, s.PRENOM as PRENOM_SOCIETAIRE " +
-                "FROM MISSION m " +
-                "LEFT JOIN VEHICULE v ON m.ID_VEHICULE = v.ID_VEHICULE " +
-                "LEFT JOIN SOCIETAIRE s ON m.ID_SOCIETAIRE = s.ID_SOCIETAIRE " +
-                "ORDER BY m.DATE_DEPART DESC";
-
         List<Mission> missions = new ArrayList<>();
-
-        try (Connection conn = dbUtil.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ALL);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
-                missions.add(buildMissionFromResultSet(rs));
+                missions.add(mapResultSetToMission(rs));
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de toutes les missions", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de toutes les Missions", e);
         }
-
         return missions;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Mission> findAll(int page, int size) {
-        String sql = "SELECT m.*, v.MARQUE, v.MODELE, v.IMMATRICULATION, " +
-                "s.NOM as NOM_SOCIETAIRE, s.PRENOM as PRENOM_SOCIETAIRE " +
-                "FROM MISSION m " +
-                "LEFT JOIN VEHICULE v ON m.ID_VEHICULE = v.ID_VEHICULE " +
-                "LEFT JOIN SOCIETAIRE s ON m.ID_SOCIETAIRE = s.ID_SOCIETAIRE " +
-                "ORDER BY m.DATE_DEPART DESC " +
-                "LIMIT ? OFFSET ?";
-
+        if (page < 0 || size <= 0) {
+            LOGGER.log(Level.WARNING, "Pagination invalide : page={0}, size={1}", new Object[]{page, size});
+            return new ArrayList<>();
+        }
         List<Mission> missions = new ArrayList<>();
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, size);
-            stmt.setInt(2, page * size);
-
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ALL_PAGED)) {
+            pstmt.setInt(1, size);
+            pstmt.setInt(2, page * size);
+            try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    missions.add(buildMissionFromResultSet(rs));
+                    missions.add(mapResultSetToMission(rs));
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération paginée des missions", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération paginée des Missions", e);
         }
-
         return missions;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Mission save(Mission mission) {
-        String sql = "INSERT INTO MISSION (ID_VEHICULE, ID_SOCIETAIRE, DESTINATION, MOTIF, " +
-                "DATE_DEPART, DATE_RETOUR_PREVUE, STATUT, KM_DEPART, KM_RETOUR, DATE_RETOUR_REELLE) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    public Mission save(Mission entity) {
+        if (entity == null || entity.getVehicule() == null || entity.getVehicule().getIdVehicule() == null ||
+                entity.getPersonnel() == null || entity.getPersonnel().getIdPersonnel() == null) {
+            LOGGER.log(Level.WARNING, "Tentative de sauvegarde d'une Mission nulle ou sans véhicule/personnel associé.");
+            return null; // id_vehicule et id_personnel sont NOT NULL
+        }
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet generatedKeys = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_SAVE, Statement.RETURN_GENERATED_KEYS);
+            mapMissionToPreparedStatement(entity, pstmt, false);
+            int affectedRows = pstmt.executeUpdate();
 
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            setMissionParameters(stmt, mission);
-
-            int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new SQLException("La création de la mission a échoué, aucune ligne affectée.");
+                conn.rollback();
+                throw new SQLException("La création de Mission a échoué, aucune ligne affectée.");
             }
-
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    mission.setIdMission(generatedKeys.getInt(1));
-                } else {
-                    throw new SQLException("La création de la mission a échoué, aucun ID obtenu.");
-                }
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                entity.setIdMission(generatedKeys.getInt(1));
+            } else {
+                conn.rollback();
+                throw new SQLException("La création de Mission a échoué, aucun ID généré retourné.");
             }
-
-            // Mise à jour de l'état du véhicule si nécessaire
-            if (mission.getVehicule() != null && mission.getVehicule().getIdVehicule() != null) {
-                updateVehiculeStatut(mission.getVehicule().getIdVehicule(), true);
-            }
+            conn.commit();
+            return entity;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'enregistrement de la mission", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde de Mission", e);
+            dbUtilRollback(conn);
+            return null;
+        } finally {
+            DbUtil.closeQuietly(null, pstmt, generatedKeys);
+            DbUtil.closeQuietly(conn, null, null);
         }
-
-        return mission;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Mission update(Mission mission) {
-        String sql = "UPDATE MISSION SET ID_VEHICULE = ?, ID_SOCIETAIRE = ?, DESTINATION = ?, " +
-                "MOTIF = ?, DATE_DEPART = ?, DATE_RETOUR_PREVUE = ?, STATUT = ?, " +
-                "KM_DEPART = ?, KM_RETOUR = ?, DATE_RETOUR_REELLE = ? " +
-                "WHERE ID_MISSION = ?";
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            setMissionParameters(stmt, mission);
-            stmt.setInt(11, mission.getIdMission());
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de la mission", e);
+    public Mission update(Mission entity) {
+        if (entity == null || entity.getIdMission() == null ||
+                entity.getVehicule() == null || entity.getVehicule().getIdVehicule() == null ||
+                entity.getPersonnel() == null || entity.getPersonnel().getIdPersonnel() == null) {
+            LOGGER.log(Level.WARNING, "Tentative de mise à jour d'une Mission nulle, sans ID, ou sans véhicule/personnel associé.");
+            return null;
         }
-
-        return mission;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_UPDATE);
+            mapMissionToPreparedStatement(entity, pstmt, true);
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                conn.commit();
+                return entity;
+            } else {
+                conn.rollback();
+                LOGGER.log(Level.WARNING, "Aucune ligne mise à jour pour Mission ID: {0}", entity.getIdMission());
+                return null;
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de Mission ID: " + entity.getIdMission(), e);
+            dbUtilRollback(conn);
+            return null;
+        } finally {
+            DbUtil.closeQuietly(conn, pstmt);
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean delete(Integer id) {
-        // Vérifier si la mission existe et n'est pas déjà terminée
-        Optional<Mission> mission = findById(id);
-        if (mission.isPresent() && mission.get().getStatut() != StatutMission.Terminee) {
-            // Si la mission est en cours, libérer le véhicule
-            if (mission.get().getVehicule() != null && mission.get().getVehicule().getIdVehicule() != null) {
-                updateVehiculeStatut(mission.get().getVehicule().getIdVehicule(), false);
-            }
-        }
-
-        String sql = "DELETE FROM MISSION WHERE ID_MISSION = ?";
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-
-            int affectedRows = stmt.executeUpdate();
+        if (id == null) return false;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            // Avant de supprimer une mission, il faudrait gérer les DepenseMission associées
+            // Soit par suppression en cascade en DB, soit explicitement ici ou dans un service.
+            // Pour l'instant, ce repository ne gère que la table MISSION.
+            pstmt = conn.prepareStatement(SQL_DELETE);
+            pstmt.setInt(1, id);
+            int affectedRows = pstmt.executeUpdate();
+            conn.commit();
             return affectedRows > 0;
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de la mission", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de Mission ID: " + id, e);
+            dbUtilRollback(conn);
             return false;
+        } finally {
+            DbUtil.closeQuietly(conn, pstmt);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public long count() {
-        String sql = "SELECT COUNT(*) FROM MISSION";
-
-        try (Connection conn = dbUtil.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
-
+        long count = 0;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_COUNT);
+             ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
-                return rs.getLong(1);
+                count = rs.getLong(1);
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des missions", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des Missions", e);
         }
-
-        return 0;
+        return count;
     }
 
-    @Override
-    public List<Mission> findActiveForVehicule(int idVehicule) {
-        String sql = "SELECT m.*, v.MARQUE, v.MODELE, v.IMMATRICULATION, " +
-                "s.NOM as NOM_SOCIETAIRE, s.PRENOM as PRENOM_SOCIETAIRE " +
-                "FROM MISSION m " +
-                "LEFT JOIN VEHICULE v ON m.ID_VEHICULE = v.ID_VEHICULE " +
-                "LEFT JOIN SOCIETAIRE s ON m.ID_SOCIETAIRE = s.ID_SOCIETAIRE " +
-                "WHERE m.ID_VEHICULE = ? AND m.STATUT = 'EnCours'";
-
+    /**
+     * Recherche les missions actives pour un véhicule spécifique.
+     * @param idVehicule L'ID du véhicule.
+     * @return Une liste de missions actives pour le véhicule.
+     */
+    public List<Mission> findActiveForVehiculeId(int idVehicule) {
         List<Mission> missions = new ArrayList<>();
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idVehicule);
-
-            try (ResultSet rs = stmt.executeQuery()) {
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ACTIVE_FOR_VEHICULE_ID)) {
+            pstmt.setInt(1, idVehicule);
+            try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    missions.add(buildMissionFromResultSet(rs));
+                    missions.add(mapResultSetToMission(rs));
                 }
             }
         } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des missions actives pour le véhicule", e);
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de Missions actives pour le véhicule ID: " + idVehicule, e);
         }
-
-        return missions;
-    }
-
-    @Override
-    public List<Mission> findByPeriod(LocalDate debut, LocalDate fin) {
-        String sql = "SELECT m.*, v.MARQUE, v.MODELE, v.IMMATRICULATION, " +
-                "s.NOM as NOM_SOCIETAIRE, s.PRENOM as PRENOM_SOCIETAIRE " +
-                "FROM MISSION m " +
-                "LEFT JOIN VEHICULE v ON m.ID_VEHICULE = v.ID_VEHICULE " +
-                "LEFT JOIN SOCIETAIRE s ON m.ID_SOCIETAIRE = s.ID_SOCIETAIRE " +
-                "WHERE (DATE(m.DATE_DEPART) BETWEEN ? AND ?) " +
-                "   OR (DATE(m.DATE_RETOUR_PREVUE) BETWEEN ? AND ?) " +
-                "   OR (DATE(m.DATE_DEPART) <= ? AND (DATE(m.DATE_RETOUR_PREVUE) >= ? OR DATE(m.DATE_RETOUR_REELLE) >= ?))";
-
-        List<Mission> missions = new ArrayList<>();
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setDate(1, java.sql.Date.valueOf(debut));
-            stmt.setDate(2, java.sql.Date.valueOf(fin));
-            stmt.setDate(3, java.sql.Date.valueOf(debut));
-            stmt.setDate(4, java.sql.Date.valueOf(fin));
-            stmt.setDate(5, java.sql.Date.valueOf(debut));
-            stmt.setDate(6, java.sql.Date.valueOf(fin));
-            stmt.setDate(7, java.sql.Date.valueOf(fin));
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    missions.add(buildMissionFromResultSet(rs));
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche des missions par période", e);
-        }
-
         return missions;
     }
 
     /**
-     * Construit un objet Mission à partir d'un ResultSet.
-     * 
-     * @param rs ResultSet contenant les données de la mission
-     * @return Objet Mission construit
-     * @throws SQLException En cas d'erreur de lecture des données
+     * Recherche les missions dont la date de début est comprise dans une période donnée.
+     * @param debut La date de début de la période (inclusive).
+     * @param fin La date de fin de la période (exclusive pour le jour).
+     * @return Une liste de missions.
      */
-    private Mission buildMissionFromResultSet(ResultSet rs) throws SQLException {
+    public List<Mission> findByPeriod(LocalDate debut, LocalDate fin) {
+        if (debut == null || fin == null) return new ArrayList<>();
+        List<Mission> missions = new ArrayList<>();
+        LocalDateTime debutDateTime = debut.atStartOfDay();
+        LocalDateTime finDateTime = fin.plusDays(1).atStartOfDay();
+
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_PERIOD)) {
+            pstmt.setTimestamp(1, Timestamp.valueOf(debutDateTime));
+            pstmt.setTimestamp(2, Timestamp.valueOf(finDateTime));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    missions.add(mapResultSetToMission(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de Missions par période: " + debut + " à " + fin, e);
+        }
+        return missions;
+    }
+
+    private Mission mapResultSetToMission(ResultSet rs) throws SQLException {
         Mission mission = new Mission();
-        mission.setIdMission(rs.getInt("ID_MISSION"));
+        mission.setIdMission(rs.getInt("id_mission"));
 
-        // Construire l'objet Vehicule avec les informations minimales
-        Vehicule vehicule = new Vehicule();
-        vehicule.setIdVehicule(rs.getInt("ID_VEHICULE"));
-        vehicule.setMarque(rs.getString("MARQUE"));
-        vehicule.setModele(rs.getString("MODELE"));
-        vehicule.setImmatriculation(rs.getString("IMMATRICULATION"));
-        mission.setVehicule(vehicule);
-
-        mission.setIdSocietaire(rs.getInt("ID_SOCIETAIRE"));
-        mission.setNomPrenomSocietaire(rs.getString("NOM_SOCIETAIRE") + " " + rs.getString("PRENOM_SOCIETAIRE"));
-        mission.setDestination(rs.getString("DESTINATION"));
-        mission.setMotif(rs.getString("MOTIF"));
-
-        Timestamp dateDepart = rs.getTimestamp("DATE_DEPART");
-        if (dateDepart != null) {
-            mission.setDateDepart(dateDepart.toLocalDateTime());
+        int idVehicule = rs.getInt("id_vehicule");
+        if (!rs.wasNull()) {
+            Vehicule vehicule = new Vehicule();
+            vehicule.setIdVehicule(idVehicule);
+            mission.setVehicule(vehicule);
         }
 
-        Timestamp dateRetourPrevue = rs.getTimestamp("DATE_RETOUR_PREVUE");
-        if (dateRetourPrevue != null) {
-            mission.setDateRetourPrevue(dateRetourPrevue.toLocalDateTime());
+        int idPersonnel = rs.getInt("id_personnel");
+        if (!rs.wasNull()) {
+            Personnel personnel = new Personnel();
+            personnel.setIdPersonnel(idPersonnel);
+            mission.setPersonnel(personnel);
         }
 
-        String statutStr = rs.getString("STATUT");
-        if (statutStr != null) {
-            mission.setStatut(StatutMission.valueOf(statutStr));
+        Timestamp dateDebutTs = rs.getTimestamp("date_debut_mission");
+        if (dateDebutTs != null) {
+            mission.setDateDebutMission(dateDebutTs.toLocalDateTime());
         }
-
-        mission.setKmDepart(rs.getInt("KM_DEPART"));
-        mission.setKmRetour(rs.getInt("KM_RETOUR"));
-
-        Timestamp dateRetourReelle = rs.getTimestamp("DATE_RETOUR_REELLE");
-        if (dateRetourReelle != null) {
-            mission.setDateRetourReelle(dateRetourReelle.toLocalDateTime());
+        Timestamp dateFinTs = rs.getTimestamp("date_fin_mission");
+        if (dateFinTs != null) {
+            mission.setDateFinMission(dateFinTs.toLocalDateTime());
         }
+        mission.setLieuDepart(rs.getString("lieu_depart"));
+        mission.setLieuArrivee(rs.getString("lieu_arrivee"));
+        mission.setKmPrevu(rs.getObject("km_prevu", Integer.class));
+        mission.setKmReel(rs.getObject("km_reel", Integer.class));
+        mission.setMotif(rs.getString("motif"));
 
+        String statutMissionDb = rs.getString("statut_mission");
+        if (statutMissionDb != null) {
+            try {
+                mission.setStatutMission(StatutMission.fromString(statutMissionDb));
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, "Statut Mission inconnu '" + statutMissionDb + "' pour Mission ID: " + mission.getIdMission() + ". Valeurs attendues: " + StatutMission.getValidValues(), e);
+            }
+        }
+        // Les dépenses (DepenseMission) ne sont pas chargées ici,
+        // elles le seront par DepenseMissionRepository ou par un service.
         return mission;
     }
 
-    /**
-     * Configure les paramètres d'une requête préparée à partir d'un objet Mission.
-     * 
-     * @param stmt    PreparedStatement à configurer
-     * @param mission Objet Mission source des données
-     * @throws SQLException En cas d'erreur de configuration
-     */
-    private void setMissionParameters(PreparedStatement stmt, Mission mission) throws SQLException {
-        if (mission.getVehicule() != null) {
-            stmt.setInt(1, mission.getVehicule().getIdVehicule());
+    private void mapMissionToPreparedStatement(Mission entity, PreparedStatement pstmt, boolean isUpdate) throws SQLException {
+        int paramIndex = 1;
+
+        // id_vehicule et id_personnel sont NOT NULL
+        pstmt.setInt(paramIndex++, entity.getVehicule().getIdVehicule());
+        pstmt.setInt(paramIndex++, entity.getPersonnel().getIdPersonnel());
+
+        if (entity.getDateDebutMission() != null) {
+            pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateDebutMission()));
         } else {
-            stmt.setNull(1, Types.INTEGER);
+            pstmt.setNull(paramIndex++, Types.TIMESTAMP); // date_debut_mission est NOT NULL
+        }
+        if (entity.getDateFinMission() != null) {
+            pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateFinMission()));
+        } else {
+            pstmt.setNull(paramIndex++, Types.TIMESTAMP);
+        }
+        pstmt.setString(paramIndex++, entity.getLieuDepart());
+        pstmt.setString(paramIndex++, entity.getLieuArrivee());
+        pstmt.setObject(paramIndex++, entity.getKmPrevu(), Types.INTEGER);
+        pstmt.setObject(paramIndex++, entity.getKmReel(), Types.INTEGER);
+        pstmt.setString(paramIndex++, entity.getMotif());
+
+        if (entity.getStatutMission() != null) {
+            pstmt.setString(paramIndex++, entity.getStatutMission().getValeurDb());
+        } else {
+            pstmt.setNull(paramIndex++, Types.VARCHAR); // statut_mission est NOT NULL
         }
 
-        stmt.setInt(2, mission.getIdSocietaire());
-        stmt.setString(3, mission.getDestination());
-        stmt.setString(4, mission.getMotif());
-
-        if (mission.getDateDepart() != null) {
-            stmt.setTimestamp(5, Timestamp.valueOf(mission.getDateDepart()));
-        } else {
-            stmt.setNull(5, Types.TIMESTAMP);
-        }
-
-        if (mission.getDateRetourPrevue() != null) {
-            stmt.setTimestamp(6, Timestamp.valueOf(mission.getDateRetourPrevue()));
-        } else {
-            stmt.setNull(6, Types.TIMESTAMP);
-        }
-
-        if (mission.getStatut() != null) {
-            stmt.setString(7, mission.getStatut().name());
-        } else {
-            stmt.setString(7, StatutMission.Planifiee.name());
-        }
-
-        stmt.setInt(8, mission.getKmDepart());
-
-        if (mission.getKmRetour() > 0) {
-            stmt.setInt(9, mission.getKmRetour());
-        } else {
-            stmt.setNull(9, Types.INTEGER);
-        }
-
-        if (mission.getDateRetourReelle() != null) {
-            stmt.setTimestamp(10, Timestamp.valueOf(mission.getDateRetourReelle()));
-        } else {
-            stmt.setNull(10, Types.TIMESTAMP);
+        if (isUpdate) {
+            pstmt.setInt(paramIndex, entity.getIdMission());
         }
     }
 
-    /**
-     * Met à jour l'état d'un véhicule en mission ou disponible.
-     * 
-     * @param idVehicule ID du véhicule
-     * @param enMission  true si en mission, false si disponible
-     */
-    private void updateVehiculeStatut(int idVehicule, boolean enMission) {
-        vehiculeRepository.findById(idVehicule).ifPresent(vehicule -> {
-            // Si on met le véhicule en mission et qu'il n'est pas déjà en mission
-            if (enMission && !isVehiculeEnMission(idVehicule)) {
-                // Rien à faire, le statut est géré via la table MISSION
+    private void dbUtilRollback(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction Mission.", ex);
             }
-            // Si on libère le véhicule et qu'il n'est plus en mission
-            else if (!enMission && !isVehiculeEnMission(idVehicule)) {
-                // Rien à faire, le statut est géré via la table MISSION
-            }
-        });
-    }
-
-    @Override
-    public boolean isVehiculeEnMission(int idVehicule) {
-        String sql = "SELECT COUNT(*) FROM MISSION WHERE ID_VEHICULE = ? AND STATUT = 'EnCours'";
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, idVehicule);
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt(1) > 0;
-                }
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification si le véhicule est en mission", e);
         }
-
-        return false;
-    }
-
-    @Override
-    public boolean terminerMission(int idMission, int kmRetour) {
-        String sql = "UPDATE MISSION SET STATUT = ?, KM_RETOUR = ?, DATE_RETOUR_REELLE = ? WHERE ID_MISSION = ?";
-
-        try (Connection conn = dbUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setString(1, StatutMission.Terminee.name());
-            stmt.setInt(2, kmRetour);
-            stmt.setTimestamp(3, Timestamp.valueOf(LocalDateTime.now()));
-            stmt.setInt(4, idMission);
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows > 0) {
-                // Mettre à jour le kilométrage du véhicule
-                Optional<Mission> missionOpt = findById(idMission);
-                if (missionOpt.isPresent() && missionOpt.get().getVehicule() != null) {
-                    int idVehicule = missionOpt.get().getVehicule().getIdVehicule();
-
-                    // Mettre à jour le kilométrage du véhicule
-                    vehiculeRepository.findById(idVehicule).ifPresent(vehicule -> {
-                        vehicule.setKmActuels(kmRetour);
-                        vehiculeRepository.update(vehicule);
-                    });
-                }
-
-                return true;
-            }
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la terminaison de la mission", e);
-        }
-
-        return false;
     }
 }

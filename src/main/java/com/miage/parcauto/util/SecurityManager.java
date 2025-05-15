@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.UtilisateurDao;
-
 /**
  * Gestionnaire de sécurité pour l'application.
  * Cette classe singleton définit et vérifie les permissions associées à chaque rôle utilisateur.

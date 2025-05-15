@@ -7,7 +7,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.UtilisateurDao;
 import main.java.com.miage.parcauto.service.EntretienService;
 import main.java.com.miage.parcauto.service.FinanceService;
 import main.java.com.miage.parcauto.service.MissionService;
@@ -26,7 +25,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import main.java.com.miage.parcauto.dao.FinanceDao;
 
 /**
  * Contrôleur pour la vue du tableau de bord.

@@ -8,6 +8,7 @@ package main.java.com.miage.parcauto.dto;
  * @version 1.0
  */
 public class AlerteEntretienDTO {
+
     private Integer idVehicule;
     private String marque;
     private String modele;
@@ -21,12 +22,16 @@ public class AlerteEntretienDTO {
      * Constructeur par défaut.
      */
     public AlerteEntretienDTO() {
+        this.kilometrage = 0;
+        this.kmRestants = 0;
+        this.kmPrevu = 0;
     }
 
     /**
      * Constructeur complet.
      */
-    public AlerteEntretienDTO(Integer idVehicule, String marque, String modele, String immatriculation, int kilometrage, int kmRestants, String typeEntretien, int kmPrevu) {
+    public AlerteEntretienDTO(Integer idVehicule, String marque, String modele, String immatriculation, int kilometrage,
+            int kmRestants, String typeEntretien, int kmPrevu) {
         this.idVehicule = idVehicule;
         this.marque = marque;
         this.modele = modele;
@@ -38,21 +43,21 @@ public class AlerteEntretienDTO {
     }
 
     /**
-     * @return l'ID du véhicule
+     * @return l'identifiant du véhicule
      */
     public Integer getIdVehicule() {
         return idVehicule;
     }
 
     /**
-     * @param idVehicule l'ID du véhicule à définir
+     * @param idVehicule l'identifiant du véhicule à définir
      */
     public void setIdVehicule(Integer idVehicule) {
         this.idVehicule = idVehicule;
     }
 
     /**
-     * @return la marque
+     * @return la marque du véhicule
      */
     public String getMarque() {
         return marque;
@@ -66,7 +71,7 @@ public class AlerteEntretienDTO {
     }
 
     /**
-     * @return le modèle
+     * @return le modèle du véhicule
      */
     public String getModele() {
         return modele;
@@ -80,7 +85,7 @@ public class AlerteEntretienDTO {
     }
 
     /**
-     * @return l'immatriculation
+     * @return l'immatriculation du véhicule
      */
     public String getImmatriculation() {
         return immatriculation;
@@ -101,28 +106,28 @@ public class AlerteEntretienDTO {
     }
 
     /**
-     * @param kilometrage le kilométrage actuel à définir
+     * @param kilometrage le kilométrage à définir
      */
     public void setKilometrage(int kilometrage) {
         this.kilometrage = kilometrage;
     }
 
     /**
-     * @return les km restants avant entretien
+     * @return le nombre de kilomètres restants avant entretien
      */
     public int getKmRestants() {
         return kmRestants;
     }
 
     /**
-     * @param kmRestants les km restants avant entretien à définir
+     * @param kmRestants le nombre de kilomètres restants à définir
      */
     public void setKmRestants(int kmRestants) {
         this.kmRestants = kmRestants;
     }
 
     /**
-     * @return le type d'entretien
+     * @return le type d'entretien prévu
      */
     public String getTypeEntretien() {
         return typeEntretien;
@@ -143,7 +148,7 @@ public class AlerteEntretienDTO {
     }
 
     /**
-     * @param kmPrevu le kilométrage prévu pour l'entretien à définir
+     * @param kmPrevu le kilométrage prévu à définir
      */
     public void setKmPrevu(int kmPrevu) {
         this.kmPrevu = kmPrevu;

@@ -1,18 +1,15 @@
 package main.java.com.miage.parcauto.service;
 
-import main.java.com.miage.parcauto.dao.EntretienRepository;
 import main.java.com.miage.parcauto.dao.EntretienRepositoryImpl;
-import main.java.com.miage.parcauto.dao.VehiculeRepository;
 import main.java.com.miage.parcauto.dao.VehiculeRepositoryImpl;
 import main.java.com.miage.parcauto.dto.EntretienDTO;
 import main.java.com.miage.parcauto.exception.DatabaseException;
 import main.java.com.miage.parcauto.exception.ValidationException;
 import main.java.com.miage.parcauto.mapper.EntretienMapper;
 import main.java.com.miage.parcauto.model.entretien.Entretien;
-import main.java.com.miage.parcauto.model.vehicule.Vehicule;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;

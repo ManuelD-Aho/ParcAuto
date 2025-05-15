@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import main.java.com.miage.parcauto.dao.NotificationRepository;
 import main.java.com.miage.parcauto.dao.NotificationRepositoryImpl;
 import main.java.com.miage.parcauto.dto.NotificationDTO;
 import main.java.com.miage.parcauto.dto.NotificationDTO.TypeNotification;

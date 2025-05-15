@@ -2,11 +2,9 @@ package main.java.com.miage.parcauto.mapper;
 
 import main.java.com.miage.parcauto.dto.SocieteCompteDTO;
 import main.java.com.miage.parcauto.model.finance.SocieteCompte;
-import main.java.com.miage.parcauto.dao.PersonnelRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Optional;
 
 /**
  * Classe utilitaire pour la conversion entre les entités SocieteCompte et les

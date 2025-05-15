@@ -3,18 +3,12 @@ package main.java.com.miage.parcauto.mapper;
 import main.java.com.miage.parcauto.dto.AlerteAssuranceDTO;
 import main.java.com.miage.parcauto.dto.AlerteEntretienDTO;
 import main.java.com.miage.parcauto.dto.BilanFinancierDTO;
-import main.java.com.miage.parcauto.dto.BilanFlotteDTO;
 import main.java.com.miage.parcauto.dto.BilanMensuelDTO;
 import main.java.com.miage.parcauto.dto.CoutEntretienDTO;
 import main.java.com.miage.parcauto.dto.TcoVehiculeDTO;
 import main.java.com.miage.parcauto.dto.VehiculeRentabiliteDTO;
 import main.java.com.miage.parcauto.model.finance.BilanFinancier;
 import main.java.com.miage.parcauto.model.finance.CoutEntretien;
-import main.java.com.miage.parcauto.dao.FinanceDao.AlerteAssurance;
-import main.java.com.miage.parcauto.dao.FinanceDao.AlerteEntretien;
-import main.java.com.miage.parcauto.dao.FinanceDao.BilanMensuel;
-import main.java.com.miage.parcauto.dao.FinanceDao.RentabiliteVehicule;
-import main.java.com.miage.parcauto.dao.FinanceDao.TCOVehicule;
 
 import java.time.Month;
 import java.util.ArrayList;

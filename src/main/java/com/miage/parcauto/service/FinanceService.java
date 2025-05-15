@@ -8,23 +8,15 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.FinanceRepository;
 import main.java.com.miage.parcauto.dao.FinanceRepositoryImpl;
-import main.java.com.miage.parcauto.dto.AlerteAssuranceDTO;
-import main.java.com.miage.parcauto.dto.AlerteEntretienDTO;
 import main.java.com.miage.parcauto.dto.BilanFinancierDTO;
-import main.java.com.miage.parcauto.dto.BilanFlotteDTO;
 import main.java.com.miage.parcauto.dto.BilanMensuelDTO;
-import main.java.com.miage.parcauto.dto.CoutEntretienDTO;
 import main.java.com.miage.parcauto.dto.TcoVehiculeDTO;
 import main.java.com.miage.parcauto.dto.VehiculeRentabiliteDTO;
 import main.java.com.miage.parcauto.exception.DatabaseException;
 import main.java.com.miage.parcauto.exception.FinanceNotFoundException;
-import main.java.com.miage.parcauto.exception.ValidationException;
 import main.java.com.miage.parcauto.mapper.FinanceMapper;
 import main.java.com.miage.parcauto.model.finance.BilanFinancier;
-import main.java.com.miage.parcauto.service.ValidationService.ValidationResult;
-import main.java.com.miage.parcauto.dao.FinanceDao;
 
 /**
  * Service métier pour la gestion financière du parc automobile.

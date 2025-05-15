@@ -8,8 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import main.java.com.miage.parcauto.dao.SocieteCompteDao;
-import main.java.com.miage.parcauto.dao.UtilisateurDao;
-import main.java.com.miage.parcauto.model.Societaire;
+import main.java.com.miage.parcauto.model.rh.Societaire;
 import main.java.com.miage.parcauto.model.finance.SocieteCompte;
 import main.java.com.miage.parcauto.model.rh.Personnel;
 

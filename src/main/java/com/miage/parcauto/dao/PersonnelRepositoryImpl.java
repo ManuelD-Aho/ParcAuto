@@ -1,13 +1,17 @@
 package main.java.com.miage.parcauto.dao;
 
-import main.java.com.miage.parcauto.model.utilisateur.Personnel;
-import main.java.com.miage.parcauto.util.ConnectionFactory;
+import main.java.com.miage.parcauto.model.rh.Fonction;
+import main.java.com.miage.parcauto.model.rh.Personnel;
+import main.java.com.miage.parcauto.model.rh.Service;
+import main.java.com.miage.parcauto.model.rh.Sexe;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,38 +19,51 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implémentation de l'interface PersonnelRepository pour la gestion du
- * personnel.
- *
- * @author MIAGE Holding
- * @version 1.0
+ * Implémentation du Repository pour l'entité {@link Personnel}.
+ * Gère les opérations CRUD pour les membres du personnel.
  */
-public class PersonnelRepositoryImpl implements PersonnelRepository {
+public class PersonnelRepositoryImpl implements Repository<Personnel, Integer> {
 
     private static final Logger LOGGER = Logger.getLogger(PersonnelRepositoryImpl.class.getName());
+
+    private static final String SQL_SELECT_BASE = "SELECT p.id_personnel, p.nom, p.prenom, p.date_naissance, p.sexe, p.adresse, " +
+            "p.telephone, p.email, p.date_embauche, " +
+            "p.id_fonction as f_id, f.lib_fonction as f_lib, " +
+            "p.id_service as s_id, s.lib_service as s_lib " +
+            "FROM PERSONNEL p " +
+            "LEFT JOIN FONCTION f ON p.id_fonction = f.id_fonction " +
+            "LEFT JOIN SERVICE s ON p.id_service = s.id_service ";
+
+    private static final String SQL_FIND_BY_ID = SQL_SELECT_BASE + "WHERE p.id_personnel = ?";
+    private static final String SQL_FIND_ALL = SQL_SELECT_BASE + "ORDER BY p.nom ASC, p.prenom ASC";
+    private static final String SQL_FIND_ALL_PAGED = SQL_SELECT_BASE + "ORDER BY p.nom ASC, p.prenom ASC LIMIT ? OFFSET ?";
+    private static final String SQL_SAVE = "INSERT INTO PERSONNEL (nom, prenom, date_naissance, sexe, adresse, telephone, email, date_embauche, id_fonction, id_service) " +
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String SQL_UPDATE = "UPDATE PERSONNEL SET nom = ?, prenom = ?, date_naissance = ?, sexe = ?, adresse = ?, " +
+            "telephone = ?, email = ?, date_embauche = ?, id_fonction = ?, id_service = ? " +
+            "WHERE id_personnel = ?";
+    private static final String SQL_DELETE = "DELETE FROM PERSONNEL WHERE id_personnel = ?";
+    private static final String SQL_COUNT = "SELECT COUNT(*) FROM PERSONNEL";
 
     /**
      * {@inheritDoc}
      */
     @Override
     public Optional<Personnel> findById(Integer id) {
-        String query = "SELECT * FROM PERSONNEL WHERE id_personnel = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
+        if (id == null) return Optional.empty();
+        Personnel personnel = null;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_ID)) {
             pstmt.setInt(1, id);
-
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(mapResultSetToPersonnel(rs));
+                    personnel = mapResultSetToPersonnel(rs);
                 }
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du personnel par ID: " + id, ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de Personnel par ID: " + id, e);
         }
-
-        return Optional.empty();
+        return Optional.ofNullable(personnel);
     }
 
     /**
@@ -54,20 +71,16 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
      */
     @Override
     public List<Personnel> findAll() {
-        String query = "SELECT * FROM PERSONNEL";
         List<Personnel> personnels = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                ResultSet rs = pstmt.executeQuery()) {
-
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ALL);
+             ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
                 personnels.add(mapResultSetToPersonnel(rs));
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tout le personnel", ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les Personnels", e);
         }
-
         return personnels;
     }
 
@@ -76,24 +89,23 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
      */
     @Override
     public List<Personnel> findAll(int page, int size) {
-        String query = "SELECT * FROM PERSONNEL LIMIT ? OFFSET ?";
+        if (page < 0 || size <= 0) {
+            LOGGER.log(Level.WARNING, "Pagination invalide : page={0}, size={1}", new Object[]{page, size});
+            return new ArrayList<>();
+        }
         List<Personnel> personnels = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_ALL_PAGED)) {
             pstmt.setInt(1, size);
-            pstmt.setInt(2, (page - 1) * size);
-
+            pstmt.setInt(2, page * size);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     personnels.add(mapResultSetToPersonnel(rs));
                 }
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du personnel avec pagination", ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération paginée des Personnels", e);
         }
-
         return personnels;
     }
 
@@ -101,76 +113,70 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
      * {@inheritDoc}
      */
     @Override
-    public Personnel save(Personnel personnel) {
-        String query = "INSERT INTO PERSONNEL (nom, prenom, email, telephone, nom_utilisateur, " +
-                "mot_de_passe, sel, role, actif) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-
-            pstmt.setString(1, personnel.getNom());
-            pstmt.setString(2, personnel.getPrenom());
-            pstmt.setString(3, personnel.getEmail());
-            pstmt.setString(4, personnel.getTelephone());
-            pstmt.setString(5, personnel.getNomUtilisateur());
-            pstmt.setString(6, personnel.getMotDePasse());
-            pstmt.setString(7, personnel.getSel());
-            pstmt.setString(8, personnel.getRole());
-            pstmt.setBoolean(9, personnel.isActif());
-
+    public Personnel save(Personnel entity) {
+        if (entity == null) return null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ResultSet generatedKeys = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_SAVE, Statement.RETURN_GENERATED_KEYS);
+            mapPersonnelToPreparedStatement(entity, pstmt, false);
             int affectedRows = pstmt.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new SQLException("La création du personnel a échoué, aucune ligne affectée.");
+                conn.rollback();
+                throw new SQLException("La création de Personnel a échoué, aucune ligne affectée.");
             }
-
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    personnel.setIdPersonnel(generatedKeys.getInt(1));
-                } else {
-                    throw new SQLException("La création du personnel a échoué, aucun ID obtenu.");
-                }
+            generatedKeys = pstmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                entity.setIdPersonnel(generatedKeys.getInt(1));
+            } else {
+                conn.rollback();
+                throw new SQLException("La création de Personnel a échoué, aucun ID généré retourné.");
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la création d'un personnel", ex);
+            conn.commit();
+            return entity;
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la sauvegarde de Personnel: " + entity.getNomComplet(), e);
+            dbUtilRollback(conn);
+            return null;
+        } finally {
+            DbUtil.closeQuietly(null, pstmt, generatedKeys);
+            DbUtil.closeQuietly(conn, null, null);
         }
-
-        return personnel;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Personnel update(Personnel personnel) {
-        String query = "UPDATE PERSONNEL SET nom = ?, prenom = ?, email = ?, telephone = ?, " +
-                "nom_utilisateur = ?, mot_de_passe = ?, sel = ?, role = ?, actif = ? " +
-                "WHERE id_personnel = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, personnel.getNom());
-            pstmt.setString(2, personnel.getPrenom());
-            pstmt.setString(3, personnel.getEmail());
-            pstmt.setString(4, personnel.getTelephone());
-            pstmt.setString(5, personnel.getNomUtilisateur());
-            pstmt.setString(6, personnel.getMotDePasse());
-            pstmt.setString(7, personnel.getSel());
-            pstmt.setString(8, personnel.getRole());
-            pstmt.setBoolean(9, personnel.isActif());
-            pstmt.setInt(10, personnel.getIdPersonnel());
-
+    public Personnel update(Personnel entity) {
+        if (entity == null || entity.getIdPersonnel() == null) return null;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_UPDATE);
+            mapPersonnelToPreparedStatement(entity, pstmt, true);
             int affectedRows = pstmt.executeUpdate();
-
-            if (affectedRows == 0) {
-                throw new SQLException("La mise à jour du personnel a échoué, aucune ligne affectée.");
+            if (affectedRows > 0) {
+                conn.commit();
+                return entity;
+            } else {
+                conn.rollback();
+                LOGGER.log(Level.WARNING, "Aucune ligne mise à jour pour Personnel ID: {0}", entity.getIdPersonnel());
+                return null;
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du personnel: " + personnel.getIdPersonnel(), ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour de Personnel ID: " + entity.getIdPersonnel(), e);
+            dbUtilRollback(conn);
+            return null;
+        } finally {
+            DbUtil.closeQuietly(conn, pstmt);
         }
-
-        return personnel;
     }
 
     /**
@@ -178,18 +184,23 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
      */
     @Override
     public boolean delete(Integer id) {
-        String query = "DELETE FROM PERSONNEL WHERE id_personnel = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
+        if (id == null) return false;
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = DbUtil.getConnection();
+            conn.setAutoCommit(false);
+            pstmt = conn.prepareStatement(SQL_DELETE);
             pstmt.setInt(1, id);
-
             int affectedRows = pstmt.executeUpdate();
+            conn.commit();
             return affectedRows > 0;
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression du personnel: " + id, ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de Personnel ID: " + id, e);
+            dbUtilRollback(conn);
             return false;
+        } finally {
+            DbUtil.closeQuietly(conn, pstmt);
         }
     }
 
@@ -198,224 +209,108 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
      */
     @Override
     public long count() {
-        String query = "SELECT COUNT(*) FROM PERSONNEL";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                ResultSet rs = pstmt.executeQuery()) {
-
+        long count = 0;
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_COUNT);
+             ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
-                return rs.getLong(1);
+                count = rs.getLong(1);
             }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du comptage du personnel", ex);
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors du comptage des Personnels", e);
         }
-
-        return 0;
+        return count;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Optional<Personnel> findByNomUtilisateur(String nomUtilisateur) {
-        String query = "SELECT * FROM PERSONNEL WHERE nom_utilisateur = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, nomUtilisateur);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapResultSetToPersonnel(rs));
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE,
-                    "Erreur lors de la recherche du personnel par nom d'utilisateur: " + nomUtilisateur, ex);
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Optional<Personnel> findByEmail(String email) {
-        String query = "SELECT * FROM PERSONNEL WHERE email = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, email);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return Optional.of(mapResultSetToPersonnel(rs));
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du personnel par email: " + email, ex);
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Personnel> findAllByRole(String role) {
-        String query = "SELECT * FROM PERSONNEL WHERE role = ?";
-        List<Personnel> personnels = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, role);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    personnels.add(mapResultSetToPersonnel(rs));
-                }
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du personnel par rôle: " + role, ex);
-        }
-
-        return personnels;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Personnel> findAllActifs() {
-        String query = "SELECT * FROM PERSONNEL WHERE actif = TRUE";
-        List<Personnel> personnels = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                personnels.add(mapResultSetToPersonnel(rs));
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du personnel actif", ex);
-        }
-
-        return personnels;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Personnel> findAllInactifs() {
-        String query = "SELECT * FROM PERSONNEL WHERE actif = FALSE";
-        List<Personnel> personnels = new ArrayList<>();
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query);
-                ResultSet rs = pstmt.executeQuery()) {
-
-            while (rs.next()) {
-                personnels.add(mapResultSetToPersonnel(rs));
-            }
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche du personnel inactif", ex);
-        }
-
-        return personnels;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean updateMotDePasse(Integer idPersonnel, String nouveauMotDePasse, String nouveauSel) {
-        String query = "UPDATE PERSONNEL SET mot_de_passe = ?, sel = ? WHERE id_personnel = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setString(1, nouveauMotDePasse);
-            pstmt.setString(2, nouveauSel);
-            pstmt.setInt(3, idPersonnel);
-
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du mot de passe du personnel: " + idPersonnel, ex);
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean desactiver(Integer idPersonnel) {
-        String query = "UPDATE PERSONNEL SET actif = FALSE WHERE id_personnel = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setInt(1, idPersonnel);
-
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la désactivation du personnel: " + idPersonnel, ex);
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean reactiver(Integer idPersonnel) {
-        String query = "UPDATE PERSONNEL SET actif = TRUE WHERE id_personnel = ?";
-
-        try (Connection conn = ConnectionFactory.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(query)) {
-
-            pstmt.setInt(1, idPersonnel);
-
-            int affectedRows = pstmt.executeUpdate();
-            return affectedRows > 0;
-        } catch (SQLException ex) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la réactivation du personnel: " + idPersonnel, ex);
-            return false;
-        }
-    }
-
-    /**
-     * Convertit un ResultSet en objet Personnel.
-     *
-     * @param rs Le ResultSet à convertir
-     * @return L'objet Personnel créé
-     * @throws SQLException Si une erreur survient lors de la récupération des
-     *                      données
-     */
     private Personnel mapResultSetToPersonnel(ResultSet rs) throws SQLException {
         Personnel personnel = new Personnel();
-
         personnel.setIdPersonnel(rs.getInt("id_personnel"));
         personnel.setNom(rs.getString("nom"));
         personnel.setPrenom(rs.getString("prenom"));
-        personnel.setEmail(rs.getString("email"));
+        Date dateNaissanceDb = rs.getDate("date_naissance");
+        if (dateNaissanceDb != null) {
+            personnel.setDateNaissance(dateNaissanceDb.toLocalDate());
+        }
+        String sexeDb = rs.getString("sexe");
+        if (sexeDb != null) {
+            try {
+                personnel.setSexe(Sexe.fromString(sexeDb));
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, "Sexe inconnu '" + sexeDb + "' trouvé pour Personnel ID: " + personnel.getIdPersonnel(), e);
+            }
+        }
+        personnel.setAdresse(rs.getString("adresse"));
         personnel.setTelephone(rs.getString("telephone"));
-        personnel.setNomUtilisateur(rs.getString("nom_utilisateur"));
-        personnel.setMotDePasse(rs.getString("mot_de_passe"));
-        personnel.setSel(rs.getString("sel"));
-        personnel.setRole(rs.getString("role"));
-        personnel.setActif(rs.getBoolean("actif"));
+        personnel.setEmail(rs.getString("email"));
+        Date dateEmbaucheDb = rs.getDate("date_embauche");
+        if (dateEmbaucheDb != null) {
+            personnel.setDateEmbauche(dateEmbaucheDb.toLocalDate());
+        }
 
+        int idFonction = rs.getInt("f_id");
+        if (!rs.wasNull()) {
+            Fonction fonction = new Fonction();
+            fonction.setIdFonction(idFonction);
+            fonction.setLibFonction(rs.getString("f_lib"));
+            personnel.setFonction(fonction);
+        }
+
+        int idService = rs.getInt("s_id");
+        if (!rs.wasNull()) {
+            Service service = new Service();
+            service.setIdService(idService);
+            service.setLibService(rs.getString("s_lib"));
+            personnel.setService(service);
+        }
         return personnel;
+    }
+
+    private void mapPersonnelToPreparedStatement(Personnel entity, PreparedStatement pstmt, boolean isUpdate) throws SQLException {
+        int paramIndex = 1;
+        pstmt.setString(paramIndex++, entity.getNom());
+        pstmt.setString(paramIndex++, entity.getPrenom());
+        if (entity.getDateNaissance() != null) {
+            pstmt.setDate(paramIndex++, Date.valueOf(entity.getDateNaissance()));
+        } else {
+            pstmt.setNull(paramIndex++, Types.DATE);
+        }
+        if (entity.getSexe() != null) {
+            pstmt.setString(paramIndex++, entity.getSexe().getValeurDb()); // Assumes Sexe has getValeurDb() for DB ENUM/VARCHAR
+        } else {
+            pstmt.setNull(paramIndex++, Types.VARCHAR);
+        }
+        pstmt.setString(paramIndex++, entity.getAdresse());
+        pstmt.setString(paramIndex++, entity.getTelephone());
+        pstmt.setString(paramIndex++, entity.getEmail());
+        if (entity.getDateEmbauche() != null) {
+            pstmt.setDate(paramIndex++, Date.valueOf(entity.getDateEmbauche()));
+        } else {
+            pstmt.setNull(paramIndex++, Types.DATE);
+        }
+
+        if (entity.getFonction() != null && entity.getFonction().getIdFonction() != null) {
+            pstmt.setInt(paramIndex++, entity.getFonction().getIdFonction());
+        } else {
+            pstmt.setNull(paramIndex++, Types.INTEGER);
+        }
+        if (entity.getService() != null && entity.getService().getIdService() != null) {
+            pstmt.setInt(paramIndex++, entity.getService().getIdService());
+        } else {
+            pstmt.setNull(paramIndex++, Types.INTEGER);
+        }
+
+        if (isUpdate) {
+            pstmt.setInt(paramIndex, entity.getIdPersonnel());
+        }
+    }
+
+    private void dbUtilRollback(Connection conn) {
+        if (conn != null) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                LOGGER.log(Level.SEVERE, "Erreur lors du rollback de la transaction Personnel.", ex);
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package main.java.com.miage.parcauto.service;
 
-import main.java.com.miage.parcauto.dao.VehiculeRepository;
 import main.java.com.miage.parcauto.dao.VehiculeRepositoryImpl;
 import main.java.com.miage.parcauto.dto.VehiculeDTO;
 import main.java.com.miage.parcauto.exception.DatabaseException;
@@ -8,7 +7,7 @@ import main.java.com.miage.parcauto.exception.ValidationException;
 import main.java.com.miage.parcauto.mapper.VehiculeMapper;
 import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
-import java.util.Collections;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;

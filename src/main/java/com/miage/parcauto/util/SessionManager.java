@@ -2,8 +2,6 @@ package main.java.com.miage.parcauto.util;
 
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
-
 /**
  * Gestionnaire de session pour l'application.
  * Cette classe singleton permet de stocker et d'accéder à l'utilisateur actuellement connecté.

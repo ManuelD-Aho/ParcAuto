@@ -30,8 +30,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import main.java.com.miage.parcauto.dao.UtilisateurDao;
-import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
 import main.java.com.miage.parcauto.util.ResourceManager;
 import main.java.com.miage.parcauto.util.SessionManager;
 import main.java.com.miage.parcauto.util.ThemeManager;

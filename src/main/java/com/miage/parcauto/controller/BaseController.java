@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.UtilisateurDao.Utilisateur;
 import main.java.com.miage.parcauto.util.Permission;
 import main.java.com.miage.parcauto.util.ResourceManager;
 import main.java.com.miage.parcauto.util.SecurityManager;
@@ -19,7 +18,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
