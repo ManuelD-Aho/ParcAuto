@@ -17,7 +17,6 @@ import javafx.stage.Stage;
 
 import main.java.com.miage.parcauto.dao.DbUtil;
 import main.java.com.miage.parcauto.util.ResourceManager;
-import main.java.com.miage.parcauto.util.SecurityManager;
 import main.java.com.miage.parcauto.util.ThemeManager;
 
 /**
