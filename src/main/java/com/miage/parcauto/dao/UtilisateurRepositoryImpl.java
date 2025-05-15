@@ -1,7 +1,6 @@
 package main.java.com.miage.parcauto.dao;
 
 import main.java.com.miage.parcauto.model.rh.Personnel;
-import main.java.com.miage.parcauto.model.utilisateur.RoleUtilisateur;
 import main.java.com.miage.parcauto.model.utilisateur.Utilisateur;
 
 import java.sql.Connection;

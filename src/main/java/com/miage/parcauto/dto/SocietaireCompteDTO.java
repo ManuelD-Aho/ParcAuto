@@ -1,28 +1,25 @@
-package main.java.com.miage.parcauto.model.finance;
-
-import main.java.com.miage.parcauto.model.rh.Personnel;
+package main.java.com.miage.parcauto.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
- * Entité représentant un compte sociétaire.
+ * DTO pour l'entité SocietaireCompte.
  */
-public class SocietaireCompte implements Serializable {
+public class SocietaireCompteDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idSocietaire;
-    private Personnel personnel;  // Lien éventuel avec un membre du personnel
+    private Integer idPersonnel;
+    private String personnelInfo;
     private String nom;
     private String numero;
     private BigDecimal solde;
     private String email;
     private String telephone;
 
-    public SocietaireCompte() {
-        this.solde = BigDecimal.ZERO;
+    public SocietaireCompteDTO() {
     }
 
     // Getters et Setters
@@ -34,12 +31,20 @@ public class SocietaireCompte implements Serializable {
         this.idSocietaire = idSocietaire;
     }
 
-    public Personnel getPersonnel() {
-        return personnel;
+    public Integer getIdPersonnel() {
+        return idPersonnel;
     }
 
-    public void setPersonnel(Personnel personnel) {
-        this.personnel = personnel;
+    public void setIdPersonnel(Integer idPersonnel) {
+        this.idPersonnel = idPersonnel;
+    }
+
+    public String getPersonnelInfo() {
+        return personnelInfo;
+    }
+
+    public void setPersonnelInfo(String personnelInfo) {
+        this.personnelInfo = personnelInfo;
     }
 
     public String getNom() {
@@ -80,19 +85,6 @@ public class SocietaireCompte implements Serializable {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SocietaireCompte that = (SocietaireCompte) o;
-        return Objects.equals(idSocietaire, that.idSocietaire);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idSocietaire);
     }
 
     @Override

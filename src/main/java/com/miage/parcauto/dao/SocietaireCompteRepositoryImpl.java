@@ -2,7 +2,6 @@ package main.java.com.miage.parcauto.dao;
 
 import main.java.com.miage.parcauto.model.finance.SocietaireCompte;
 import main.java.com.miage.parcauto.model.finance.TypeCompteSocietaire; // Assurez-vous que cette énumération existe
-import main.java.com.miage.parcauto.model.rh.Societaire; // Supposant une entité Societaire, sinon ajuster
 
 import java.math.BigDecimal;
 import java.sql.Connection;

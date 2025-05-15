@@ -1,14 +1,15 @@
-package main.java.com.miage.parcauto.model.assurance;
+package main.java.com.miage.parcauto.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Entité représentant une assurance de véhicule.
+ * DTO pour l'entité Assurance.
  */
-public class Assurance implements Serializable {
+public class AssuranceDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,8 +18,10 @@ public class Assurance implements Serializable {
     private LocalDateTime dateFinAssurance;
     private String agence;
     private BigDecimal coutAssurance;
+    private List<Integer> idVehiculesCouvert = new ArrayList<>();
+    private List<String> vehiculesInfos = new ArrayList<>();
 
-    public Assurance() {
+    public AssuranceDTO() {
     }
 
     // Getters et Setters
@@ -62,17 +65,20 @@ public class Assurance implements Serializable {
         this.coutAssurance = coutAssurance;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Assurance assurance = (Assurance) o;
-        return Objects.equals(numCarteAssurance, assurance.numCarteAssurance);
+    public List<Integer> getIdVehiculesCouvert() {
+        return idVehiculesCouvert;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(numCarteAssurance);
+    public void setIdVehiculesCouvert(List<Integer> idVehiculesCouvert) {
+        this.idVehiculesCouvert = idVehiculesCouvert;
+    }
+
+    public List<String> getVehiculesInfos() {
+        return vehiculesInfos;
+    }
+
+    public void setVehiculesInfos(List<String> vehiculesInfos) {
+        this.vehiculesInfos = vehiculesInfos;
     }
 
     @Override

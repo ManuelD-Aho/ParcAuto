@@ -2,23 +2,20 @@ package main.java.com.miage.parcauto.model.entretien;
 
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Entité représentant un entretien effectué ou à effectuer sur un véhicule.
- * Correspond à un enregistrement de la table ENTRETIEN.
+ * Entité représentant un entretien de véhicule.
  */
 public class Entretien implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private Integer idEntretien;
-    private Vehicule vehicule; // Relation avec Vehicule (via id_vehicule)
+    private Vehicule vehicule;
     private LocalDateTime dateEntreeEntr;
     private LocalDateTime dateSortieEntr;
     private String motifEntr;
@@ -28,43 +25,10 @@ public class Entretien implements Serializable {
     private TypeEntretien type;
     private StatutOT statutOt;
 
-    /**
-     * Constructeur par défaut.
-     */
     public Entretien() {
     }
 
-    /**
-     * Constructeur avec tous les paramètres.
-     *
-     * @param idEntretien      L'identifiant unique de l'entretien.
-     * @param vehicule         Le véhicule concerné par l'entretien.
-     * @param dateEntreeEntr   La date d'entrée du véhicule pour l'entretien.
-     * @param dateSortieEntr   La date de sortie du véhicule après l'entretien.
-     * @param motifEntr        Le motif principal de l'entretien.
-     * @param observation      Les observations techniques ou remarques.
-     * @param coutEntr         Le coût total de l'entretien.
-     * @param lieuEntr         Le lieu où l'entretien a été réalisé (garage, etc.).
-     * @param type             Le type d'entretien (Préventif, Correctif).
-     * @param statutOt         Le statut de l'ordre de travail associé.
-     */
-    public Entretien(Integer idEntretien, Vehicule vehicule, LocalDateTime dateEntreeEntr,
-                     LocalDateTime dateSortieEntr, String motifEntr, String observation,
-                     BigDecimal coutEntr, String lieuEntr, TypeEntretien type, StatutOT statutOt) {
-        this.idEntretien = idEntretien;
-        this.vehicule = vehicule;
-        this.dateEntreeEntr = dateEntreeEntr;
-        this.dateSortieEntr = dateSortieEntr;
-        this.motifEntr = motifEntr;
-        this.observation = observation;
-        this.coutEntr = coutEntr;
-        this.lieuEntr = lieuEntr;
-        this.type = type;
-        this.statutOt = statutOt;
-    }
-
     // Getters et Setters
-
     public Integer getIdEntretien() {
         return idEntretien;
     }
@@ -160,13 +124,6 @@ public class Entretien implements Serializable {
 
     @Override
     public String toString() {
-        return "Entretien{" +
-                "idEntretien=" + idEntretien +
-                ", vehicule=" + (vehicule != null ? vehicule.getImmatriculation() : "N/A") +
-                ", motifEntr='" + motifEntr + '\'' +
-                ", type=" + type +
-                ", statutOt=" + statutOt +
-                ", coutEntr=" + coutEntr +
-                '}';
+        return "Entretien #" + idEntretien + " pour " + vehicule + " (" + statutOt + ")";
     }
 }

@@ -1,7 +1,5 @@
 package main.java.com.miage.parcauto.dao;
 
-import main.java.com.miage.parcauto.model.utilisateur.Societaire;
-import java.sql.*;
 import java.util.*;
 
 /**

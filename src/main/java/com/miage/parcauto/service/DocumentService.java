@@ -1,249 +1,148 @@
 package main.java.com.miage.parcauto.service;
 
+import main.java.com.miage.parcauto.dao.DocumentRepository;
+import main.java.com.miage.parcauto.model.document.DocumentSocietaire;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.sql.SQLException;
-import java.util.Collections;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.dao.DocumentRepository;
-import main.java.com.miage.parcauto.dao.DocumentRepository.Document;
-import main.java.com.miage.parcauto.dao.DocumentRepository.TypeDoc;
-
 /**
  * Service pour la gestion des documents.
- * Implémente la logique métier liée aux documents et fait le lien entre le
- * contrôleur et le DAO.
- * 
+ * Ce service offre une couche d'abstraction au-dessus du repository et gère les opérations métier.
  */
 public class DocumentService {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentService.class.getName());
+
     private final DocumentRepository documentRepository;
+    private final String baseStoragePath;
 
     /**
-     * Constructeur par défaut.
+     * Constructeur avec injection de dépendances.
+     * @param documentRepository Le repository pour les opérations de base de données.
+     * @param baseStoragePath Le chemin de base pour le stockage des documents.
      */
-    public DocumentService() {
-        this.documentRepository = new DocumentRepositoryImpl();
-    }
-
-    /**
-     * Constructeur avec injection de dépendance pour les tests.
-     * 
-     * @param documentRepository DAO des documents à utiliser
-     */
-    public DocumentService(DocumentRepository documentRepository) {
+    public DocumentService(DocumentRepository documentRepository, String baseStoragePath) {
         this.documentRepository = documentRepository;
-    }
-
-    /**
-     * Récupère tous les documents.
-     * 
-     * @return Liste des documents
-     */
-    public List<Document> getAllDocuments() {
-        try {
-            return documentRepository.findAll();
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération de tous les documents", e);
-            return Collections.emptyList();
-        }
+        this.baseStoragePath = baseStoragePath;
     }
 
     /**
      * Récupère un document par son ID.
-     * 
-     * @param id ID du document
-     * @return Document trouvé ou null si non trouvé
+     * @param id L'ID du document.
+     * @return Un Optional contenant le document s'il est trouvé.
      */
-    public Document getDocumentById(int id) {
-        try {
-            Optional<Document> doc = documentRepository.findById(id);
-            return doc.orElse(null);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du document par ID: " + id, e);
+    public Optional<DocumentSocietaire> getDocumentById(Integer id) {
+        return documentRepository.findById(id);
+    }
+
+    /**
+     * Récupère tous les documents d'un sociétaire.
+     * @param societaire Le sociétaire concerné.
+     * @return Une liste de documents.
+     */
+    public List<DocumentSocietaire> getDocumentsBySocietaire(Societaire societaire) {
+        return documentRepository.findBySocietaire(societaire);
+    }
+
+    /**
+     * Récupère tous les documents d'un type spécifique.
+     * @param typeDocument Le type de document.
+     * @return Une liste de documents.
+     */
+    public List<DocumentSocietaire> getDocumentsByType(TypeDocumentSocietaire typeDocument) {
+        return documentRepository.findByType(typeDocument);
+    }
+
+    /**
+     * Sauvegarde un nouveau document avec son contenu.
+     * @param document Le document à sauvegarder.
+     * @param fileContent Le contenu du fichier.
+     * @return Le document sauvegardé.
+     * @throws IOException Si une erreur survient lors de l'écriture du fichier.
+     */
+    public DocumentSocietaire saveDocument(DocumentSocietaire document, byte[] fileContent) throws IOException {
+        if (document == null || document.getSocietaire() == null) {
+            throw new IllegalArgumentException("Le document et son sociétaire ne peuvent pas être null.");
+        }
+
+        // Créer le dossier pour le sociétaire si nécessaire
+        String societaireFolderPath = baseStoragePath + "/" + document.getSocietaire().getIdSocietaire();
+        Files.createDirectories(Paths.get(societaireFolderPath));
+
+        // Générer un nom unique pour le fichier
+        String fileName = System.currentTimeMillis() + "_" + document.getNomDocument();
+        String filePath = societaireFolderPath + "/" + fileName;
+
+        // Écrire le fichier sur le disque
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(fileContent);
+        }
+
+        // Mettre à jour les détails du document
+        document.setCheminAccesDocument(filePath);
+        document.setDateUploadDocument(LocalDateTime.now());
+        document.setTailleDocumentKo(fileContent.length / 1024); // Convertir en Ko
+
+        // Sauvegarder en base de données
+        return documentRepository.save(document);
+    }
+
+    /**
+     * Supprime un document par son ID.
+     * Cette méthode supprime à la fois l'enregistrement en base et le fichier physique.
+     * @param id L'ID du document à supprimer.
+     * @return true si la suppression a réussi, false sinon.
+     */
+    public boolean deleteDocument(Integer id) {
+        Optional<DocumentSocietaire> documentOpt = documentRepository.findById(id);
+        if (documentOpt.isEmpty()) {
+            return false;
+        }
+
+        DocumentSocietaire document = documentOpt.get();
+
+        // Supprimer le fichier physique
+        File file = new File(document.getCheminAccesDocument());
+        boolean fileDeleted = file.delete();
+
+        if (!fileDeleted) {
+            LOGGER.log(Level.WARNING, "Impossible de supprimer le fichier physique: {0}", document.getCheminAccesDocument());
+        }
+
+        // Supprimer l'enregistrement en base de données
+        return documentRepository.delete(id);
+    }
+
+    /**
+     * Récupère le contenu d'un document par son ID.
+     * @param id L'ID du document.
+     * @return Un tableau d'octets contenant le contenu du document, ou null si non trouvé.
+     * @throws IOException Si une erreur survient lors de la lecture du fichier.
+     */
+    public byte[] getDocumentContent(Integer id) throws IOException {
+        Optional<DocumentSocietaire> documentOpt = documentRepository.findById(id);
+        if (documentOpt.isEmpty()) {
             return null;
         }
-    }
 
-    /**
-     * Récupère les documents d'un sociétaire.
-     * 
-     * @param idSocietaire ID du sociétaire
-     * @return Liste des documents du sociétaire
-     */
-    public List<Document> getDocumentsBySocietaire(int idSocietaire) {
-        try {
-            return documentRepository.findBySocietaire(idSocietaire);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du sociétaire: " + idSocietaire, e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Récupère les documents d'un type spécifique.
-     * 
-     * @param typeDoc Type de document
-     * @return Liste des documents du type spécifié
-     */
-    public List<Document> getDocumentsByType(TypeDoc typeDoc) {
-        try {
-            return documentRepository.findByType(typeDoc);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du type: " + typeDoc, e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
-     * Récupère les documents de plusieurs types spécifiques.
-     * 
-     * @param types Types de documents
-     * @return Liste des documents des types spécifiés
-     */
-    public List<Document> getDocumentsByTypes(TypeDoc... types) {
-        List<Document> result = new java.util.ArrayList<>();
-
-        for (TypeDoc type : types) {
-            try {
-                List<Document> docs = documentRepository.findByType(type);
-                result.addAll(docs);
-            } catch (SQLException e) {
-                LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des documents du type: " + type, e);
-            }
+        DocumentSocietaire document = documentOpt.get();
+        File file = new File(document.getCheminAccesDocument());
+        if (!file.exists()) {
+            throw new IOException("Le fichier n'existe pas: " + document.getCheminAccesDocument());
         }
 
-        return result;
-    }
-
-    /**
-     * Vérifie si un document d'un type spécifique existe pour un sociétaire.
-     * 
-     * @param idSocietaire ID du sociétaire
-     * @param typeDoc      Type de document
-     * @return true si un document existe, false sinon
-     */
-    public boolean documentExists(int idSocietaire, TypeDoc typeDoc) {
-        try {
-            return documentRepository.documentExists(idSocietaire, typeDoc);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification d'existence du document", e);
-            return false;
-        }
-    }
-
-    /**
-     * Upload un nouveau document.
-     * 
-     * @param sourcePath   Chemin du fichier à uploader
-     * @param idSocietaire ID du sociétaire associé
-     * @param typeDoc      Type du document
-     * @param nomOriginal  Nom original du fichier
-     * @return Document créé ou null si erreur
-     */
-    public Document uploadDocument(Path sourcePath, int idSocietaire, TypeDoc typeDoc, String nomOriginal) {
-        try {
-            return documentRepository.save(sourcePath, idSocietaire, typeDoc, nomOriginal);
-        } catch (SQLException | IOException | IllegalArgumentException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de l'upload du document", e);
-            return null;
-        }
-    }
-
-    /**
-     * Remplace un document existant.
-     * 
-     * @param idDoc       ID du document à remplacer
-     * @param sourcePath  Chemin du nouveau fichier
-     * @param nomOriginal Nom original du nouveau fichier
-     * @return Document mis à jour ou null si erreur
-     */
-    public Document replaceDocument(int idDoc, Path sourcePath, String nomOriginal) {
-        try {
-            return documentRepository.replace(idDoc, sourcePath, nomOriginal);
-        } catch (SQLException | IOException | IllegalArgumentException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors du remplacement du document", e);
-            return null;
-        }
-    }
-
-    /**
-     * Met à jour les informations d'un document.
-     * 
-     * @param document Document à mettre à jour
-     * @return true si la mise à jour est réussie, false sinon
-     */
-    public boolean updateDocument(Document document) {
-        try {
-            return documentRepository.update(document);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du document", e);
-            return false;
-        }
-    }
-
-    /**
-     * Supprime un document.
-     * 
-     * @param idDoc ID du document à supprimer
-     * @return true si la suppression est réussie, false sinon
-     */
-    public boolean deleteDocument(int idDoc) {
-        try {
-            return documentRepository.delete(idDoc);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression du document", e);
-            return false;
-        }
-    }
-
-    /**
-     * Récupère le chemin d'un document pour l'afficher.
-     * 
-     * @param idDoc ID du document
-     * @return Optional contenant le chemin du document s'il existe
-     */
-    public Optional<Path> getDocumentPath(int idDoc) {
-        try {
-            return documentRepository.getDocumentPath(idDoc);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du chemin du document", e);
-            return Optional.empty();
-        }
-    }
-
-    /**
-     * Vérifie si un sociétaire possède tous les documents obligatoires.
-     * 
-     * @param idSocietaire ID du sociétaire
-     * @return true si tous les documents obligatoires sont présents, false sinon
-     */
-    public boolean hasRequiredDocuments(int idSocietaire) {
-        try {
-            return documentRepository.hasRequiredDocuments(idSocietaire);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la vérification des documents obligatoires", e);
-            return false;
-        }
-    }
-
-    /**
-     * Recherche de documents par terme de recherche.
-     * 
-     * @param searchTerm Terme de recherche
-     * @return Liste des documents correspondants
-     */
-    public List<Document> searchDocuments(String searchTerm) {
-        try {
-            return documentRepository.search(searchTerm);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de documents", e);
-            return Collections.emptyList();
+        try (FileInputStream fis = new FileInputStream(file)) {
+            return fis.readAllBytes();
         }
     }
 }

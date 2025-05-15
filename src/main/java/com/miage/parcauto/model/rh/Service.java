@@ -1,35 +1,22 @@
 package main.java.com.miage.parcauto.model.rh;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * Entité représentant un service ou un département au sein de l'entreprise.
- * Correspond à un enregistrement de la table SERVICE.
+ * Entité représentant un service dans l'entreprise.
  */
 public class Service implements Serializable {
 
-    @Serial
     private static final long serialVersionUID = 1L;
 
     private Integer idService;
-    private String libService; // Libellé du service
-    private String localisationService; // Localisation géographique ou bureau du service
+    private String libService;
+    private String localisationService;
 
-    /**
-     * Constructeur par défaut.
-     */
     public Service() {
     }
 
-    /**
-     * Constructeur avec tous les paramètres.
-     *
-     * @param idService            L'identifiant unique du service.
-     * @param libService           Le libellé du service (ex: "Direction", "Logistique", "Maintenance").
-     * @param localisationService  La localisation du service.
-     */
     public Service(Integer idService, String libService, String localisationService) {
         this.idService = idService;
         this.libService = libService;
@@ -37,7 +24,6 @@ public class Service implements Serializable {
     }
 
     // Getters et Setters
-
     public Integer getIdService() {
         return idService;
     }
@@ -77,10 +63,6 @@ public class Service implements Serializable {
 
     @Override
     public String toString() {
-        return "Service{" +
-                "idService=" + idService +
-                ", libService='" + libService + '\'' +
-                ", localisationService='" + localisationService + '\'' +
-                '}';
+        return libService;
     }
 }

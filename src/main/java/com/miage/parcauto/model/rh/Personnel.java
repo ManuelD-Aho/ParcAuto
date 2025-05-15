@@ -8,17 +8,16 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Entité représentant un membre du personnel de l'entreprise.
- * Correspond à un enregistrement de la table PERSONNEL.
+ * Entité représentant un membre du personnel.
  */
 public class Personnel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idPersonnel;
-    private Service service; // Relation avec Service (via id_service)
-    private Fonction fonction; // Relation avec Fonction (via id_fonction)
-    private Vehicule vehiculeAttribution; // Véhicule directement attribué (via id_vehicule)
+    private Service service;
+    private Fonction fonction;
+    private Vehicule vehicule;  // Véhicule attribué si applicable
     private String matricule;
     private String nomPersonnel;
     private String prenomPersonnel;
@@ -27,55 +26,12 @@ public class Personnel implements Serializable {
     private String adresse;
     private LocalDate dateNaissance;
     private Sexe sexe;
-    private LocalDateTime dateAttribution; // Date d'attribution du véhicule lié (PERSONNEL.id_vehicule)
+    private LocalDateTime dateAttribution;  // Date d'attribution du véhicule
 
-    // Note: La relation avec Utilisateur (pour login, role) sera gérée via l'entité Utilisateur
-    // qui aura une référence vers Personnel (id_personnel).
-
-    /**
-     * Constructeur par défaut.
-     */
     public Personnel() {
     }
 
-    /**
-     * Constructeur avec tous les paramètres.
-     *
-     * @param idPersonnel        L'identifiant unique du membre du personnel.
-     * @param service            Le service auquel le personnel est rattaché.
-     * @param fonction           La fonction occupée par le personnel.
-     * @param vehiculeAttribution Le véhicule potentiellement attribué directement au personnel.
-     * @param matricule          Le matricule unique du personnel.
-     * @param nomPersonnel       Le nom de famille du personnel.
-     * @param prenomPersonnel    Le prénom du personnel.
-     * @param email              L'adresse email du personnel.
-     * @param telephone          Le numéro de téléphone du personnel.
-     * @param adresse            L'adresse postale du personnel.
-     * @param dateNaissance      La date de naissance du personnel.
-     * @param sexe               Le sexe du personnel.
-     * @param dateAttribution    La date d'attribution du véhicule (si un véhicule est directement attribué).
-     */
-    public Personnel(Integer idPersonnel, Service service, Fonction fonction, Vehicule vehiculeAttribution,
-                     String matricule, String nomPersonnel, String prenomPersonnel, String email,
-                     String telephone, String adresse, LocalDate dateNaissance, Sexe sexe,
-                     LocalDateTime dateAttribution) {
-        this.idPersonnel = idPersonnel;
-        this.service = service;
-        this.fonction = fonction;
-        this.vehiculeAttribution = vehiculeAttribution;
-        this.matricule = matricule;
-        this.nomPersonnel = nomPersonnel;
-        this.prenomPersonnel = prenomPersonnel;
-        this.email = email;
-        this.telephone = telephone;
-        this.adresse = adresse;
-        this.dateNaissance = dateNaissance;
-        this.sexe = sexe;
-        this.dateAttribution = dateAttribution;
-    }
-
     // Getters et Setters
-
     public Integer getIdPersonnel() {
         return idPersonnel;
     }
@@ -100,12 +56,12 @@ public class Personnel implements Serializable {
         this.fonction = fonction;
     }
 
-    public Vehicule getVehiculeAttribution() {
-        return vehiculeAttribution;
+    public Vehicule getVehicule() {
+        return vehicule;
     }
 
-    public void setVehiculeAttribution(Vehicule vehiculeAttribution) {
-        this.vehiculeAttribution = vehiculeAttribution;
+    public void setVehicule(Vehicule vehicule) {
+        this.vehicule = vehicule;
     }
 
     public String getMatricule() {
@@ -180,43 +136,21 @@ public class Personnel implements Serializable {
         this.dateAttribution = dateAttribution;
     }
 
-    /**
-     * Retourne le nom complet (prénom nom) du membre du personnel.
-     * @return Le nom complet.
-     */
-    public String getNomComplet() {
-        String prenom = (prenomPersonnel != null ? prenomPersonnel : "");
-        String nom = (nomPersonnel != null ? nomPersonnel : "");
-        return (prenom + " " + nom).trim();
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Personnel personnel = (Personnel) o;
-        return Objects.equals(idPersonnel, personnel.idPersonnel) ||
-                (matricule != null && Objects.equals(matricule, personnel.matricule));
+        return Objects.equals(idPersonnel, personnel.idPersonnel);
     }
 
     @Override
     public int hashCode() {
-        // Utiliser matricule s'il est non nul et unique, sinon idPersonnel.
-        // Pour être safe, on peut baser le hash sur l'ID si disponible, sinon matricule.
-        if (idPersonnel != null) {
-            return Objects.hash(idPersonnel);
-        }
-        return Objects.hash(matricule);
+        return Objects.hash(idPersonnel);
     }
 
     @Override
     public String toString() {
-        return "Personnel{" +
-                "idPersonnel=" + idPersonnel +
-                ", matricule='" + matricule + '\'' +
-                ", nomComplet='" + getNomComplet() + '\'' +
-                ", email='" + email + '\'' +
-                ", fonction=" + (fonction != null ? fonction.getLibFonction() : "N/A") +
-                '}';
+        return prenomPersonnel + " " + nomPersonnel;
     }
 }

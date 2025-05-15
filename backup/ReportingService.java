@@ -1,7 +1,6 @@
 package main.java.com.miage.parcauto.service;
 
 import main.java.com.miage.parcauto.dao.*;
-import main.java.com.miage.parcauto.model.entretien.Assurance;
 import main.java.com.miage.parcauto.model.finance.Mouvement;
 import main.java.com.miage.parcauto.model.mission.DepenseMission;
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;

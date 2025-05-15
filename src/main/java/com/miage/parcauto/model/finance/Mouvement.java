@@ -2,52 +2,26 @@ package main.java.com.miage.parcauto.model.finance;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime; // La table MOUVEMENT a un champ `date` de type DATETIME
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
- * Entité représentant un mouvement financier (dépôt, retrait, mensualité)
- * sur un compte sociétaire.
- * Correspond à un enregistrement de la table MOUVEMENT.
+ * Entité représentant un mouvement financier.
  */
 public class Mouvement implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id; // Nommé 'id' dans la table
-    private SocietaireCompte societaireCompte; // Relation avec SocietaireCompte (via id_societaire)
-    private LocalDateTime date; // Date et heure du mouvement
+    private Integer id;
+    private SocietaireCompte societaire;
+    private LocalDateTime date;
     private TypeMouvement type;
     private BigDecimal montant;
-    // La table MOUVEMENT n'a pas de champ "libellé" direct pour le mouvement lui-même.
-    // Si un libellé est nécessaire, il faudrait l'ajouter à la table ou le déduire.
 
-    /**
-     * Constructeur par défaut.
-     */
     public Mouvement() {
     }
 
-    /**
-     * Constructeur avec tous les paramètres.
-     *
-     * @param id                L'identifiant unique du mouvement.
-     * @param societaireCompte  Le compte sociétaire concerné par le mouvement.
-     * @param date              La date et heure du mouvement.
-     * @param type              Le type de mouvement (Depot, Retrait, Mensualite).
-     * @param montant           Le montant du mouvement.
-     */
-    public Mouvement(Integer id, SocietaireCompte societaireCompte, LocalDateTime date,
-                     TypeMouvement type, BigDecimal montant) {
-        this.id = id;
-        this.societaireCompte = societaireCompte;
-        this.date = date;
-        this.type = type;
-        this.montant = montant;
-    }
-
     // Getters et Setters
-
     public Integer getId() {
         return id;
     }
@@ -56,12 +30,12 @@ public class Mouvement implements Serializable {
         this.id = id;
     }
 
-    public SocietaireCompte getSocietaireCompte() {
-        return societaireCompte;
+    public SocietaireCompte getSocietaire() {
+        return societaire;
     }
 
-    public void setSocietaireCompte(SocietaireCompte societaireCompte) {
-        this.societaireCompte = societaireCompte;
+    public void setSocietaire(SocietaireCompte societaire) {
+        this.societaire = societaire;
     }
 
     public LocalDateTime getDate() {
@@ -103,12 +77,6 @@ public class Mouvement implements Serializable {
 
     @Override
     public String toString() {
-        return "Mouvement{" +
-                "id=" + id +
-                ", type=" + type +
-                ", montant=" + montant +
-                ", date=" + date +
-                ", compteId=" + (societaireCompte != null ? societaireCompte.getIdSocietaire() : "N/A") +
-                '}';
+        return type + ": " + montant + "€ le " + date;
     }
 }

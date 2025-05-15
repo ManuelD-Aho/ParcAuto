@@ -11,7 +11,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import main.java.com.miage.parcauto.model.rh.Societaire;
 import main.java.com.miage.parcauto.service.DocumentService;
 import main.java.com.miage.parcauto.service.SocietaireService;
 import main.java.com.miage.parcauto.util.Permission;

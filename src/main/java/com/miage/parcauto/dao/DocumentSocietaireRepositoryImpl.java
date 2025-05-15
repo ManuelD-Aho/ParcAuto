@@ -1,8 +1,6 @@
 package main.java.com.miage.parcauto.dao;
 
 import main.java.com.miage.parcauto.model.document.DocumentSocietaire;
-import main.java.com.miage.parcauto.model.document.TypeDocumentSocietaire; // Assurez-vous que cette énumération existe
-import main.java.com.miage.parcauto.model.rh.Societaire; // Supposant une entité Societaire
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,7 +20,7 @@ import java.util.logging.Logger;
  * Implémentation du Repository pour l'entité {@link DocumentSocietaire}.
  * Gère les opérations CRUD pour les documents sociétaires.
  */
-public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSocietaire, Integer> {
+public class DocumentSocietaireRepositoryImpl implements DocumentRepository {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentSocietaireRepositoryImpl.class.getName());
 
@@ -40,6 +38,8 @@ public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSoci
     private static final String SQL_DELETE = "DELETE FROM DOCUMENT_SOCIETAIRE WHERE id_document_societaire = ?";
     private static final String SQL_COUNT = "SELECT COUNT(*) FROM DOCUMENT_SOCIETAIRE";
     private static final String SQL_FIND_BY_SOCIETAIRE_ID = SQL_SELECT_BASE + "WHERE ds.id_societaire = ? ORDER BY ds.date_upload_document DESC";
+    private static final String SQL_FIND_BY_TYPE = SQL_SELECT_BASE + "WHERE ds.type_document = ? ORDER BY ds.date_upload_document DESC";
+    private static final String SQL_FIND_BY_NOM_CONTAINING = SQL_SELECT_BASE + "WHERE ds.nom_document LIKE ? ORDER BY ds.date_upload_document DESC";
 
     /**
      * {@inheritDoc}
@@ -196,8 +196,6 @@ public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSoci
             pstmt.setInt(1, id);
             int affectedRows = pstmt.executeUpdate();
             conn.commit();
-            // La suppression physique du fichier sur le disque/serveur de fichiers
-            // devrait être gérée par la couche service.
             return affectedRows > 0;
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "Erreur lors de la suppression de DocumentSocietaire ID: " + id, e);
@@ -227,7 +225,18 @@ public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSoci
     }
 
     /**
-     * Recherche tous les documents pour un sociétaire spécifique.
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DocumentSocietaire> findBySocietaire(Societaire societaire) {
+        if (societaire == null || societaire.getIdSocietaire() == null) {
+            return new ArrayList<>();
+        }
+        return findBySocietaireId(societaire.getIdSocietaire());
+    }
+
+    /**
+     * Recherche tous les documents pour un sociétaire spécifique par son ID.
      * @param idSocietaire L'ID du sociétaire.
      * @return Une liste de documents.
      */
@@ -247,6 +256,52 @@ public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSoci
         return documents;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DocumentSocietaire> findByType(TypeDocumentSocietaire typeDocument) {
+        if (typeDocument == null) {
+            return new ArrayList<>();
+        }
+        List<DocumentSocietaire> documents = new ArrayList<>();
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_TYPE)) {
+            pstmt.setString(1, typeDocument.getValeurDb());
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    documents.add(mapResultSetToDocumentSocietaire(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de DocumentSocietaire par type: " + typeDocument, e);
+        }
+        return documents;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<DocumentSocietaire> findByNomContaining(String nomPartiel) {
+        if (nomPartiel == null || nomPartiel.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<DocumentSocietaire> documents = new ArrayList<>();
+        try (Connection conn = DbUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(SQL_FIND_BY_NOM_CONTAINING)) {
+            pstmt.setString(1, "%" + nomPartiel + "%");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    documents.add(mapResultSetToDocumentSocietaire(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Erreur lors de la recherche de DocumentSocietaire contenant '" + nomPartiel + "' dans le nom", e);
+        }
+        return documents;
+    }
+
     private DocumentSocietaire mapResultSetToDocumentSocietaire(ResultSet rs) throws SQLException {
         DocumentSocietaire doc = new DocumentSocietaire();
         doc.setIdDocumentSocietaire(rs.getInt("id_document_societaire"));
@@ -254,7 +309,7 @@ public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSoci
         int idSocietaire = rs.getInt("id_societaire");
         if (!rs.wasNull()) {
             Societaire societaire = new Societaire(); // Partiellement chargé
-            societaire.setIdSocietaire(idSocietaire); // Assurez-vous que Societaire a setIdSocietaire
+            societaire.setIdSocietaire(idSocietaire);
             doc.setSocietaire(societaire);
         }
 
@@ -279,20 +334,20 @@ public class DocumentSocietaireRepositoryImpl implements Repository<DocumentSoci
     private void mapDocumentSocietaireToPreparedStatement(DocumentSocietaire entity, PreparedStatement pstmt, boolean isUpdate) throws SQLException {
         int paramIndex = 1;
 
-        pstmt.setInt(paramIndex++, entity.getSocietaire().getIdSocietaire()); // id_societaire NOT NULL
-        pstmt.setString(paramIndex++, entity.getNomDocument()); // nom_document NOT NULL
+        pstmt.setInt(paramIndex++, entity.getSocietaire().getIdSocietaire());
+        pstmt.setString(paramIndex++, entity.getNomDocument());
 
-        if (entity.getTypeDocument() != null) { // type_document NOT NULL
+        if (entity.getTypeDocument() != null) {
             pstmt.setString(paramIndex++, entity.getTypeDocument().getValeurDb());
         } else {
-            pstmt.setNull(paramIndex++, Types.VARCHAR); // Devrait être validé
+            pstmt.setNull(paramIndex++, Types.VARCHAR);
         }
-        pstmt.setString(paramIndex++, entity.getCheminAccesDocument()); // chemin_acces_document NOT NULL
+        pstmt.setString(paramIndex++, entity.getCheminAccesDocument());
 
-        if (entity.getDateUploadDocument() != null) { // date_upload_document NOT NULL
+        if (entity.getDateUploadDocument() != null) {
             pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(entity.getDateUploadDocument()));
         } else {
-            pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(LocalDateTime.now())); // Ou gérer l'erreur
+            pstmt.setTimestamp(paramIndex++, Timestamp.valueOf(LocalDateTime.now()));
         }
         pstmt.setObject(paramIndex++, entity.getTailleDocumentKo(), Types.INTEGER);
 

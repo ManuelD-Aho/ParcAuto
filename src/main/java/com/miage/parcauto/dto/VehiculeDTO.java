@@ -1,20 +1,20 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
-import main.java.com.miage.parcauto.model.vehicule.Vehicule.TypeEnergie;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
+/**
+ * DTO pour l'entité Vehicule.
+ */
 public class VehiculeDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idVehicule;
-    private EtatVoiture etatVoiture; // From ETAT_VOITURE table via id_etat_voiture
-    private TypeEnergie energie; // DB Enum: Diesel, Essence, Électrique, Hybride
+    private Integer idEtatVoiture;
+    private String libEtatVoiture;
+    private String energie;
     private String numeroChassi;
     private String immatriculation;
     private String marque;
@@ -27,43 +27,13 @@ public class VehiculeDTO implements Serializable {
     private String couleur;
     private BigDecimal prixVehicule;
     private Integer kmActuels;
-    private LocalDateTime dateEtat; // Corresponds to VEHICULES.date_etat
+    private LocalDateTime dateEtat;
 
-    // Fields from original DTO, potentially derived or for specific UI needs
-    private LocalDateTime dernierEntretien;
-    private Integer kmDernierEntretien;
-    private Boolean enMission;
-
-
+    // Constructeurs, getters et setters
     public VehiculeDTO() {
-        this.etatVoiture = EtatVoiture.EnService; // Default or map from DB's 'Disponible'
-        this.energie = TypeEnergie.Diesel;
-        this.kmActuels = 0;
-        this.enMission = false;
     }
 
-    public VehiculeDTO(Integer idVehicule, EtatVoiture etatVoiture, TypeEnergie energie, String numeroChassi, String immatriculation, String marque, String modele, Integer nbPlaces, LocalDateTime dateAcquisition, LocalDateTime dateAmmortissement, LocalDateTime dateMiseEnService, Integer puissance, String couleur, BigDecimal prixVehicule, Integer kmActuels, LocalDateTime dateEtat, LocalDateTime dernierEntretien, Integer kmDernierEntretien, Boolean enMission) {
-        this.idVehicule = idVehicule;
-        this.etatVoiture = etatVoiture;
-        this.energie = energie;
-        this.numeroChassi = numeroChassi;
-        this.immatriculation = immatriculation;
-        this.marque = marque;
-        this.modele = modele;
-        this.nbPlaces = nbPlaces;
-        this.dateAcquisition = dateAcquisition;
-        this.dateAmmortissement = dateAmmortissement;
-        this.dateMiseEnService = dateMiseEnService;
-        this.puissance = puissance;
-        this.couleur = couleur;
-        this.prixVehicule = prixVehicule;
-        this.kmActuels = kmActuels;
-        this.dateEtat = dateEtat;
-        this.dernierEntretien = dernierEntretien;
-        this.kmDernierEntretien = kmDernierEntretien;
-        this.enMission = enMission;
-    }
-
+    // Getters et Setters (omis pour concision)
     public Integer getIdVehicule() {
         return idVehicule;
     }
@@ -72,19 +42,27 @@ public class VehiculeDTO implements Serializable {
         this.idVehicule = idVehicule;
     }
 
-    public EtatVoiture getEtatVoiture() {
-        return etatVoiture;
+    public Integer getIdEtatVoiture() {
+        return idEtatVoiture;
     }
 
-    public void setEtatVoiture(EtatVoiture etatVoiture) {
-        this.etatVoiture = etatVoiture;
+    public void setIdEtatVoiture(Integer idEtatVoiture) {
+        this.idEtatVoiture = idEtatVoiture;
     }
 
-    public TypeEnergie getEnergie() {
+    public String getLibEtatVoiture() {
+        return libEtatVoiture;
+    }
+
+    public void setLibEtatVoiture(String libEtatVoiture) {
+        this.libEtatVoiture = libEtatVoiture;
+    }
+
+    public String getEnergie() {
         return energie;
     }
 
-    public void setEnergie(TypeEnergie energie) {
+    public void setEnergie(String energie) {
         this.energie = energie;
     }
 
@@ -190,47 +168,6 @@ public class VehiculeDTO implements Serializable {
 
     public void setDateEtat(LocalDateTime dateEtat) {
         this.dateEtat = dateEtat;
-    }
-
-    public LocalDateTime getDernierEntretien() {
-        return dernierEntretien;
-    }
-
-    public void setDernierEntretien(LocalDateTime dernierEntretien) {
-        this.dernierEntretien = dernierEntretien;
-    }
-
-    public Integer getKmDernierEntretien() {
-        return kmDernierEntretien;
-    }
-
-    public void setKmDernierEntretien(Integer kmDernierEntretien) {
-        this.kmDernierEntretien = kmDernierEntretien;
-    }
-
-    public Boolean getEnMission() {
-        return enMission;
-    }
-
-    public void setEnMission(Boolean enMission) {
-        this.enMission = enMission;
-    }
-
-    public String getPrixVehiculeFormate() {
-        return prixVehicule != null ? prixVehicule.setScale(2, BigDecimal.ROUND_HALF_UP) + " FCFA" : "N/A";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        VehiculeDTO that = (VehiculeDTO) o;
-        return Objects.equals(idVehicule, that.idVehicule);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idVehicule);
     }
 
     @Override

@@ -1,23 +1,22 @@
-package main.java.com.miage.parcauto.model.mission;
+package main.java.com.miage.parcauto.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
- * Entité représentant une dépense liée à une mission.
+ * DTO pour l'entité DepenseMission.
  */
-public class DepenseMission implements Serializable {
+public class DepenseMissionDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer id;
-    private Mission mission;
-    private NatureDepenseMission nature;
+    private Integer idMission;
+    private String nature;
     private BigDecimal montant;
     private String justificatif;
 
-    public DepenseMission() {
+    public DepenseMissionDTO() {
     }
 
     // Getters et Setters
@@ -29,19 +28,19 @@ public class DepenseMission implements Serializable {
         this.id = id;
     }
 
-    public Mission getMission() {
-        return mission;
+    public Integer getIdMission() {
+        return idMission;
     }
 
-    public void setMission(Mission mission) {
-        this.mission = mission;
+    public void setIdMission(Integer idMission) {
+        this.idMission = idMission;
     }
 
-    public NatureDepenseMission getNature() {
+    public String getNature() {
         return nature;
     }
 
-    public void setNature(NatureDepenseMission nature) {
+    public void setNature(String nature) {
         this.nature = nature;
     }
 
@@ -59,19 +58,6 @@ public class DepenseMission implements Serializable {
 
     public void setJustificatif(String justificatif) {
         this.justificatif = justificatif;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DepenseMission that = (DepenseMission) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
     @Override

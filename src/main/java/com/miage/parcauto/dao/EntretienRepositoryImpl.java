@@ -1,11 +1,10 @@
 package main.java.com.miage.parcauto.dao;
 
 import main.java.com.miage.parcauto.model.entretien.Entretien;
-import main.java.com.miage.parcauto.model.vehicule.StatutOT; // Assurez-vous que ce fichier existe et correspond à l'ENUM de la DB
+import main.java.com.miage.parcauto.model.entretien.StatutOT; // Assurez-vous que ce fichier existe et correspond à l'ENUM de la DB
 import main.java.com.miage.parcauto.model.entretien.TypeEntretien; // Assurez-vous que ce fichier existe et correspond à l'ENUM de la DB
 import main.java.com.miage.parcauto.model.vehicule.Vehicule;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

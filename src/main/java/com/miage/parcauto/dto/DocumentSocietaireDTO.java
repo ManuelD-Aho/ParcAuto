@@ -1,25 +1,23 @@
-package main.java.com.miage.parcauto.model.document;
-
-import main.java.com.miage.parcauto.model.finance.SocietaireCompte;
+package main.java.com.miage.parcauto.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 /**
- * Entité représentant un document associé à un sociétaire.
+ * DTO pour l'entité DocumentSocietaire.
  */
-public class DocumentSocietaire implements Serializable {
+public class DocumentSocietaireDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idDoc;
-    private SocietaireCompte societaire;
-    private TypeDocument typeDoc;
+    private Integer idSocietaire;
+    private String societaireInfo;
+    private String typeDoc;
     private String cheminFichier;
     private LocalDateTime dateUpload;
 
-    public DocumentSocietaire() {
+    public DocumentSocietaireDTO() {
     }
 
     // Getters et Setters
@@ -31,19 +29,27 @@ public class DocumentSocietaire implements Serializable {
         this.idDoc = idDoc;
     }
 
-    public SocietaireCompte getSocietaire() {
-        return societaire;
+    public Integer getIdSocietaire() {
+        return idSocietaire;
     }
 
-    public void setSocietaire(SocietaireCompte societaire) {
-        this.societaire = societaire;
+    public void setIdSocietaire(Integer idSocietaire) {
+        this.idSocietaire = idSocietaire;
     }
 
-    public TypeDocument getTypeDoc() {
+    public String getSocietaireInfo() {
+        return societaireInfo;
+    }
+
+    public void setSocietaireInfo(String societaireInfo) {
+        this.societaireInfo = societaireInfo;
+    }
+
+    public String getTypeDoc() {
         return typeDoc;
     }
 
-    public void setTypeDoc(TypeDocument typeDoc) {
+    public void setTypeDoc(String typeDoc) {
         this.typeDoc = typeDoc;
     }
 
@@ -63,28 +69,6 @@ public class DocumentSocietaire implements Serializable {
         this.dateUpload = dateUpload;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DocumentSocietaire that = (DocumentSocietaire) o;
-        return Objects.equals(idDoc, that.idDoc);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idDoc);
-    }
-
-    @Override
-    public String toString() {
-        return typeDoc + " - " + getNomFichier();
-    }
-
-    /**
-     * Extrait le nom du fichier à partir du chemin complet.
-     * @return Le nom du fichier
-     */
     public String getNomFichier() {
         if (cheminFichier == null) {
             return "";
@@ -97,5 +81,10 @@ public class DocumentSocietaire implements Serializable {
             return cheminFichier;
         }
         return cheminFichier.substring(lastIndex + 1);
+    }
+
+    @Override
+    public String toString() {
+        return typeDoc + " - " + getNomFichier();
     }
 }
