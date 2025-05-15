@@ -3,9 +3,6 @@ package main.java.com.miage.parcauto.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * DTO pour la vue TCO (Total Cost of Ownership).
- */
 public class TCODTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -19,7 +16,6 @@ public class TCODTO implements Serializable {
     public TCODTO() {
     }
 
-    // Getters et Setters
     public BigDecimal getCoutsTotaux() {
         return coutsTotaux;
     }
@@ -62,6 +58,6 @@ public class TCODTO implements Serializable {
 
     @Override
     public String toString() {
-        return "TCO pour " + vehiculeInfo + ": " + coutsTotaux + "€";
+        return "TCO pour " + (vehiculeInfo != null ? vehiculeInfo : "Véhicule ID " + idVehicule) + ": " + coutsTotaux + "€";
     }
 }

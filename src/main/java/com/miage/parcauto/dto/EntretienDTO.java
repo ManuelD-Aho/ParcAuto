@@ -1,33 +1,31 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.entretien.StatutOT;
+import main.java.com.miage.parcauto.model.entretien.TypeEntretien;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * DTO pour l'entité Entretien.
- */
 public class EntretienDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idEntretien;
     private Integer idVehicule;
-    private String vehiculeInfo;  // Marque + modèle + immatriculation
+    private String vehiculeInfo;
     private LocalDateTime dateEntreeEntr;
     private LocalDateTime dateSortieEntr;
     private String motifEntr;
     private String observation;
     private BigDecimal coutEntr;
     private String lieuEntr;
-    private String type;
-    private String statutOt;
+    private TypeEntretien type;
+    private StatutOT statutOt;
 
-    // Constructeurs, getters et setters
     public EntretienDTO() {
     }
 
-    // Getters et Setters (omis pour concision)
     public Integer getIdEntretien() {
         return idEntretien;
     }
@@ -100,24 +98,24 @@ public class EntretienDTO implements Serializable {
         this.lieuEntr = lieuEntr;
     }
 
-    public String getType() {
+    public TypeEntretien getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TypeEntretien type) {
         this.type = type;
     }
 
-    public String getStatutOt() {
+    public StatutOT getStatutOt() {
         return statutOt;
     }
 
-    public void setStatutOt(String statutOt) {
+    public void setStatutOt(StatutOT statutOt) {
         this.statutOt = statutOt;
     }
 
     @Override
     public String toString() {
-        return "Entretien #" + idEntretien + " pour " + vehiculeInfo + " (" + statutOt + ")";
+        return "Entretien #" + idEntretien + " pour " + vehiculeInfo + " (" + (statutOt != null ? statutOt.getValeur() : "N/A") + ")";
     }
 }

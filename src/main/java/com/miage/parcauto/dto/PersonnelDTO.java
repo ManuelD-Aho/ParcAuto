@@ -1,23 +1,18 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.rh.Sexe;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * DTO pour l'entité Personnel.
- */
 public class PersonnelDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idPersonnel;
-    private Integer idService;
-    private String libService;
-    private Integer idFonction;
-    private String libFonction;
-    private Integer idVehicule;
-    private String vehiculeInfo;
+    private String serviceInfo;
+    private String fonctionInfo;
     private String matricule;
     private String nomPersonnel;
     private String prenomPersonnel;
@@ -25,13 +20,13 @@ public class PersonnelDTO implements Serializable {
     private String telephone;
     private String adresse;
     private LocalDate dateNaissance;
-    private String sexe;
-    private LocalDateTime dateAttribution;
+    private Sexe sexe;
+    private LocalDateTime dateAttributionVehicule;
+    private String vehiculeAttributionInfo;
 
     public PersonnelDTO() {
     }
 
-    // Getters et Setters
     public Integer getIdPersonnel() {
         return idPersonnel;
     }
@@ -40,52 +35,20 @@ public class PersonnelDTO implements Serializable {
         this.idPersonnel = idPersonnel;
     }
 
-    public Integer getIdService() {
-        return idService;
+    public String getServiceInfo() {
+        return serviceInfo;
     }
 
-    public void setIdService(Integer idService) {
-        this.idService = idService;
+    public void setServiceInfo(String serviceInfo) {
+        this.serviceInfo = serviceInfo;
     }
 
-    public String getLibService() {
-        return libService;
+    public String getFonctionInfo() {
+        return fonctionInfo;
     }
 
-    public void setLibService(String libService) {
-        this.libService = libService;
-    }
-
-    public Integer getIdFonction() {
-        return idFonction;
-    }
-
-    public void setIdFonction(Integer idFonction) {
-        this.idFonction = idFonction;
-    }
-
-    public String getLibFonction() {
-        return libFonction;
-    }
-
-    public void setLibFonction(String libFonction) {
-        this.libFonction = libFonction;
-    }
-
-    public Integer getIdVehicule() {
-        return idVehicule;
-    }
-
-    public void setIdVehicule(Integer idVehicule) {
-        this.idVehicule = idVehicule;
-    }
-
-    public String getVehiculeInfo() {
-        return vehiculeInfo;
-    }
-
-    public void setVehiculeInfo(String vehiculeInfo) {
-        this.vehiculeInfo = vehiculeInfo;
+    public void setFonctionInfo(String fonctionInfo) {
+        this.fonctionInfo = fonctionInfo;
     }
 
     public String getMatricule() {
@@ -144,28 +107,37 @@ public class PersonnelDTO implements Serializable {
         this.dateNaissance = dateNaissance;
     }
 
-    public String getSexe() {
+    public Sexe getSexe() {
         return sexe;
     }
 
-    public void setSexe(String sexe) {
+    public void setSexe(Sexe sexe) {
         this.sexe = sexe;
     }
 
-    public LocalDateTime getDateAttribution() {
-        return dateAttribution;
+    public LocalDateTime getDateAttributionVehicule() {
+        return dateAttributionVehicule;
     }
 
-    public void setDateAttribution(LocalDateTime dateAttribution) {
-        this.dateAttribution = dateAttribution;
+    public void setDateAttributionVehicule(LocalDateTime dateAttributionVehicule) {
+        this.dateAttributionVehicule = dateAttributionVehicule;
+    }
+
+    public String getVehiculeAttributionInfo() {
+        return vehiculeAttributionInfo;
+    }
+
+    public void setVehiculeAttributionInfo(String vehiculeAttributionInfo) {
+        this.vehiculeAttributionInfo = vehiculeAttributionInfo;
     }
 
     @Override
     public String toString() {
-        return prenomPersonnel + " " + nomPersonnel + " [" + matricule + "]";
-    }
-
-    public String getNomComplet() {
-        return prenomPersonnel + " " + nomPersonnel;
+        return "PersonnelDTO{" +
+                "idPersonnel=" + idPersonnel +
+                ", nom='" + prenomPersonnel + " " + nomPersonnel + '\'' +
+                ", matricule='" + matricule + '\'' +
+                ", fonction='" + fonctionInfo + '\'' +
+                '}';
     }
 }

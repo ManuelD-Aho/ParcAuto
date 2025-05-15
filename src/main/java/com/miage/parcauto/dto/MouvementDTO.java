@@ -1,12 +1,11 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.finance.TypeMouvement;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * DTO pour l'entité Mouvement.
- */
 public class MouvementDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -15,13 +14,12 @@ public class MouvementDTO implements Serializable {
     private Integer idSocietaire;
     private String societaireInfo;
     private LocalDateTime date;
-    private String type;
+    private TypeMouvement type;
     private BigDecimal montant;
 
     public MouvementDTO() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -54,11 +52,11 @@ public class MouvementDTO implements Serializable {
         this.date = date;
     }
 
-    public String getType() {
+    public TypeMouvement getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TypeMouvement type) {
         this.type = type;
     }
 
@@ -72,6 +70,12 @@ public class MouvementDTO implements Serializable {
 
     @Override
     public String toString() {
-        return type + ": " + montant + "€ le " + date;
+        return "MouvementDTO{" +
+                "id=" + id +
+                ", societaireInfo='" + societaireInfo + '\'' +
+                ", type=" + (type != null ? type.getValeur() : "N/A") +
+                ", montant=" + montant +
+                ", date=" + date +
+                '}';
     }
 }

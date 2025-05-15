@@ -1,288 +1,122 @@
 package main.java.com.miage.parcauto.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.time.Month;
 
-/**
- * DTO représentant le bilan de la flotte de véhicules.
- * Contient les informations statistiques et financières globales
- * sur l'ensemble des véhicules.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
-public class BilanFlotteDTO {
+public class BilanFlotteDTO implements Serializable {
 
-    private int annee;
-    private int nombreVehicules;
-    private int kmTotalParcourus;
-    private BigDecimal coutTotalAcquisition;
-    private BigDecimal coutTotalEntretien;
-    private BigDecimal coutTotalAssurance;
-    private BigDecimal coutTotalCarburant;
-    private BigDecimal coutTotalAutres;
-    private BigDecimal coutTotalGlobal;
-    private BigDecimal coutMoyenParKm;
-    private BigDecimal coutMoyenParVehicule;
-    private Map<Month, BilanMensuelDTO> evolutionMensuelle;
-    private Map<String, BigDecimal> repartitionBudgetaire;
-    private List<VehiculeRentabiliteDTO> vehiculesParRentabilite;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructeur par défaut.
-     */
+    private int nombreTotalVehicules;
+    private Map<String, Integer> vehiculesParEtat; // Libellé de l'état -> Nombre
+    private Map<String, Integer> vehiculesParEnergie; // Valeur de l'énergie -> Nombre
+    private int nombreVehiculesEnEntretien;
+    private int nombreVehiculesEnMission;
+    private BigDecimal valeurTotaleFlotte; // Basée sur prix d'acquisition ou valeur actuelle
+    private double ageMoyenFlotteAnnees;
+    private double kmMoyenParVehicule;
+    private List<VehiculeDTO> vehiculesRecemmentAjoutes; // Optionnel
+    private List<AlerteEntretienDTO> alertesEntretienActives; // Optionnel
+    private List<AlerteAssuranceDTO> alertesAssuranceActives; // Optionnel
+
     public BilanFlotteDTO() {
-        this.nombreVehicules = 0;
-        this.kmTotalParcourus = 0;
-        this.coutTotalAcquisition = BigDecimal.ZERO;
-        this.coutTotalEntretien = BigDecimal.ZERO;
-        this.coutTotalAssurance = BigDecimal.ZERO;
-        this.coutTotalCarburant = BigDecimal.ZERO;
-        this.coutTotalAutres = BigDecimal.ZERO;
-        this.coutTotalGlobal = BigDecimal.ZERO;
-        this.coutMoyenParKm = BigDecimal.ZERO;
-        this.coutMoyenParVehicule = BigDecimal.ZERO;
-        this.evolutionMensuelle = new HashMap<>();
-        this.repartitionBudgetaire = new HashMap<>();
-        this.vehiculesParRentabilite = new ArrayList<>();
     }
 
-    /**
-     * Constructeur complet.
-     *
-     * @param annee                   l'année
-     * @param nombreVehicules         le nombre de véhicules
-     * @param kmTotalParcourus        le nombre total de km parcourus
-     * @param coutTotalAcquisition    le coût total d'acquisition
-     * @param coutTotalEntretien      le coût total d'entretien
-     * @param coutTotalAssurance      le coût total d'assurance
-     * @param coutTotalCarburant      le coût total de carburant
-     * @param coutTotalAutres         les autres coûts totaux
-     * @param coutTotalGlobal         le coût total global
-     * @param coutMoyenParKm          le coût moyen par km
-     * @param coutMoyenParVehicule    le coût moyen par véhicule
-     * @param evolutionMensuelle      l'évolution mensuelle
-     * @param repartitionBudgetaire   la répartition budgétaire
-     * @param vehiculesParRentabilite les véhicules par rentabilité
-     */
-    public BilanFlotteDTO(int annee, int nombreVehicules, int kmTotalParcourus, BigDecimal coutTotalAcquisition,
-            BigDecimal coutTotalEntretien, BigDecimal coutTotalAssurance, BigDecimal coutTotalCarburant,
-            BigDecimal coutTotalAutres, BigDecimal coutTotalGlobal, BigDecimal coutMoyenParKm,
-            BigDecimal coutMoyenParVehicule, Map<Month, BilanMensuelDTO> evolutionMensuelle,
-            Map<String, BigDecimal> repartitionBudgetaire, List<VehiculeRentabiliteDTO> vehiculesParRentabilite) {
-        this.annee = annee;
-        this.nombreVehicules = nombreVehicules;
-        this.kmTotalParcourus = kmTotalParcourus;
-        this.coutTotalAcquisition = coutTotalAcquisition;
-        this.coutTotalEntretien = coutTotalEntretien;
-        this.coutTotalAssurance = coutTotalAssurance;
-        this.coutTotalCarburant = coutTotalCarburant;
-        this.coutTotalAutres = coutTotalAutres;
-        this.coutTotalGlobal = coutTotalGlobal;
-        this.coutMoyenParKm = coutMoyenParKm;
-        this.coutMoyenParVehicule = coutMoyenParVehicule;
-        this.evolutionMensuelle = evolutionMensuelle;
-        this.repartitionBudgetaire = repartitionBudgetaire;
-        this.vehiculesParRentabilite = vehiculesParRentabilite;
+    public int getNombreTotalVehicules() {
+        return nombreTotalVehicules;
     }
 
-    /**
-     * @return l'année
-     */
-    public int getAnnee() {
-        return annee;
+    public void setNombreTotalVehicules(int nombreTotalVehicules) {
+        this.nombreTotalVehicules = nombreTotalVehicules;
     }
 
-    /**
-     * @param annee l'année à définir
-     */
-    public void setAnnee(int annee) {
-        this.annee = annee;
+    public Map<String, Integer> getVehiculesParEtat() {
+        return vehiculesParEtat;
     }
 
-    /**
-     * @return le nombre de véhicules
-     */
-    public int getNombreVehicules() {
-        return nombreVehicules;
+    public void setVehiculesParEtat(Map<String, Integer> vehiculesParEtat) {
+        this.vehiculesParEtat = vehiculesParEtat;
     }
 
-    /**
-     * @param nombreVehicules le nombre de véhicules à définir
-     */
-    public void setNombreVehicules(int nombreVehicules) {
-        this.nombreVehicules = nombreVehicules;
+    public Map<String, Integer> getVehiculesParEnergie() {
+        return vehiculesParEnergie;
     }
 
-    /**
-     * @return le nombre total de km parcourus
-     */
-    public int getKmTotalParcourus() {
-        return kmTotalParcourus;
+    public void setVehiculesParEnergie(Map<String, Integer> vehiculesParEnergie) {
+        this.vehiculesParEnergie = vehiculesParEnergie;
     }
 
-    /**
-     * @param kmTotalParcourus le nombre total de km parcourus à définir
-     */
-    public void setKmTotalParcourus(int kmTotalParcourus) {
-        this.kmTotalParcourus = kmTotalParcourus;
+    public int getNombreVehiculesEnEntretien() {
+        return nombreVehiculesEnEntretien;
     }
 
-    /**
-     * @return le coût total d'acquisition
-     */
-    public BigDecimal getCoutTotalAcquisition() {
-        return coutTotalAcquisition;
+    public void setNombreVehiculesEnEntretien(int nombreVehiculesEnEntretien) {
+        this.nombreVehiculesEnEntretien = nombreVehiculesEnEntretien;
     }
 
-    /**
-     * @param coutTotalAcquisition le coût total d'acquisition à définir
-     */
-    public void setCoutTotalAcquisition(BigDecimal coutTotalAcquisition) {
-        this.coutTotalAcquisition = coutTotalAcquisition;
+    public int getNombreVehiculesEnMission() {
+        return nombreVehiculesEnMission;
     }
 
-    /**
-     * @return le coût total d'entretien
-     */
-    public BigDecimal getCoutTotalEntretien() {
-        return coutTotalEntretien;
+    public void setNombreVehiculesEnMission(int nombreVehiculesEnMission) {
+        this.nombreVehiculesEnMission = nombreVehiculesEnMission;
     }
 
-    /**
-     * @param coutTotalEntretien le coût total d'entretien à définir
-     */
-    public void setCoutTotalEntretien(BigDecimal coutTotalEntretien) {
-        this.coutTotalEntretien = coutTotalEntretien;
+    public BigDecimal getValeurTotaleFlotte() {
+        return valeurTotaleFlotte;
     }
 
-    /**
-     * @return le coût total d'assurance
-     */
-    public BigDecimal getCoutTotalAssurance() {
-        return coutTotalAssurance;
+    public void setValeurTotaleFlotte(BigDecimal valeurTotaleFlotte) {
+        this.valeurTotaleFlotte = valeurTotaleFlotte;
     }
 
-    /**
-     * @param coutTotalAssurance le coût total d'assurance à définir
-     */
-    public void setCoutTotalAssurance(BigDecimal coutTotalAssurance) {
-        this.coutTotalAssurance = coutTotalAssurance;
+    public double getAgeMoyenFlotteAnnees() {
+        return ageMoyenFlotteAnnees;
     }
 
-    /**
-     * @return le coût total de carburant
-     */
-    public BigDecimal getCoutTotalCarburant() {
-        return coutTotalCarburant;
+    public void setAgeMoyenFlotteAnnees(double ageMoyenFlotteAnnees) {
+        this.ageMoyenFlotteAnnees = ageMoyenFlotteAnnees;
     }
 
-    /**
-     * @param coutTotalCarburant le coût total de carburant à définir
-     */
-    public void setCoutTotalCarburant(BigDecimal coutTotalCarburant) {
-        this.coutTotalCarburant = coutTotalCarburant;
+    public double getKmMoyenParVehicule() {
+        return kmMoyenParVehicule;
     }
 
-    /**
-     * @return les autres coûts totaux
-     */
-    public BigDecimal getCoutTotalAutres() {
-        return coutTotalAutres;
+    public void setKmMoyenParVehicule(double kmMoyenParVehicule) {
+        this.kmMoyenParVehicule = kmMoyenParVehicule;
     }
 
-    /**
-     * @param coutTotalAutres les autres coûts totaux à définir
-     */
-    public void setCoutTotalAutres(BigDecimal coutTotalAutres) {
-        this.coutTotalAutres = coutTotalAutres;
+    public List<VehiculeDTO> getVehiculesRecemmentAjoutes() {
+        return vehiculesRecemmentAjoutes;
     }
 
-    /**
-     * @return le coût total global
-     */
-    public BigDecimal getCoutTotalGlobal() {
-        return coutTotalGlobal;
+    public void setVehiculesRecemmentAjoutes(List<VehiculeDTO> vehiculesRecemmentAjoutes) {
+        this.vehiculesRecemmentAjoutes = vehiculesRecemmentAjoutes;
     }
 
-    /**
-     * @param coutTotalGlobal le coût total global à définir
-     */
-    public void setCoutTotalGlobal(BigDecimal coutTotalGlobal) {
-        this.coutTotalGlobal = coutTotalGlobal;
+    public List<AlerteEntretienDTO> getAlertesEntretienActives() {
+        return alertesEntretienActives;
     }
 
-    /**
-     * @return le coût moyen par km
-     */
-    public BigDecimal getCoutMoyenParKm() {
-        return coutMoyenParKm;
+    public void setAlertesEntretienActives(List<AlerteEntretienDTO> alertesEntretienActives) {
+        this.alertesEntretienActives = alertesEntretienActives;
     }
 
-    /**
-     * @param coutMoyenParKm le coût moyen par km à définir
-     */
-    public void setCoutMoyenParKm(BigDecimal coutMoyenParKm) {
-        this.coutMoyenParKm = coutMoyenParKm;
+    public List<AlerteAssuranceDTO> getAlertesAssuranceActives() {
+        return alertesAssuranceActives;
     }
 
-    /**
-     * @return le coût moyen par véhicule
-     */
-    public BigDecimal getCoutMoyenParVehicule() {
-        return coutMoyenParVehicule;
+    public void setAlertesAssuranceActives(List<AlerteAssuranceDTO> alertesAssuranceActives) {
+        this.alertesAssuranceActives = alertesAssuranceActives;
     }
 
-    /**
-     * @param coutMoyenParVehicule le coût moyen par véhicule à définir
-     */
-    public void setCoutMoyenParVehicule(BigDecimal coutMoyenParVehicule) {
-        this.coutMoyenParVehicule = coutMoyenParVehicule;
-    }
-
-    /**
-     * @return l'évolution mensuelle
-     */
-    public Map<Month, BilanMensuelDTO> getEvolutionMensuelle() {
-        return evolutionMensuelle;
-    }
-
-    /**
-     * @param evolutionMensuelle l'évolution mensuelle à définir
-     */
-    public void setEvolutionMensuelle(Map<Month, BilanMensuelDTO> evolutionMensuelle) {
-        this.evolutionMensuelle = evolutionMensuelle;
-    }
-
-    /**
-     * @return la répartition budgétaire
-     */
-    public Map<String, BigDecimal> getRepartitionBudgetaire() {
-        return repartitionBudgetaire;
-    }
-
-    /**
-     * @param repartitionBudgetaire la répartition budgétaire à définir
-     */
-    public void setRepartitionBudgetaire(Map<String, BigDecimal> repartitionBudgetaire) {
-        this.repartitionBudgetaire = repartitionBudgetaire;
-    }
-
-    /**
-     * @return les véhicules par rentabilité
-     */
-    public List<VehiculeRentabiliteDTO> getVehiculesParRentabilite() {
-        return vehiculesParRentabilite;
-    }
-
-    /**
-     * @param vehiculesParRentabilite les véhicules par rentabilité à définir
-     */
-    public void setVehiculesParRentabilite(List<VehiculeRentabiliteDTO> vehiculesParRentabilite) {
-        this.vehiculesParRentabilite = vehiculesParRentabilite;
+    @Override
+    public String toString() {
+        return "BilanFlotteDTO{" +
+                "nombreTotalVehicules=" + nombreTotalVehicules +
+                ", valeurTotaleFlotte=" + valeurTotaleFlotte +
+                '}';
     }
 }

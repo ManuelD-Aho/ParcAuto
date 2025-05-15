@@ -3,16 +3,13 @@ package main.java.com.miage.parcauto.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * DTO pour l'entité SocietaireCompte.
- */
 public class SocietaireCompteDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer idSocietaire;
     private Integer idPersonnel;
-    private String personnelInfo;
+    private String personnelInfo; // Nom et prénom du personnel si lié
     private String nom;
     private String numero;
     private BigDecimal solde;
@@ -22,7 +19,6 @@ public class SocietaireCompteDTO implements Serializable {
     public SocietaireCompteDTO() {
     }
 
-    // Getters et Setters
     public Integer getIdSocietaire() {
         return idSocietaire;
     }
@@ -89,6 +85,11 @@ public class SocietaireCompteDTO implements Serializable {
 
     @Override
     public String toString() {
-        return nom + " (" + numero + ")";
+        return "SocietaireCompteDTO{" +
+                "idSocietaire=" + idSocietaire +
+                ", nom='" + nom + '\'' +
+                ", numero='" + numero + '\'' +
+                ", solde=" + solde +
+                '}';
     }
 }

@@ -1,112 +1,136 @@
 package main.java.com.miage.parcauto.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.Map;
 
-/**
- * DTO représentant le bilan mensuel pour les analyses financières.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
-public class BilanMensuelDTO {
+public class BilanMensuelDTO implements Serializable {
 
-    private int mois;
-    private int nombreMissions;
-    private int nombreEntretiens;
-    private BigDecimal recettes;
-    private BigDecimal depenses;
-    private BigDecimal solde;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructeur par défaut.
-     */
+    private YearMonth moisAnnee;
+    private BigDecimal totalRevenusMensualites;
+    private BigDecimal totalCoutsEntretiens;
+    private BigDecimal totalCoutsMissions;
+    private BigDecimal totalAutresDepenses;
+    private BigDecimal soldeMensuel;
+    private int nombreNouvellesAffectations;
+    private int nombreFinAffectations;
+    private int nombreNouveauxVehicules;
+    private int nombreVehiculesSortis; // Vendus, mis au rebut
+    private Map<String, BigDecimal> revenusParSource; // e.g., "Mensualités Crédit", "Location Mission"
+    private Map<String, BigDecimal> depensesParCategorie; // e.g., "Carburant", "Entretien Préventif"
+
     public BilanMensuelDTO() {
-        this.recettes = BigDecimal.ZERO;
-        this.depenses = BigDecimal.ZERO;
-        this.solde = BigDecimal.ZERO;
+        this.totalRevenusMensualites = BigDecimal.ZERO;
+        this.totalCoutsEntretiens = BigDecimal.ZERO;
+        this.totalCoutsMissions = BigDecimal.ZERO;
+        this.totalAutresDepenses = BigDecimal.ZERO;
+        this.soldeMensuel = BigDecimal.ZERO;
     }
 
-    /**
-     * @return le mois
-     */
-    public int getMois() {
-        return mois;
+    public YearMonth getMoisAnnee() {
+        return moisAnnee;
     }
 
-    /**
-     * @param mois le mois à définir
-     */
-    public void setMois(int mois) {
-        this.mois = mois;
+    public void setMoisAnnee(YearMonth moisAnnee) {
+        this.moisAnnee = moisAnnee;
     }
 
-    /**
-     * @return le nombre de missions
-     */
-    public int getNombreMissions() {
-        return nombreMissions;
+    public BigDecimal getTotalRevenusMensualites() {
+        return totalRevenusMensualites;
     }
 
-    /**
-     * @param nombreMissions le nombre de missions à définir
-     */
-    public void setNombreMissions(int nombreMissions) {
-        this.nombreMissions = nombreMissions;
+    public void setTotalRevenusMensualites(BigDecimal totalRevenusMensualites) {
+        this.totalRevenusMensualites = totalRevenusMensualites;
     }
 
-    /**
-     * @return le nombre d'entretiens
-     */
-    public int getNombreEntretiens() {
-        return nombreEntretiens;
+    public BigDecimal getTotalCoutsEntretiens() {
+        return totalCoutsEntretiens;
     }
 
-    /**
-     * @param nombreEntretiens le nombre d'entretiens à définir
-     */
-    public void setNombreEntretiens(int nombreEntretiens) {
-        this.nombreEntretiens = nombreEntretiens;
+    public void setTotalCoutsEntretiens(BigDecimal totalCoutsEntretiens) {
+        this.totalCoutsEntretiens = totalCoutsEntretiens;
     }
 
-    /**
-     * @return les recettes
-     */
-    public BigDecimal getRecettes() {
-        return recettes;
+    public BigDecimal getTotalCoutsMissions() {
+        return totalCoutsMissions;
     }
 
-    /**
-     * @param recettes les recettes à définir
-     */
-    public void setRecettes(BigDecimal recettes) {
-        this.recettes = recettes;
+    public void setTotalCoutsMissions(BigDecimal totalCoutsMissions) {
+        this.totalCoutsMissions = totalCoutsMissions;
     }
 
-    /**
-     * @return les dépenses
-     */
-    public BigDecimal getDepenses() {
-        return depenses;
+    public BigDecimal getTotalAutresDepenses() {
+        return totalAutresDepenses;
     }
 
-    /**
-     * @param depenses les dépenses à définir
-     */
-    public void setDepenses(BigDecimal depenses) {
-        this.depenses = depenses;
+    public void setTotalAutresDepenses(BigDecimal totalAutresDepenses) {
+        this.totalAutresDepenses = totalAutresDepenses;
     }
 
-    /**
-     * @return le solde
-     */
-    public BigDecimal getSolde() {
-        return solde;
+    public BigDecimal getSoldeMensuel() {
+        return soldeMensuel;
     }
 
-    /**
-     * @param solde le solde à définir
-     */
-    public void setSolde(BigDecimal solde) {
-        this.solde = solde;
+    public void setSoldeMensuel(BigDecimal soldeMensuel) {
+        this.soldeMensuel = soldeMensuel;
+    }
+
+    public int getNombreNouvellesAffectations() {
+        return nombreNouvellesAffectations;
+    }
+
+    public void setNombreNouvellesAffectations(int nombreNouvellesAffectations) {
+        this.nombreNouvellesAffectations = nombreNouvellesAffectations;
+    }
+
+    public int getNombreFinAffectations() {
+        return nombreFinAffectations;
+    }
+
+    public void setNombreFinAffectations(int nombreFinAffectations) {
+        this.nombreFinAffectations = nombreFinAffectations;
+    }
+
+    public int getNombreNouveauxVehicules() {
+        return nombreNouveauxVehicules;
+    }
+
+    public void setNombreNouveauxVehicules(int nombreNouveauxVehicules) {
+        this.nombreNouveauxVehicules = nombreNouveauxVehicules;
+    }
+
+    public int getNombreVehiculesSortis() {
+        return nombreVehiculesSortis;
+    }
+
+    public void setNombreVehiculesSortis(int nombreVehiculesSortis) {
+        this.nombreVehiculesSortis = nombreVehiculesSortis;
+    }
+
+    public Map<String, BigDecimal> getRevenusParSource() {
+        return revenusParSource;
+    }
+
+    public void setRevenusParSource(Map<String, BigDecimal> revenusParSource) {
+        this.revenusParSource = revenusParSource;
+    }
+
+    public Map<String, BigDecimal> getDepensesParCategorie() {
+        return depensesParCategorie;
+    }
+
+    public void setDepensesParCategorie(Map<String, BigDecimal> depensesParCategorie) {
+        this.depensesParCategorie = depensesParCategorie;
+    }
+
+    @Override
+    public String toString() {
+        return "BilanMensuelDTO{" +
+                "moisAnnee=" + moisAnnee +
+                ", soldeMensuel=" + soldeMensuel +
+                '}';
     }
 }

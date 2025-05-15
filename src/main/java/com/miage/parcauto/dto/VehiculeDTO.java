@@ -1,12 +1,11 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.vehicule.Energie;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * DTO pour l'entité Vehicule.
- */
 public class VehiculeDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -14,7 +13,7 @@ public class VehiculeDTO implements Serializable {
     private Integer idVehicule;
     private Integer idEtatVoiture;
     private String libEtatVoiture;
-    private String energie;
+    private Energie energie;
     private String numeroChassi;
     private String immatriculation;
     private String marque;
@@ -29,11 +28,9 @@ public class VehiculeDTO implements Serializable {
     private Integer kmActuels;
     private LocalDateTime dateEtat;
 
-    // Constructeurs, getters et setters
     public VehiculeDTO() {
     }
 
-    // Getters et Setters (omis pour concision)
     public Integer getIdVehicule() {
         return idVehicule;
     }
@@ -58,11 +55,11 @@ public class VehiculeDTO implements Serializable {
         this.libEtatVoiture = libEtatVoiture;
     }
 
-    public String getEnergie() {
+    public Energie getEnergie() {
         return energie;
     }
 
-    public void setEnergie(String energie) {
+    public void setEnergie(Energie energie) {
         this.energie = energie;
     }
 

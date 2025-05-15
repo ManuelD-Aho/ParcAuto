@@ -6,9 +6,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO pour l'entité Assurance.
- */
 public class AssuranceDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -24,7 +21,6 @@ public class AssuranceDTO implements Serializable {
     public AssuranceDTO() {
     }
 
-    // Getters et Setters
     public Integer getNumCarteAssurance() {
         return numCarteAssurance;
     }
@@ -83,6 +79,11 @@ public class AssuranceDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "Police n°" + numCarteAssurance + " (" + agence + ")";
+        return "AssuranceDTO{" +
+                "numCarteAssurance=" + numCarteAssurance +
+                ", agence='" + agence + '\'' +
+                ", dateFinAssurance=" + dateFinAssurance +
+                ", vehiculesCouvert=" + (vehiculesInfos != null ? vehiculesInfos.size() : 0) +
+                '}';
     }
 }

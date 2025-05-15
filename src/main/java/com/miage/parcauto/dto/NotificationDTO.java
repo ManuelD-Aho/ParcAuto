@@ -1,94 +1,36 @@
 package main.java.com.miage.parcauto.dto;
 
+// Supposons que l'enum TypeNotification est défini dans votre modèle Notification:
+// import main.java.com.miage.parcauto.model.notification.Notification.TypeNotification;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * Objet de transfert de données (DTO) pour les notifications.
- * Utilisé pour transférer des données entre la couche service et la couche
- * présentation.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
 public class NotificationDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Enum représentant les différents types de notification.
-     */
-    public enum TypeNotification {
-        INFO("Information", "notification-info"),
-        ALERTE("Alerte", "notification-warning"),
-        ERREUR("Erreur", "notification-error"),
-        SUCCES("Succès", "notification-success");
-
-        private final String libelle;
-        private final String cssClass;
-
-        TypeNotification(String libelle, String cssClass) {
-            this.libelle = libelle;
-            this.cssClass = cssClass;
-        }
-
-        public String getLibelle() {
-            return libelle;
-        }
-
-        public String getCssClass() {
-            return cssClass;
-        }
+    // Supposons l'existence de cet enum dans votre modèle Notification.java
+    // Si ce n'est pas le cas, il faudra le créer ou utiliser un String ici.
+    public enum TypeNotificationDTO {
+        INFO,
+        ALERTE,
+        ERREUR,
+        SUCCES
     }
 
     private Integer idNotification;
-    private Integer idUtilisateur;
+    private Integer idUtilisateur; // Ou String loginUtilisateur si plus pertinent pour affichage
+    private String utilisateurInfo;
     private String titre;
     private String message;
-    private TypeNotification type;
+    private TypeNotificationDTO type;
     private LocalDateTime dateCreation;
     private boolean vue;
     private String actionUrl;
 
-    /**
-     * Constructeur par défaut.
-     */
     public NotificationDTO() {
-        this.dateCreation = LocalDateTime.now();
-        this.vue = false;
     }
-
-    /**
-     * Constructeur avec paramètres de base.
-     * 
-     * @param titre   Titre de la notification
-     * @param message Message de la notification
-     * @param type    Type de notification
-     */
-    public NotificationDTO(String titre, String message, TypeNotification type) {
-        this();
-        this.titre = titre;
-        this.message = message;
-        this.type = type;
-    }
-
-    /**
-     * Constructeur avec paramètres complets.
-     * 
-     * @param idUtilisateur ID de l'utilisateur destinataire
-     * @param titre         Titre de la notification
-     * @param message       Message de la notification
-     * @param type          Type de notification
-     * @param actionUrl     URL d'action associée (optionnel)
-     */
-    public NotificationDTO(Integer idUtilisateur, String titre, String message, TypeNotification type,
-            String actionUrl) {
-        this(titre, message, type);
-        this.idUtilisateur = idUtilisateur;
-        this.actionUrl = actionUrl;
-    }
-
-    // Getters et Setters
 
     public Integer getIdNotification() {
         return idNotification;
@@ -104,6 +46,14 @@ public class NotificationDTO implements Serializable {
 
     public void setIdUtilisateur(Integer idUtilisateur) {
         this.idUtilisateur = idUtilisateur;
+    }
+
+    public String getUtilisateurInfo() {
+        return utilisateurInfo;
+    }
+
+    public void setUtilisateurInfo(String utilisateurInfo) {
+        this.utilisateurInfo = utilisateurInfo;
     }
 
     public String getTitre() {
@@ -122,11 +72,11 @@ public class NotificationDTO implements Serializable {
         this.message = message;
     }
 
-    public TypeNotification getType() {
+    public TypeNotificationDTO getType() {
         return type;
     }
 
-    public void setType(TypeNotification type) {
+    public void setType(TypeNotificationDTO type) {
         this.type = type;
     }
 
@@ -156,8 +106,11 @@ public class NotificationDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "NotificationDTO [idNotification=" + idNotification + ", type=" + type + ", titre=" + titre
-                + ", dateCreation="
-                + dateCreation + ", vue=" + vue + "]";
+        return "NotificationDTO{" +
+                "idNotification=" + idNotification +
+                ", titre='" + titre + '\'' +
+                ", type=" + type +
+                ", vue=" + vue +
+                '}';
     }
 }

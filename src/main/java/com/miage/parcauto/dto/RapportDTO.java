@@ -10,14 +10,12 @@ import java.time.format.DateTimeFormatter;
 
 public class RapportDTO implements Serializable {
 
-    private static final long serialVersionUID = 1L; // Added serialVersionUID
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
+    private static final long serialVersionUID = 1L;
 
     private String titre;
     private String description;
-    private LocalDateTime dateGeneration; // Changed to LocalDateTime
-    private List<String> typesExport; // PDF, EXCEL, CSV etc.
+    private LocalDateTime dateGeneration;
+    private List<String> typesExport;
     private Map<String, Object> donnees;
     private List<String> erreurs;
 
@@ -52,10 +50,6 @@ public class RapportDTO implements Serializable {
 
     public LocalDateTime getDateGeneration() {
         return dateGeneration;
-    }
-
-    public String getDateGenerationFormattee() {
-        return dateGeneration != null ? dateGeneration.format(DATE_TIME_FORMATTER) : "N/A";
     }
 
     public void setDateGeneration(LocalDateTime dateGeneration) {
@@ -108,7 +102,7 @@ public class RapportDTO implements Serializable {
     public String toString() {
         return "RapportDTO{" +
                 "titre='" + titre + '\'' +
-                ", dateGeneration=" + getDateGenerationFormattee() +
+                ", dateGeneration=" + (dateGeneration != null ? dateGeneration.toString() : "N/A") +
                 ", typesExport=" + typesExport +
                 ", hasErreurs=" + hasErreurs() +
                 '}';

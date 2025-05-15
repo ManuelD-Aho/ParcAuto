@@ -1,144 +1,101 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.entretien.TypeEntretien;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Map;
 
-/**
- * DTO représentant le coût d'entretien d'un véhicule.
- * Utilisé pour transmettre les informations de coût entre les couches de
- * l'application.
- * 
- * @author MIAGE Holding
- * @version 1.0
- */
-public class CoutEntretienDTO {
+public class CoutEntretienDTO implements Serializable {
 
-    private Integer idVehicule;
-    private String marque;
-    private String modele;
-    private String immatriculation;
+    private static final long serialVersionUID = 1L;
+
+    private Integer idVehicule; // Optionnel, si c'est pour un véhicule spécifique
+    private String vehiculeInfo; // Optionnel
+    private LocalDate periodeDebut;
+    private LocalDate periodeFin;
+    private BigDecimal coutTotalEntretiens;
+    private Map<TypeEntretien, BigDecimal> coutParTypeEntretien;
     private int nombreEntretiens;
-    private BigDecimal coutTotal;
-    private BigDecimal coutMoyen;
+    private BigDecimal coutMoyenParEntretien;
 
-    /**
-     * Constructeur par défaut.
-     */
     public CoutEntretienDTO() {
-        this.nombreEntretiens = 0;
-        this.coutTotal = BigDecimal.ZERO;
-        this.coutMoyen = BigDecimal.ZERO;
+        this.coutTotalEntretiens = BigDecimal.ZERO;
+        this.coutMoyenParEntretien = BigDecimal.ZERO;
     }
 
-    /**
-     * Constructeur complet.
-     */
-    public CoutEntretienDTO(Integer idVehicule, String marque, String modele, String immatriculation,
-            int nombreEntretiens, BigDecimal coutTotal, BigDecimal coutMoyen) {
-        this.idVehicule = idVehicule;
-        this.marque = marque;
-        this.modele = modele;
-        this.immatriculation = immatriculation;
-        this.nombreEntretiens = nombreEntretiens;
-        this.coutTotal = coutTotal;
-        this.coutMoyen = coutMoyen;
-    }
-
-    /**
-     * @return l'ID du véhicule
-     */
     public Integer getIdVehicule() {
         return idVehicule;
     }
 
-    /**
-     * @param idVehicule l'ID du véhicule à définir
-     */
     public void setIdVehicule(Integer idVehicule) {
         this.idVehicule = idVehicule;
     }
 
-    /**
-     * @return la marque
-     */
-    public String getMarque() {
-        return marque;
+    public String getVehiculeInfo() {
+        return vehiculeInfo;
     }
 
-    /**
-     * @param marque la marque à définir
-     */
-    public void setMarque(String marque) {
-        this.marque = marque;
+    public void setVehiculeInfo(String vehiculeInfo) {
+        this.vehiculeInfo = vehiculeInfo;
     }
 
-    /**
-     * @return le modèle
-     */
-    public String getModele() {
-        return modele;
+    public LocalDate getPeriodeDebut() {
+        return periodeDebut;
     }
 
-    /**
-     * @param modele le modèle à définir
-     */
-    public void setModele(String modele) {
-        this.modele = modele;
+    public void setPeriodeDebut(LocalDate periodeDebut) {
+        this.periodeDebut = periodeDebut;
     }
 
-    /**
-     * @return l'immatriculation
-     */
-    public String getImmatriculation() {
-        return immatriculation;
+    public LocalDate getPeriodeFin() {
+        return periodeFin;
     }
 
-    /**
-     * @param immatriculation l'immatriculation à définir
-     */
-    public void setImmatriculation(String immatriculation) {
-        this.immatriculation = immatriculation;
+    public void setPeriodeFin(LocalDate periodeFin) {
+        this.periodeFin = periodeFin;
     }
 
-    /**
-     * @return le nombre d'entretiens
-     */
+    public BigDecimal getCoutTotalEntretiens() {
+        return coutTotalEntretiens;
+    }
+
+    public void setCoutTotalEntretiens(BigDecimal coutTotalEntretiens) {
+        this.coutTotalEntretiens = coutTotalEntretiens;
+    }
+
+    public Map<TypeEntretien, BigDecimal> getCoutParTypeEntretien() {
+        return coutParTypeEntretien;
+    }
+
+    public void setCoutParTypeEntretien(Map<TypeEntretien, BigDecimal> coutParTypeEntretien) {
+        this.coutParTypeEntretien = coutParTypeEntretien;
+    }
+
     public int getNombreEntretiens() {
         return nombreEntretiens;
     }
 
-    /**
-     * @param nombreEntretiens le nombre d'entretiens à définir
-     */
     public void setNombreEntretiens(int nombreEntretiens) {
         this.nombreEntretiens = nombreEntretiens;
     }
 
-    /**
-     * @return le coût total
-     */
-    public BigDecimal getCoutTotal() {
-        return coutTotal;
+    public BigDecimal getCoutMoyenParEntretien() {
+        return coutMoyenParEntretien;
     }
 
-    /**
-     * @param coutTotal le coût total à définir
-     */
-    public void setCoutTotal(BigDecimal coutTotal) {
-        this.coutTotal = coutTotal;
+    public void setCoutMoyenParEntretien(BigDecimal coutMoyenParEntretien) {
+        this.coutMoyenParEntretien = coutMoyenParEntretien;
     }
 
-    /**
-     * @return le coût moyen
-     */
-    public BigDecimal getCoutMoyen() {
-        return coutMoyen;
-    }
-
-    /**
-     * @param coutMoyen le coût moyen à définir
-     */
-    public void setCoutMoyen(BigDecimal coutMoyen) {
-        this.coutMoyen = coutMoyen;
+    @Override
+    public String toString() {
+        return "CoutEntretienDTO{" +
+                "vehiculeInfo='" + (vehiculeInfo != null ? vehiculeInfo : "Global") + '\'' +
+                ", periodeDebut=" + periodeDebut +
+                ", periodeFin=" + periodeFin +
+                ", coutTotalEntretiens=" + coutTotalEntretiens +
+                '}';
     }
 }

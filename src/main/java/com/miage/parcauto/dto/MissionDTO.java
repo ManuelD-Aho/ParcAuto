@@ -1,14 +1,13 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.mission.StatutMission;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * DTO pour l'entité Mission.
- */
 public class MissionDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,7 +21,7 @@ public class MissionDTO implements Serializable {
     private LocalDateTime dateFinMission;
     private Integer kmPrevu;
     private Integer kmReel;
-    private String status;
+    private StatutMission status;
     private BigDecimal coutTotal;
     private String circuitMission;
     private String observationMission;
@@ -31,7 +30,6 @@ public class MissionDTO implements Serializable {
     public MissionDTO() {
     }
 
-    // Getters et Setters
     public Integer getIdMission() {
         return idMission;
     }
@@ -104,11 +102,11 @@ public class MissionDTO implements Serializable {
         this.kmReel = kmReel;
     }
 
-    public String getStatus() {
+    public StatutMission getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(StatutMission status) {
         this.status = status;
     }
 
@@ -146,6 +144,6 @@ public class MissionDTO implements Serializable {
 
     @Override
     public String toString() {
-        return libMission + " (" + status + ")";
+        return libMission + " (" + (status != null ? status.getValeur() : "N/A") + ")";
     }
 }

@@ -1,297 +1,112 @@
 package main.java.com.miage.parcauto.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
-/**
- * DTO pour les rapports concernant un véhicule.
- * Cette classe étend RapportDTO et ajoute des informations spécifiques aux
- * véhicules.
- * 
- * @author MIAGE Holding
- * @version 1.0
- */
-public class RapportVehiculeDTO extends RapportDTO {
+public class RapportVehiculeDTO implements Serializable {
 
-    private Integer idVehicule;
-    private String immatriculation;
-    private String marque;
-    private String modele;
-    private int kilometrage;
-    private LocalDate dateMiseEnService;
-    private String etat;
-    private BigDecimal valeurAcquisition;
-    private BigDecimal valeurResiduelle;
-    private int nombreMissions;
-    private int nombreEntretiens;
-    private BigDecimal coutTotalEntretiens;
-    private int joursDepuisAcquisition;
-    private double tauxUtilisation; // en pourcentage
-    private List<EntretienDTO> historiquePrevEntretien;
-    private List<EntretienDTO> entretiensNecessaires;
-    private List<MissionDTO> dernieresMissions;
-    private Map<String, BigDecimal> repartitionCouts;
+    private static final long serialVersionUID = 1L;
 
-    /**
-     * Constructeur par défaut.
-     */
+    private VehiculeDTO vehicule; // Informations de base du véhicule
+    private TCODTO tcoActuel;
+    private List<EntretienDTO> historiqueEntretiens;
+    private List<MissionDTO> historiqueMissions;
+    private List<AffectationDTO> historiqueAffectations;
+    private AssuranceDTO assuranceActuelle; // Ou List<AssuranceDTO> si plusieurs peuvent être actives/historiques
+    private BigDecimal totalCoutsEntretiens;
+    private BigDecimal totalCoutsMissions; // Carburant, etc.
+    private Integer totalKmParcourusEnMission;
+    private Double tauxUtilisation; // Pourcentage de temps en mission ou affecté
+
     public RapportVehiculeDTO() {
-        super("Rapport véhicule", "Données complètes sur un véhicule");
     }
 
-    /**
-     * @return l'ID du véhicule
-     */
-    public Integer getIdVehicule() {
-        return idVehicule;
+    public VehiculeDTO getVehicule() {
+        return vehicule;
     }
 
-    /**
-     * @param idVehicule l'ID du véhicule à définir
-     */
-    public void setIdVehicule(Integer idVehicule) {
-        this.idVehicule = idVehicule;
+    public void setVehicule(VehiculeDTO vehicule) {
+        this.vehicule = vehicule;
     }
 
-    /**
-     * @return l'immatriculation
-     */
-    public String getImmatriculation() {
-        return immatriculation;
+    public TCODTO getTcoActuel() {
+        return tcoActuel;
     }
 
-    /**
-     * @param immatriculation l'immatriculation à définir
-     */
-    public void setImmatriculation(String immatriculation) {
-        this.immatriculation = immatriculation;
+    public void setTcoActuel(TCODTO tcoActuel) {
+        this.tcoActuel = tcoActuel;
     }
 
-    /**
-     * @return la marque
-     */
-    public String getMarque() {
-        return marque;
+    public List<EntretienDTO> getHistoriqueEntretiens() {
+        return historiqueEntretiens;
     }
 
-    /**
-     * @param marque la marque à définir
-     */
-    public void setMarque(String marque) {
-        this.marque = marque;
+    public void setHistoriqueEntretiens(List<EntretienDTO> historiqueEntretiens) {
+        this.historiqueEntretiens = historiqueEntretiens;
     }
 
-    /**
-     * @return le modèle
-     */
-    public String getModele() {
-        return modele;
+    public List<MissionDTO> getHistoriqueMissions() {
+        return historiqueMissions;
     }
 
-    /**
-     * @param modele le modèle à définir
-     */
-    public void setModele(String modele) {
-        this.modele = modele;
+    public void setHistoriqueMissions(List<MissionDTO> historiqueMissions) {
+        this.historiqueMissions = historiqueMissions;
     }
 
-    /**
-     * @return le kilométrage
-     */
-    public int getKilometrage() {
-        return kilometrage;
+    public List<AffectationDTO> getHistoriqueAffectations() {
+        return historiqueAffectations;
     }
 
-    /**
-     * @param kilometrage le kilométrage à définir
-     */
-    public void setKilometrage(int kilometrage) {
-        this.kilometrage = kilometrage;
+    public void setHistoriqueAffectations(List<AffectationDTO> historiqueAffectations) {
+        this.historiqueAffectations = historiqueAffectations;
     }
 
-    /**
-     * @return la date de mise en service
-     */
-    public LocalDate getDateMiseEnService() {
-        return dateMiseEnService;
+    public AssuranceDTO getAssuranceActuelle() {
+        return assuranceActuelle;
     }
 
-    /**
-     * @param dateMiseEnService la date de mise en service à définir
-     */
-    public void setDateMiseEnService(LocalDate dateMiseEnService) {
-        this.dateMiseEnService = dateMiseEnService;
+    public void setAssuranceActuelle(AssuranceDTO assuranceActuelle) {
+        this.assuranceActuelle = assuranceActuelle;
     }
 
-    /**
-     * @return l'état
-     */
-    public String getEtat() {
-        return etat;
+    public BigDecimal getTotalCoutsEntretiens() {
+        return totalCoutsEntretiens;
     }
 
-    /**
-     * @param etat l'état à définir
-     */
-    public void setEtat(String etat) {
-        this.etat = etat;
+    public void setTotalCoutsEntretiens(BigDecimal totalCoutsEntretiens) {
+        this.totalCoutsEntretiens = totalCoutsEntretiens;
     }
 
-    /**
-     * @return la valeur d'acquisition
-     */
-    public BigDecimal getValeurAcquisition() {
-        return valeurAcquisition;
+    public BigDecimal getTotalCoutsMissions() {
+        return totalCoutsMissions;
     }
 
-    /**
-     * @param valeurAcquisition la valeur d'acquisition à définir
-     */
-    public void setValeurAcquisition(BigDecimal valeurAcquisition) {
-        this.valeurAcquisition = valeurAcquisition;
+    public void setTotalCoutsMissions(BigDecimal totalCoutsMissions) {
+        this.totalCoutsMissions = totalCoutsMissions;
     }
 
-    /**
-     * @return la valeur résiduelle
-     */
-    public BigDecimal getValeurResiduelle() {
-        return valeurResiduelle;
+    public Integer getTotalKmParcourusEnMission() {
+        return totalKmParcourusEnMission;
     }
 
-    /**
-     * @param valeurResiduelle la valeur résiduelle à définir
-     */
-    public void setValeurResiduelle(BigDecimal valeurResiduelle) {
-        this.valeurResiduelle = valeurResiduelle;
+    public void setTotalKmParcourusEnMission(Integer totalKmParcourusEnMission) {
+        this.totalKmParcourusEnMission = totalKmParcourusEnMission;
     }
 
-    /**
-     * @return le nombre de missions
-     */
-    public int getNombreMissions() {
-        return nombreMissions;
-    }
-
-    /**
-     * @param nombreMissions le nombre de missions à définir
-     */
-    public void setNombreMissions(int nombreMissions) {
-        this.nombreMissions = nombreMissions;
-    }
-
-    /**
-     * @return le nombre d'entretiens
-     */
-    public int getNombreEntretiens() {
-        return nombreEntretiens;
-    }
-
-    /**
-     * @param nombreEntretiens le nombre d'entretiens à définir
-     */
-    public void setNombreEntretiens(int nombreEntretiens) {
-        this.nombreEntretiens = nombreEntretiens;
-    }
-
-    /**
-     * @return le coût total des entretiens
-     */
-    public BigDecimal getCoutTotalEntretiens() {
-        return coutTotalEntretiens;
-    }
-
-    /**
-     * @param coutTotalEntretiens le coût total des entretiens à définir
-     */
-    public void setCoutTotalEntretiens(BigDecimal coutTotalEntretiens) {
-        this.coutTotalEntretiens = coutTotalEntretiens;
-    }
-
-    /**
-     * @return le nombre de jours depuis l'acquisition
-     */
-    public int getJoursDepuisAcquisition() {
-        return joursDepuisAcquisition;
-    }
-
-    /**
-     * @param joursDepuisAcquisition le nombre de jours depuis l'acquisition à
-     *                               définir
-     */
-    public void setJoursDepuisAcquisition(int joursDepuisAcquisition) {
-        this.joursDepuisAcquisition = joursDepuisAcquisition;
-    }
-
-    /**
-     * @return le taux d'utilisation
-     */
-    public double getTauxUtilisation() {
+    public Double getTauxUtilisation() {
         return tauxUtilisation;
     }
 
-    /**
-     * @param tauxUtilisation le taux d'utilisation à définir
-     */
-    public void setTauxUtilisation(double tauxUtilisation) {
+    public void setTauxUtilisation(Double tauxUtilisation) {
         this.tauxUtilisation = tauxUtilisation;
     }
 
-    /**
-     * @return l'historique des entretiens préventifs
-     */
-    public List<EntretienDTO> getHistoriquePrevEntretien() {
-        return historiquePrevEntretien;
-    }
-
-    /**
-     * @param historiquePrevEntretien l'historique des entretiens préventifs à
-     *                                définir
-     */
-    public void setHistoriquePrevEntretien(List<EntretienDTO> historiquePrevEntretien) {
-        this.historiquePrevEntretien = historiquePrevEntretien;
-    }
-
-    /**
-     * @return les entretiens nécessaires
-     */
-    public List<EntretienDTO> getEntretiensNecessaires() {
-        return entretiensNecessaires;
-    }
-
-    /**
-     * @param entretiensNecessaires les entretiens nécessaires à définir
-     */
-    public void setEntretiensNecessaires(List<EntretienDTO> entretiensNecessaires) {
-        this.entretiensNecessaires = entretiensNecessaires;
-    }
-
-    /**
-     * @return les dernières missions
-     */
-    public List<MissionDTO> getDernieresMissions() {
-        return dernieresMissions;
-    }
-
-    /**
-     * @param dernieresMissions les dernières missions à définir
-     */
-    public void setDernieresMissions(List<MissionDTO> dernieresMissions) {
-        this.dernieresMissions = dernieresMissions;
-    }
-
-    /**
-     * @return la répartition des coûts
-     */
-    public Map<String, BigDecimal> getRepartitionCouts() {
-        return repartitionCouts;
-    }
-
-    /**
-     * @param repartitionCouts la répartition des coûts à définir
-     */
-    public void setRepartitionCouts(Map<String, BigDecimal> repartitionCouts) {
-        this.repartitionCouts = repartitionCouts;
+    @Override
+    public String toString() {
+        return "RapportVehiculeDTO{" +
+                "vehicule=" + (vehicule != null ? vehicule.getImmatriculation() : "N/A") +
+                '}';
     }
 }

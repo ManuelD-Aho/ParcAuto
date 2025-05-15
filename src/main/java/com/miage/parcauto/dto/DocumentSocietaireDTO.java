@@ -1,11 +1,10 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.document.TypeDocument;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * DTO pour l'entité DocumentSocietaire.
- */
 public class DocumentSocietaireDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -13,14 +12,13 @@ public class DocumentSocietaireDTO implements Serializable {
     private Integer idDoc;
     private Integer idSocietaire;
     private String societaireInfo;
-    private String typeDoc;
+    private TypeDocument typeDoc;
     private String cheminFichier;
     private LocalDateTime dateUpload;
 
     public DocumentSocietaireDTO() {
     }
 
-    // Getters et Setters
     public Integer getIdDoc() {
         return idDoc;
     }
@@ -45,11 +43,11 @@ public class DocumentSocietaireDTO implements Serializable {
         this.societaireInfo = societaireInfo;
     }
 
-    public String getTypeDoc() {
+    public TypeDocument getTypeDoc() {
         return typeDoc;
     }
 
-    public void setTypeDoc(String typeDoc) {
+    public void setTypeDoc(TypeDocument typeDoc) {
         this.typeDoc = typeDoc;
     }
 
@@ -69,22 +67,13 @@ public class DocumentSocietaireDTO implements Serializable {
         this.dateUpload = dateUpload;
     }
 
-    public String getNomFichier() {
-        if (cheminFichier == null) {
-            return "";
-        }
-        int lastIndex = cheminFichier.lastIndexOf('/');
-        if (lastIndex == -1) {
-            lastIndex = cheminFichier.lastIndexOf('\\');
-        }
-        if (lastIndex == -1) {
-            return cheminFichier;
-        }
-        return cheminFichier.substring(lastIndex + 1);
-    }
-
     @Override
     public String toString() {
-        return typeDoc + " - " + getNomFichier();
+        return "DocumentSocietaireDTO{" +
+                "idDoc=" + idDoc +
+                ", societaireInfo='" + societaireInfo + '\'' +
+                ", typeDoc=" + (typeDoc != null ? typeDoc.getValeur() : "N/A") +
+                ", cheminFichier='" + cheminFichier + '\'' +
+                '}';
     }
 }

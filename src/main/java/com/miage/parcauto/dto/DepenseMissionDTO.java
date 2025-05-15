@@ -1,31 +1,52 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.mission.NatureDepenseMission;
+
+import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.Objects;
 
-/**
- * DTO pour l'entité DepenseMission.
- */
 public class DepenseMissionDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private Integer idDepense;
     private Integer idMission;
-    private String nature;
+    private NatureDepenseMission nature;
+    private String description;
     private BigDecimal montant;
+    private LocalDate date;
     private String justificatif;
 
     public DepenseMissionDTO() {
+        this.montant = BigDecimal.ZERO;
+        this.date = LocalDate.now();
     }
 
-    // Getters et Setters
-    public Integer getId() {
-        return id;
+    public DepenseMissionDTO(Integer idDepense, Integer idMission, NatureDepenseMission nature, String description, BigDecimal montant,
+                             LocalDate date, String justificatif) {
+        this.idDepense = idDepense;
+        this.idMission = idMission;
+        this.nature = nature;
+        this.description = description;
+        this.montant = montant;
+        this.date = date;
+        this.justificatif = justificatif;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public boolean hasJustificatif() {
+        return justificatif != null && !justificatif.isEmpty();
+    }
+
+    public Integer getIdDepense() {
+        return idDepense;
+    }
+
+    public void setIdDepense(Integer idDepense) {
+        this.idDepense = idDepense;
     }
 
     public Integer getIdMission() {
@@ -36,12 +57,20 @@ public class DepenseMissionDTO implements Serializable {
         this.idMission = idMission;
     }
 
-    public String getNature() {
+    public NatureDepenseMission getNature() {
         return nature;
     }
 
-    public void setNature(String nature) {
+    public void setNature(NatureDepenseMission nature) {
         this.nature = nature;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public BigDecimal getMontant() {
@@ -50,6 +79,14 @@ public class DepenseMissionDTO implements Serializable {
 
     public void setMontant(BigDecimal montant) {
         this.montant = montant;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public String getJustificatif() {
@@ -61,7 +98,27 @@ public class DepenseMissionDTO implements Serializable {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        DepenseMissionDTO that = (DepenseMissionDTO) o;
+        return Objects.equals(idDepense, that.idDepense);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idDepense);
+    }
+
+    @Override
     public String toString() {
-        return nature + ": " + montant + "€";
+        return "DepenseMissionDTO{" +
+                "idDepense=" + idDepense +
+                ", nature=" + (nature != null ? nature.getValeur() : "N/A") +
+                ", montant=" + montant +
+                ", date=" + (date != null ? date.toString() : "N/A") +
+                '}';
     }
 }

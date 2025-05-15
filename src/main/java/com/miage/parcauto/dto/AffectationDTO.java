@@ -1,11 +1,10 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.affectation.TypeAffectation;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * DTO pour l'entité Affectation.
- */
 public class AffectationDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -17,14 +16,13 @@ public class AffectationDTO implements Serializable {
     private String personnelInfo;
     private Integer idSocietaire;
     private String societaireInfo;
-    private String type;
+    private TypeAffectation type;
     private LocalDateTime dateDebut;
     private LocalDateTime dateFin;
 
     public AffectationDTO() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -81,11 +79,11 @@ public class AffectationDTO implements Serializable {
         this.societaireInfo = societaireInfo;
     }
 
-    public String getType() {
+    public TypeAffectation getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(TypeAffectation type) {
         this.type = type;
     }
 
@@ -107,8 +105,19 @@ public class AffectationDTO implements Serializable {
 
     @Override
     public String toString() {
-        String beneficiaire = personnelInfo != null ? personnelInfo :
-                (societaireInfo != null ? societaireInfo : "Inconnu");
-        return "Affectation de " + vehiculeInfo + " à " + beneficiaire;
+        String beneficiaire = "N/A";
+        if (personnelInfo != null && !personnelInfo.isEmpty()) {
+            beneficiaire = personnelInfo;
+        } else if (societaireInfo != null && !societaireInfo.isEmpty()) {
+            beneficiaire = societaireInfo;
+        }
+        return "AffectationDTO{" +
+                "id=" + id +
+                ", vehiculeInfo='" + vehiculeInfo + '\'' +
+                ", beneficiaire='" + beneficiaire + '\'' +
+                ", type=" + (type != null ? type.getValeur() : "N/A") +
+                ", dateDebut=" + dateDebut +
+                ", dateFin=" + dateFin +
+                '}';
     }
 }

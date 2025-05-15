@@ -1,7 +1,5 @@
 package main.java.com.miage.parcauto.model.rh;
 
-import main.java.com.miage.parcauto.model.vehicule.Vehicule;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +15,6 @@ public class Personnel implements Serializable {
     private Integer idPersonnel;
     private Service service;
     private Fonction fonction;
-    private Vehicule vehicule;  // Véhicule attribué si applicable
     private String matricule;
     private String nomPersonnel;
     private String prenomPersonnel;
@@ -26,12 +23,11 @@ public class Personnel implements Serializable {
     private String adresse;
     private LocalDate dateNaissance;
     private Sexe sexe;
-    private LocalDateTime dateAttribution;  // Date d'attribution du véhicule
+    private LocalDateTime dateAttribution;
 
     public Personnel() {
     }
 
-    // Getters et Setters
     public Integer getIdPersonnel() {
         return idPersonnel;
     }
@@ -54,14 +50,6 @@ public class Personnel implements Serializable {
 
     public void setFonction(Fonction fonction) {
         this.fonction = fonction;
-    }
-
-    public Vehicule getVehicule() {
-        return vehicule;
-    }
-
-    public void setVehicule(Vehicule vehicule) {
-        this.vehicule = vehicule;
     }
 
     public String getMatricule() {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * État possible d'un véhicule dans le parc automobile.
+ * Entité représentant l'état d'un véhicule.
  */
 public class EtatVoiture implements Serializable {
 
@@ -21,7 +21,6 @@ public class EtatVoiture implements Serializable {
         this.libEtatVoiture = libEtatVoiture;
     }
 
-    // Getters et Setters
     public Integer getIdEtatVoiture() {
         return idEtatVoiture;
     }

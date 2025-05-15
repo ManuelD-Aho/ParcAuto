@@ -1,25 +1,23 @@
 package main.java.com.miage.parcauto.dto;
 
+import main.java.com.miage.parcauto.model.utilisateur.Role;
+
 import java.io.Serializable;
 
-/**
- * DTO pour l'entité Utilisateur.
- */
 public class UtilisateurDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private Integer id;
     private String login;
+    private Role role;
     private Integer idPersonnel;
     private String personnelInfo;
-    private String role;
-    private boolean hasMfa;
+    private boolean mfaEnabled;
 
     public UtilisateurDTO() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -34,6 +32,14 @@ public class UtilisateurDTO implements Serializable {
 
     public void setLogin(String login) {
         this.login = login;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public Integer getIdPersonnel() {
@@ -52,24 +58,21 @@ public class UtilisateurDTO implements Serializable {
         this.personnelInfo = personnelInfo;
     }
 
-    public String getRole() {
-        return role;
+    public boolean isMfaEnabled() {
+        return mfaEnabled;
     }
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public boolean isHasMfa() {
-        return hasMfa;
-    }
-
-    public void setHasMfa(boolean hasMfa) {
-        this.hasMfa = hasMfa;
+    public void setMfaEnabled(boolean mfaEnabled) {
+        this.mfaEnabled = mfaEnabled;
     }
 
     @Override
     public String toString() {
-        return login + " (" + role + ")";
+        return "UtilisateurDTO{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", role=" + (role != null ? role.getValeur() : "N/A") +
+                ", personnelInfo='" + personnelInfo + '\'' +
+                '}';
     }
 }

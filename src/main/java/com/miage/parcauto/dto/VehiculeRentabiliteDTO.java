@@ -1,176 +1,167 @@
 package main.java.com.miage.parcauto.dto;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-/**
- * DTO représentant la rentabilité d'un véhicule.
- * Utilisé pour les rapports et analyses financières.
- *
- * @author MIAGE Holding
- * @version 1.0
- */
-public class VehiculeRentabiliteDTO {
+public class VehiculeRentabiliteDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Integer idVehicule;
-    private String marque;
-    private String modele;
-    private String immatriculation;
-    private int nombreMissions;
-    private int kmParcourus;
-    private BigDecimal recettesGenerees;
-    private BigDecimal coutTotal;
-    private BigDecimal beneficeNet;
-    private BigDecimal rentabilite; // en pourcentage
+    private String vehiculeInfo; // Marque, modèle, immatriculation
+    private LocalDate dateDebutAnalyse;
+    private LocalDate dateFinAnalyse;
+    private BigDecimal revenusGeneres; // Par ex. mensualités de sociétaires, facturation de missions
+    private BigDecimal coutTotalAcquisition; // Prix d'achat initial
+    private BigDecimal coutTotalEntretiens;
+    private BigDecimal coutTotalAssurances;
+    private BigDecimal coutTotalCarburantMissions; // Spécifique aux missions
+    private BigDecimal autresCoutsOperationnels; // Taxes, parking, etc.
+    private BigDecimal coutTotalOperationnel; // Somme des coûts hors acquisition
+    private BigDecimal beneficeNetVehicule; // Revenus - Coûts Opérationnels
+    private BigDecimal retourSurInvestissementInitial; // (Bénéfice Net / Coût Acquisition) * 100
+    private Integer nombreMissionsEffectuees;
+    private Integer joursAffectationCredit; // Nombre de jours où le véhicule a été affecté en crédit
 
-    /**
-     * Constructeur par défaut.
-     */
     public VehiculeRentabiliteDTO() {
-        this.nombreMissions = 0;
-        this.kmParcourus = 0;
-        this.recettesGenerees = BigDecimal.ZERO;
-        this.coutTotal = BigDecimal.ZERO;
-        this.beneficeNet = BigDecimal.ZERO;
-        this.rentabilite = BigDecimal.ZERO;
+        this.revenusGeneres = BigDecimal.ZERO;
+        this.coutTotalAcquisition = BigDecimal.ZERO;
+        this.coutTotalEntretiens = BigDecimal.ZERO;
+        this.coutTotalAssurances = BigDecimal.ZERO;
+        this.coutTotalCarburantMissions = BigDecimal.ZERO;
+        this.autresCoutsOperationnels = BigDecimal.ZERO;
+        this.coutTotalOperationnel = BigDecimal.ZERO;
+        this.beneficeNetVehicule = BigDecimal.ZERO;
+        this.retourSurInvestissementInitial = BigDecimal.ZERO;
     }
 
-    /**
-     * @return l'ID du véhicule
-     */
     public Integer getIdVehicule() {
         return idVehicule;
     }
 
-    /**
-     * @param idVehicule l'ID du véhicule à définir
-     */
     public void setIdVehicule(Integer idVehicule) {
         this.idVehicule = idVehicule;
     }
 
-    /**
-     * @return la marque
-     */
-    public String getMarque() {
-        return marque;
+    public String getVehiculeInfo() {
+        return vehiculeInfo;
     }
 
-    /**
-     * @param marque la marque à définir
-     */
-    public void setMarque(String marque) {
-        this.marque = marque;
+    public void setVehiculeInfo(String vehiculeInfo) {
+        this.vehiculeInfo = vehiculeInfo;
     }
 
-    /**
-     * @return le modèle
-     */
-    public String getModele() {
-        return modele;
+    public LocalDate getDateDebutAnalyse() {
+        return dateDebutAnalyse;
     }
 
-    /**
-     * @param modele le modèle à définir
-     */
-    public void setModele(String modele) {
-        this.modele = modele;
+    public void setDateDebutAnalyse(LocalDate dateDebutAnalyse) {
+        this.dateDebutAnalyse = dateDebutAnalyse;
     }
 
-    /**
-     * @return l'immatriculation
-     */
-    public String getImmatriculation() {
-        return immatriculation;
+    public LocalDate getDateFinAnalyse() {
+        return dateFinAnalyse;
     }
 
-    /**
-     * @param immatriculation l'immatriculation à définir
-     */
-    public void setImmatriculation(String immatriculation) {
-        this.immatriculation = immatriculation;
+    public void setDateFinAnalyse(LocalDate dateFinAnalyse) {
+        this.dateFinAnalyse = dateFinAnalyse;
     }
 
-    /**
-     * @return le nombre de missions
-     */
-    public int getNombreMissions() {
-        return nombreMissions;
+    public BigDecimal getRevenusGeneres() {
+        return revenusGeneres;
     }
 
-    /**
-     * @param nombreMissions le nombre de missions à définir
-     */
-    public void setNombreMissions(int nombreMissions) {
-        this.nombreMissions = nombreMissions;
+    public void setRevenusGeneres(BigDecimal revenusGeneres) {
+        this.revenusGeneres = revenusGeneres;
     }
 
-    /**
-     * @return le nombre de km parcourus
-     */
-    public int getKmParcourus() {
-        return kmParcourus;
+    public BigDecimal getCoutTotalAcquisition() {
+        return coutTotalAcquisition;
     }
 
-    /**
-     * @param kmParcourus le nombre de km parcourus à définir
-     */
-    public void setKmParcourus(int kmParcourus) {
-        this.kmParcourus = kmParcourus;
+    public void setCoutTotalAcquisition(BigDecimal coutTotalAcquisition) {
+        this.coutTotalAcquisition = coutTotalAcquisition;
     }
 
-    /**
-     * @return les recettes générées
-     */
-    public BigDecimal getRecettesGenerees() {
-        return recettesGenerees;
+    public BigDecimal getCoutTotalEntretiens() {
+        return coutTotalEntretiens;
     }
 
-    /**
-     * @param recettesGenerees les recettes générées à définir
-     */
-    public void setRecettesGenerees(BigDecimal recettesGenerees) {
-        this.recettesGenerees = recettesGenerees;
+    public void setCoutTotalEntretiens(BigDecimal coutTotalEntretiens) {
+        this.coutTotalEntretiens = coutTotalEntretiens;
     }
 
-    /**
-     * @return le coût total
-     */
-    public BigDecimal getCoutTotal() {
-        return coutTotal;
+    public BigDecimal getCoutTotalAssurances() {
+        return coutTotalAssurances;
     }
 
-    /**
-     * @param coutTotal le coût total à définir
-     */
-    public void setCoutTotal(BigDecimal coutTotal) {
-        this.coutTotal = coutTotal;
+    public void setCoutTotalAssurances(BigDecimal coutTotalAssurances) {
+        this.coutTotalAssurances = coutTotalAssurances;
     }
 
-    /**
-     * @return le bénéfice net
-     */
-    public BigDecimal getBeneficeNet() {
-        return beneficeNet;
+    public BigDecimal getCoutTotalCarburantMissions() {
+        return coutTotalCarburantMissions;
     }
 
-    /**
-     * @param beneficeNet le bénéfice net à définir
-     */
-    public void setBeneficeNet(BigDecimal beneficeNet) {
-        this.beneficeNet = beneficeNet;
+    public void setCoutTotalCarburantMissions(BigDecimal coutTotalCarburantMissions) {
+        this.coutTotalCarburantMissions = coutTotalCarburantMissions;
     }
 
-    /**
-     * @return la rentabilité (en pourcentage)
-     */
-    public BigDecimal getRentabilite() {
-        return rentabilite;
+    public BigDecimal getAutresCoutsOperationnels() {
+        return autresCoutsOperationnels;
     }
 
-    /**
-     * @param rentabilite la rentabilité à définir (en pourcentage)
-     */
-    public void setRentabilite(BigDecimal rentabilite) {
-        this.rentabilite = rentabilite;
+    public void setAutresCoutsOperationnels(BigDecimal autresCoutsOperationnels) {
+        this.autresCoutsOperationnels = autresCoutsOperationnels;
+    }
+
+    public BigDecimal getCoutTotalOperationnel() {
+        return coutTotalOperationnel;
+    }
+
+    public void setCoutTotalOperationnel(BigDecimal coutTotalOperationnel) {
+        this.coutTotalOperationnel = coutTotalOperationnel;
+    }
+
+    public BigDecimal getBeneficeNetVehicule() {
+        return beneficeNetVehicule;
+    }
+
+    public void setBeneficeNetVehicule(BigDecimal beneficeNetVehicule) {
+        this.beneficeNetVehicule = beneficeNetVehicule;
+    }
+
+    public BigDecimal getRetourSurInvestissementInitial() {
+        return retourSurInvestissementInitial;
+    }
+
+    public void setRetourSurInvestissementInitial(BigDecimal retourSurInvestissementInitial) {
+        this.retourSurInvestissementInitial = retourSurInvestissementInitial;
+    }
+
+    public Integer getNombreMissionsEffectuees() {
+        return nombreMissionsEffectuees;
+    }
+
+    public void setNombreMissionsEffectuees(Integer nombreMissionsEffectuees) {
+        this.nombreMissionsEffectuees = nombreMissionsEffectuees;
+    }
+
+    public Integer getJoursAffectationCredit() {
+        return joursAffectationCredit;
+    }
+
+    public void setJoursAffectationCredit(Integer joursAffectationCredit) {
+        this.joursAffectationCredit = joursAffectationCredit;
+    }
+
+    @Override
+    public String toString() {
+        return "VehiculeRentabiliteDTO{" +
+                "vehiculeInfo='" + vehiculeInfo + '\'' +
+                ", beneficeNetVehicule=" + beneficeNetVehicule +
+                ", periode='" + dateDebutAnalyse + " à " + dateFinAnalyse + '\'' +
+                '}';
     }
 }
