@@ -1,117 +1,98 @@
 package main.java.com.miage.parcauto.service;
 
 import main.java.com.miage.parcauto.dto.VehiculeDTO;
-import main.java.com.miage.parcauto.exception.DatabaseException;
+import main.java.com.miage.parcauto.exception.OperationFailedException;
 import main.java.com.miage.parcauto.exception.ValidationException;
-import main.java.com.miage.parcauto.mapper.VehiculeMapper;
-import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
-import main.java.com.miage.parcauto.model.vehicule.Vehicule;
+import main.java.com.miage.parcauto.exception.VehiculeNotFoundException;
+import main.java.com.miage.parcauto.exception.DuplicateEntityException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * Service de gestion des véhicules (version refactorisée Repository/DTO).
- * Utilise VehiculeRepository, DTOs, ValidationService et exceptions
- * personnalisées.
- *
- * @author MIAGE Holding
- * @version 2.0
+ * Service pour la gestion des véhicules du parc.
  */
-public class VehiculeService {
+public interface VehiculeService {
 
-    private static final Logger LOGGER = Logger.getLogger(VehiculeService.class.getName());
-    private final VehiculeRepository vehiculeRepository;
-    private final ValidationService validationService;
+    /**
+     * Crée un nouveau véhicule.
+     *
+     * @param vehiculeDTO Le DTO du véhicule à créer.
+     * @return Le VehiculeDTO créé avec son ID.
+     * @throws ValidationException Si les données du véhicule sont invalides.
+     * @throws DuplicateEntityException Si un véhicule avec la même immatriculation ou numéro de châssis existe déjà.
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    VehiculeDTO createVehicule(VehiculeDTO vehiculeDTO) throws ValidationException, DuplicateEntityException, OperationFailedException;
 
-    public VehiculeService() {
-        this.vehiculeRepository = new VehiculeRepositoryImpl();
-        this.validationService = new ValidationService();
-    }
+    /**
+     * Récupère un véhicule par son identifiant.
+     *
+     * @param idVehicule L'identifiant du véhicule.
+     * @return Un Optional contenant le VehiculeDTO si trouvé.
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    Optional<VehiculeDTO> getVehiculeById(Integer idVehicule) throws OperationFailedException;
 
-    public List<VehiculeDTO> getAllVehicules() {
-        try {
-            List<Vehicule> vehicules = vehiculeRepository.findAll();
-            return VehiculeMapper.toDTOList(vehicules);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des véhicules", e);
-            throw new DatabaseException("Erreur lors de la récupération des véhicules", e);
-        }
-    }
+    /**
+     * Récupère tous les véhicules du parc.
+     *
+     * @return Une liste de VehiculeDTO.
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    List<VehiculeDTO> getAllVehicules() throws OperationFailedException;
 
-    public Optional<VehiculeDTO> getVehiculeById(Integer id) {
-        try {
-            return vehiculeRepository.findById(id).map(VehiculeMapper::toDTO);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération du véhicule", e);
-            throw new DatabaseException("Erreur lors de la récupération du véhicule", e);
-        }
-    }
+    /**
+     * Met à jour les informations d'un véhicule existant.
+     *
+     * @param vehiculeDTO Le DTO du véhicule avec les informations mises à jour.
+     * @return Le VehiculeDTO mis à jour.
+     * @throws ValidationException Si les données du véhicule sont invalides.
+     * @throws VehiculeNotFoundException Si le véhicule à mettre à jour n'est pas trouvé.
+     * @throws DuplicateEntityException Si la nouvelle immatriculation ou numéro de châssis entre en conflit.
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    VehiculeDTO updateVehicule(VehiculeDTO vehiculeDTO) throws ValidationException, VehiculeNotFoundException, DuplicateEntityException, OperationFailedException;
 
-    public boolean createVehicule(VehiculeDTO vehiculeDTO) {
-        ValidationService.ValidationResult result = validationService.validateVehicule(vehiculeDTO);
-        if (!result.isValid()) {
-            throw new ValidationException(result);
-        }
-        try {
-            Vehicule vehicule = VehiculeMapper.toEntity(vehiculeDTO);
-            vehiculeRepository.save(vehicule);
-            return true;
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la création du véhicule", e);
-            throw new DatabaseException("Erreur lors de la création du véhicule", e);
-        }
-    }
+    /**
+     * Supprime un véhicule par son identifiant.
+     *
+     * @param idVehicule L'identifiant du véhicule à supprimer.
+     * @throws VehiculeNotFoundException Si le véhicule à supprimer n'est pas trouvé.
+     * @throws OperationFailedException Si une erreur technique survient (ex: véhicule impliqué dans des missions actives).
+     */
+    void deleteVehicule(Integer idVehicule) throws VehiculeNotFoundException, OperationFailedException;
 
-    public boolean updateVehicule(VehiculeDTO vehiculeDTO) {
-        ValidationService.ValidationResult result = validationService.validateVehicule(vehiculeDTO);
-        if (!result.isValid()) {
-            throw new ValidationException(result);
-        }
-        try {
-            Vehicule vehicule = VehiculeMapper.toEntity(vehiculeDTO);
-            vehiculeRepository.update(vehicule);
-            return true;
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du véhicule", e);
-            throw new DatabaseException("Erreur lors de la mise à jour du véhicule", e);
-        }
-    }
+    /**
+     * Met à jour le kilométrage d'un véhicule.
+     *
+     * @param idVehicule L'identifiant du véhicule.
+     * @param nouveauKilometrage Le nouveau kilométrage.
+     * @throws VehiculeNotFoundException Si le véhicule n'est pas trouvé.
+     * @throws ValidationException Si le nouveau kilométrage est invalide (ex: inférieur à l'actuel).
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    void updateKilometrage(Integer idVehicule, int nouveauKilometrage) throws VehiculeNotFoundException, ValidationException, OperationFailedException;
 
-    public boolean updateKilometrage(Integer id, int nouveauKm) {
-        try {
-            Optional<Vehicule> optVehicule = vehiculeRepository.findById(id);
-            if (optVehicule.isEmpty()) {
-                throw new DatabaseException("Véhicule non trouvé pour la mise à jour du kilométrage");
-            }
-            Vehicule vehicule = optVehicule.get();
-            vehicule.setKilometrage(nouveauKm);
-            vehiculeRepository.update(vehicule);
-            return true;
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la mise à jour du kilométrage", e);
-            throw new DatabaseException("Erreur lors de la mise à jour du kilométrage", e);
-        }
-    }
+    /**
+     * Récupère la liste des véhicules disponibles pour une affectation ou une mission
+     * sur une période donnée. Un véhicule est disponible s'il est dans un état approprié
+     * (ex: "Disponible") et n'a pas de mission ou d'affectation conflictuelle.
+     *
+     * @param dateDebut La date de début de la période souhaitée.
+     * @param dateFin La date de fin de la période souhaitée.
+     * @return Une liste de VehiculeDTO disponibles.
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    List<VehiculeDTO> getVehiculesDisponibles(LocalDateTime dateDebut, LocalDateTime dateFin) throws OperationFailedException;
 
-    public boolean deleteVehicule(Integer id) {
-        try {
-            return vehiculeRepository.delete(id);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la suppression du véhicule", e);
-            throw new DatabaseException("Erreur lors de la suppression du véhicule", e);
-        }
-    }
-
-    public List<VehiculeDTO> getVehiculesDisponibles() {
-        try {
-            List<Vehicule> vehicules = vehiculeRepository.findByEtat(EtatVoiture.DISPONIBLE);
-            return VehiculeMapper.toDTOList(vehicules);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Erreur lors de la récupération des véhicules disponibles", e);
-            throw new DatabaseException("Erreur lors de la récupération des véhicules disponibles", e);
-        }
-    }
+    /**
+     * Récupère les véhicules nécessitant une maintenance.
+     * La logique exacte dépendra des critères (ex: km depuis dernier entretien, date prochain entretien).
+     *
+     * @return Une liste de VehiculeDTO.
+     * @throws OperationFailedException Si une erreur technique survient.
+     */
+    List<VehiculeDTO> getVehiculesRequerantMaintenance() throws OperationFailedException;
 }
