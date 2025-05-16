@@ -3,15 +3,16 @@ package main.java.com.miage.parcauto.service;
 import main.java.com.miage.parcauto.dto.*; // Importer tous les DTOs nécessaires
 import main.java.com.miage.parcauto.exception.ValidationException;
 
-
 /**
- * Service transversal pour la validation des objets de transfert de données (DTO)
+ * Service transversal pour la validation des objets de transfert de données
+ * (DTO)
  * et potentiellement des entités avant persistance ou traitement.
  */
 public interface ValidationService {
 
     /**
      * Valide un VehiculeDTO.
+     * 
      * @param vehiculeDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -19,6 +20,7 @@ public interface ValidationService {
 
     /**
      * Valide un EntretienDTO.
+     * 
      * @param entretienDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -26,6 +28,7 @@ public interface ValidationService {
 
     /**
      * Valide un MissionDTO.
+     * 
      * @param missionDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -33,6 +36,7 @@ public interface ValidationService {
 
     /**
      * Valide un DepenseMissionDTO.
+     * 
      * @param depenseDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -40,14 +44,17 @@ public interface ValidationService {
 
     /**
      * Valide un UtilisateurDTO (pour création ou mise à jour).
+     * 
      * @param utilisateurDTO Le DTO à valider.
-     * @param isCreation true si c'est pour une création (ex: mot de passe obligatoire), false pour une mise à jour.
+     * @param isCreation     true si c'est pour une création (ex: mot de passe
+     *                       obligatoire), false pour une mise à jour.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
     void validateUtilisateur(UtilisateurDTO utilisateurDTO, boolean isCreation) throws ValidationException;
 
     /**
      * Valide un PersonnelDTO.
+     * 
      * @param personnelDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -55,6 +62,7 @@ public interface ValidationService {
 
     /**
      * Valide un SocietaireCompteDTO.
+     * 
      * @param compteDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -62,6 +70,7 @@ public interface ValidationService {
 
     /**
      * Valide un MouvementDTO.
+     * 
      * @param mouvementDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -69,6 +78,7 @@ public interface ValidationService {
 
     /**
      * Valide un DocumentSocietaireDTO.
+     * 
      * @param documentDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -76,6 +86,7 @@ public interface ValidationService {
 
     /**
      * Valide un AssuranceDTO.
+     * 
      * @param assuranceDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -83,6 +94,7 @@ public interface ValidationService {
 
     /**
      * Valide un AffectationDTO.
+     * 
      * @param affectationDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */
@@ -90,6 +102,7 @@ public interface ValidationService {
 
     /**
      * Valide une NotificationDTO.
+     * 
      * @param notificationDTO Le DTO à valider.
      * @throws ValidationException si des erreurs de validation sont trouvées.
      */

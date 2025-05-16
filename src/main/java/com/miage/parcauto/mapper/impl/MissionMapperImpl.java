@@ -19,19 +19,15 @@ public class MissionMapperImpl implements MissionMapper {
         MissionDTO dto = new MissionDTO();
         dto.setIdMission(mission.getIdMission());
         dto.setIdVehicule(mission.getIdVehicule());
-        // dto.setIdPersonnel(mission.getIdPersonnel()); // Si vous ajoutez idPersonnel à Mission
         dto.setLibelle(mission.getLibelle());
-        dto.setSiteDestination(mission.getSite());
-        dto.setDateDebut(mission.getDateDebutMission());
-        dto.setDateFinPrevue(mission.getDateFinMission()); // date_fin_mission est la date de fin prévue/effective
-        dto.setDateFinEffective(mission.getDateFinEffective()); // Ajouter ce champ au modèle Mission et DTO si besoin de distinguer
-        dto.setKmPrevu(mission.getKmPrevu());
-        dto.setKmReel(mission.getKmReel());
+        dto.setSiteDestination(mission.getSiteDestination());
+        dto.setDateDebut(mission.getDateDebut());
+        dto.setDateFinPrevue(mission.getDateFin());
         dto.setStatut(mission.getStatut() != null ? mission.getStatut().name() : null);
-        dto.setCoutEstime(mission.getCoutEstime()); // Ajouter ce champ au modèle Mission et DTO
-        dto.setCoutTotalReel(mission.getCoutTotal()); // cout_total est le coût réel
-        dto.setCircuit(mission.getCircuitMission());
-        dto.setObservations(mission.getObservationMission());
+        dto.setCoutTotalReel(mission.getCoutTotal());
+        dto.setCircuit(mission.getCircuit());
+        dto.setObservations(mission.getObservations());
+        // Les champs non présents côté modèle sont ignorés
         return dto;
     }
 
@@ -43,25 +39,14 @@ public class MissionMapperImpl implements MissionMapper {
         Mission entity = new Mission();
         entity.setIdMission(dto.getIdMission());
         entity.setIdVehicule(dto.getIdVehicule());
-        // entity.setIdPersonnel(dto.getIdPersonnel());
         entity.setLibelle(dto.getLibelle());
-        entity.setSite(dto.getSiteDestination());
-        entity.setDateDebutMission(dto.getDateDebut());
-        entity.setDateFinMission(dto.getDateFinPrevue());
-        entity.setDateFinEffective(dto.getDateFinEffective());
-        entity.setKmPrevu(dto.getKmPrevu());
-        entity.setKmReel(dto.getKmReel());
-        if (dto.getStatut() != null) {
-            try {
-                entity.setStatut(StatutMission.valueOf(dto.getStatut()));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Statut de mission invalide dans DTO: " + dto.getStatut());
-            }
-        }
-        entity.setCoutEstime(dto.getCoutEstime());
+        entity.setSiteDestination(dto.getSiteDestination());
+        entity.setDateDebut(dto.getDateDebut());
+        entity.setDateFin(dto.getDateFinPrevue());
+        entity.setStatut(dto.getStatut() != null ? StatutMission.valueOf(dto.getStatut()) : null);
         entity.setCoutTotal(dto.getCoutTotalReel());
-        entity.setCircuitMission(dto.getCircuit());
-        entity.setObservationMission(dto.getObservations());
+        entity.setCircuit(dto.getCircuit());
+        entity.setObservations(dto.getObservations());
         return entity;
     }
 

@@ -4,6 +4,7 @@ import main.java.com.miage.parcauto.dao.DepenseMissionRepository;
 import main.java.com.miage.parcauto.model.mission.DepenseMission;
 import main.java.com.miage.parcauto.model.mission.NatureDepenseMission;
 import main.java.com.miage.parcauto.exception.DataAccessException;
+import main.java.com.miage.parcauto.util.DbUtil; // Assurez-vous que DbUtil gère correctement les connexions
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,25 +22,34 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
         DepenseMission depense = new DepenseMission();
         depense.setIdDepense(rs.getInt("id_depense"));
         depense.setIdMission(rs.getInt("id_mission"));
-
         String natureStr = rs.getString("nature");
         if (natureStr != null) {
-            depense.setNature(NatureDepenseMission.fromString(natureStr));
+            try {
+                depense.setNature(NatureDepenseMission.valueOf(natureStr.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Gérer le cas où la valeur de la DB ne correspond à aucune enum
+                // Par exemple, logger une erreur ou affecter une valeur par défaut
+                System.err.println("Valeur NatureDepenseMission non valide depuis la DB: " + natureStr);
+                depense.setNature(null); // Ou une valeur par défaut appropriée
+            }
+        } else {
+            depense.setNature(null);
         }
         depense.setMontant(rs.getBigDecimal("montant"));
-
         Timestamp dateDepenseTs = rs.getTimestamp("date_depense");
-        depense.setDateDepense(dateDepenseTs != null ? dateDepenseTs.toLocalDateTime() : null);
-
+        if (dateDepenseTs != null) {
+            depense.setDateDepense(dateDepenseTs.toLocalDateTime());
+        }
         depense.setJustificatif(rs.getString("justificatif"));
         depense.setObservation(rs.getString("observation"));
         return depense;
     }
 
     @Override
-    public Optional<DepenseMission> findById(Connection conn, Integer id) throws SQLException {
+    public Optional<DepenseMission> findById(Integer id) {
         String sql = "SELECT * FROM DEPENSE_MISSION WHERE id_depense = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -53,11 +63,12 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
     }
 
     @Override
-    public List<DepenseMission> findAll(Connection conn) throws SQLException {
+    public List<DepenseMission> findAll() {
         List<DepenseMission> depenses = new ArrayList<>();
         String sql = "SELECT * FROM DEPENSE_MISSION";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 depenses.add(mapResultSetToDepenseMission(rs));
             }
@@ -68,12 +79,13 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
     }
 
     @Override
-    public List<DepenseMission> findAll(Connection conn, int page, int size) throws SQLException {
+    public List<DepenseMission> findAll(int page, int size) {
         List<DepenseMission> depenses = new ArrayList<>();
         String sql = "SELECT * FROM DEPENSE_MISSION LIMIT ? OFFSET ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, size);
-            pstmt.setInt(2, (page - 1) * size);
+            pstmt.setInt(2, page * size); // Correct pour offset 0-based si page est 0-based
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     depenses.add(mapResultSetToDepenseMission(rs));
@@ -86,13 +98,16 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
     }
 
     @Override
-    public DepenseMission save(Connection conn, DepenseMission depense) throws SQLException {
+    public DepenseMission save(DepenseMission depense) {
         String sql = "INSERT INTO DEPENSE_MISSION (id_mission, nature, montant, date_depense, justificatif, observation) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, depense.getIdMission());
-            pstmt.setString(2, depense.getNature() != null ? depense.getNature().getValeur() : null);
+            pstmt.setString(2, depense.getNature() != null ? depense.getNature().name() : null); // Utiliser .name()
+                                                                                                 // pour Enum
             pstmt.setBigDecimal(3, depense.getMontant());
-            pstmt.setTimestamp(4, depense.getDateDepense() != null ? Timestamp.valueOf(depense.getDateDepense()) : null);
+            pstmt.setTimestamp(4,
+                    depense.getDateDepense() != null ? Timestamp.valueOf(depense.getDateDepense()) : null);
             pstmt.setString(5, depense.getJustificatif());
             pstmt.setString(6, depense.getObservation());
 
@@ -108,37 +123,46 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde de la dépense de mission pour la mission ID: " + depense.getIdMission(), e);
+            throw new DataAccessException("Erreur lors de la sauvegarde de la dépense de mission pour la mission ID: "
+                    + (depense != null ? depense.getIdMission() : "null"), e);
         }
         return depense;
     }
 
     @Override
-    public DepenseMission update(Connection conn, DepenseMission depense) throws SQLException {
+    public DepenseMission update(DepenseMission depense) {
         String sql = "UPDATE DEPENSE_MISSION SET id_mission = ?, nature = ?, montant = ?, date_depense = ?, justificatif = ?, observation = ? WHERE id_depense = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, depense.getIdMission());
-            pstmt.setString(2, depense.getNature() != null ? depense.getNature().getValeur() : null);
+            pstmt.setString(2, depense.getNature() != null ? depense.getNature().name() : null); // Utiliser .name()
+                                                                                                 // pour Enum
             pstmt.setBigDecimal(3, depense.getMontant());
-            pstmt.setTimestamp(4, depense.getDateDepense() != null ? Timestamp.valueOf(depense.getDateDepense()) : null);
+            pstmt.setTimestamp(4,
+                    depense.getDateDepense() != null ? Timestamp.valueOf(depense.getDateDepense()) : null);
             pstmt.setString(5, depense.getJustificatif());
             pstmt.setString(6, depense.getObservation());
             pstmt.setInt(7, depense.getIdDepense());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de la dépense de mission avec ID " + depense.getIdDepense() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de la dépense de mission avec ID "
+                        + depense.getIdDepense() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de la dépense de mission: " + depense.getIdDepense(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour de la dépense de mission: "
+                            + (depense != null ? depense.getIdDepense() : "null"),
+                    e);
         }
         return depense;
     }
 
     @Override
-    public boolean delete(Connection conn, Integer id) throws SQLException {
+    public boolean delete(Integer id) {
         String sql = "DELETE FROM DEPENSE_MISSION WHERE id_depense = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -148,10 +172,11 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
     }
 
     @Override
-    public long count(Connection conn) throws SQLException {
+    public long count() {
         String sql = "SELECT COUNT(*) FROM DEPENSE_MISSION";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -162,10 +187,11 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
     }
 
     @Override
-    public List<DepenseMission> findByMissionId(Connection conn, Integer idMission) throws SQLException {
+    public List<DepenseMission> findByMissionId(Integer idMission) {
         List<DepenseMission> depenses = new ArrayList<>();
         String sql = "SELECT * FROM DEPENSE_MISSION WHERE id_mission = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idMission);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -173,7 +199,8 @@ public class DepenseMissionRepositoryImpl implements DepenseMissionRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des dépenses pour la mission ID: " + idMission, e);
+            throw new DataAccessException("Erreur lors de la recherche des dépenses pour la mission ID: " + idMission,
+                    e);
         }
         return depenses;
     }

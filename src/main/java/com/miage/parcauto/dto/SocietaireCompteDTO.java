@@ -15,6 +15,9 @@ public class SocietaireCompteDTO implements Serializable {
     private BigDecimal solde;
     private String email;
     private String telephone;
+    private Integer idSocietaireCompte;
+    private String numeroCompte;
+    private Boolean actif;
 
     public SocietaireCompteDTO() {
     }
@@ -81,6 +84,30 @@ public class SocietaireCompteDTO implements Serializable {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public Integer getIdSocietaireCompte() {
+        return idSocietaireCompte;
+    }
+
+    public void setIdSocietaireCompte(Integer idSocietaireCompte) {
+        this.idSocietaireCompte = idSocietaireCompte;
+    }
+
+    public String getNumeroCompte() {
+        return numeroCompte;
+    }
+
+    public void setNumeroCompte(String numeroCompte) {
+        this.numeroCompte = numeroCompte;
+    }
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
     }
 
     @Override

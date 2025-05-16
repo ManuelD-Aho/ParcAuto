@@ -22,18 +22,12 @@ public class MouvementRepositoryImpl implements MouvementRepository {
         Mouvement mouvement = new Mouvement();
         mouvement.setIdMouvement(rs.getInt("id_mouvement"));
         mouvement.setIdCompteSocietaire(rs.getInt("id_compte_societaire"));
-
         String typeStr = rs.getString("type");
-        if (typeStr != null) {
-            mouvement.setType(TypeMouvement.fromString(typeStr));
-        }
+        mouvement.setType(typeStr != null ? TypeMouvement.valueOf(typeStr) : null);
         mouvement.setMontant(rs.getBigDecimal("montant"));
-
-        Timestamp dateMouvementTs = rs.getTimestamp("date_mouvement");
-        mouvement.setDateMouvement(dateMouvementTs != null ? dateMouvementTs.toLocalDateTime() : null);
-
-        mouvement.setLibelle(rs.getString("libelle"));
-        mouvement.setReferenceTransaction(rs.getString("reference_transaction"));
+        mouvement.setDateMouvement(
+                rs.getTimestamp("date_mouvement") != null ? rs.getTimestamp("date_mouvement").toLocalDateTime() : null);
+        mouvement.setObservation(rs.getString("observation"));
         return mouvement;
     }
 
@@ -58,7 +52,7 @@ public class MouvementRepositoryImpl implements MouvementRepository {
         List<Mouvement> mouvements = new ArrayList<>();
         String sql = "SELECT * FROM MOUVEMENT";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 mouvements.add(mapResultSetToMouvement(rs));
             }
@@ -93,7 +87,8 @@ public class MouvementRepositoryImpl implements MouvementRepository {
             pstmt.setInt(1, mouvement.getIdCompteSocietaire());
             pstmt.setString(2, mouvement.getType() != null ? mouvement.getType().getValeur() : null);
             pstmt.setBigDecimal(3, mouvement.getMontant());
-            pstmt.setTimestamp(4, mouvement.getDateMouvement() != null ? Timestamp.valueOf(mouvement.getDateMouvement()) : Timestamp.valueOf(LocalDateTime.now()));
+            pstmt.setTimestamp(4, mouvement.getDateMouvement() != null ? Timestamp.valueOf(mouvement.getDateMouvement())
+                    : Timestamp.valueOf(LocalDateTime.now()));
             pstmt.setString(5, mouvement.getLibelle());
             pstmt.setString(6, mouvement.getReferenceTransaction());
 
@@ -121,17 +116,20 @@ public class MouvementRepositoryImpl implements MouvementRepository {
             pstmt.setInt(1, mouvement.getIdCompteSocietaire());
             pstmt.setString(2, mouvement.getType() != null ? mouvement.getType().getValeur() : null);
             pstmt.setBigDecimal(3, mouvement.getMontant());
-            pstmt.setTimestamp(4, mouvement.getDateMouvement() != null ? Timestamp.valueOf(mouvement.getDateMouvement()) : null);
+            pstmt.setTimestamp(4,
+                    mouvement.getDateMouvement() != null ? Timestamp.valueOf(mouvement.getDateMouvement()) : null);
             pstmt.setString(5, mouvement.getLibelle());
             pstmt.setString(6, mouvement.getReferenceTransaction());
             pstmt.setInt(7, mouvement.getIdMouvement());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour du mouvement avec ID " + mouvement.getIdMouvement() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour du mouvement avec ID " + mouvement.getIdMouvement()
+                        + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour du mouvement: " + mouvement.getIdMouvement(), e);
+            throw new DataAccessException("Erreur lors de la mise à jour du mouvement: " + mouvement.getIdMouvement(),
+                    e);
         }
         return mouvement;
     }
@@ -152,7 +150,7 @@ public class MouvementRepositoryImpl implements MouvementRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM MOUVEMENT";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -174,13 +172,16 @@ public class MouvementRepositoryImpl implements MouvementRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des mouvements pour le compte sociétaire ID: " + idCompteSocietaire, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des mouvements pour le compte sociétaire ID: " + idCompteSocietaire,
+                    e);
         }
         return mouvements;
     }
 
     @Override
-    public List<Mouvement> findBySocietaireCompteIdAndType(Connection conn, Integer idCompteSocietaire, TypeMouvement type) throws SQLException {
+    public List<Mouvement> findBySocietaireCompteIdAndType(Connection conn, Integer idCompteSocietaire,
+            TypeMouvement type) throws SQLException {
         List<Mouvement> mouvements = new ArrayList<>();
         String sql = "SELECT * FROM MOUVEMENT WHERE id_compte_societaire = ? AND type = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -192,13 +193,15 @@ public class MouvementRepositoryImpl implements MouvementRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des mouvements pour le compte sociétaire ID: " + idCompteSocietaire + " et type: " + type, e);
+            throw new DataAccessException("Erreur lors de la recherche des mouvements pour le compte sociétaire ID: "
+                    + idCompteSocietaire + " et type: " + type, e);
         }
         return mouvements;
     }
 
     @Override
-    public List<Mouvement> findByDateRange(Connection conn, LocalDateTime debut, LocalDateTime fin) throws SQLException {
+    public List<Mouvement> findByDateRange(Connection conn, LocalDateTime debut, LocalDateTime fin)
+            throws SQLException {
         List<Mouvement> mouvements = new ArrayList<>();
         String sql = "SELECT * FROM MOUVEMENT WHERE date_mouvement >= ? AND date_mouvement <= ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -210,7 +213,8 @@ public class MouvementRepositoryImpl implements MouvementRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des mouvements entre " + debut + " et " + fin, e);
+            throw new DataAccessException("Erreur lors de la recherche des mouvements entre " + debut + " et " + fin,
+                    e);
         }
         return mouvements;
     }

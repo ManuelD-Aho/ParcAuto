@@ -1,28 +1,19 @@
 package main.java.com.miage.parcauto.model.utilisateur;
 
-import main.java.com.miage.parcauto.model.rh.Personnel;
+// import main.java.com.miage.parcauto.model.utilisateur.Role;
 
-import java.io.Serializable;
-import java.util.Objects;
+public class Utilisateur {
 
-/**
- * Entité représentant un utilisateur du système.
- */
-public class Utilisateur implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private Integer id;
+    private Integer id; // SQL: id
     private String login;
-    private String hash;
+    private String hashMotDePasse; // SQL: hash
     private Role role;
-    private Personnel personnel;  // Personnel associé à cet utilisateur (facultatif)
-    private String mfaSecret;     // Secret pour l'authentification à deux facteurs
+    private Integer idPersonnel;
+    private String mfaSecret;
 
     public Utilisateur() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -39,12 +30,12 @@ public class Utilisateur implements Serializable {
         this.login = login;
     }
 
-    public String getHash() {
-        return hash;
+    public String getHashMotDePasse() {
+        return hashMotDePasse;
     }
 
-    public void setHash(String hash) {
-        this.hash = hash;
+    public void setHashMotDePasse(String hashMotDePasse) {
+        this.hashMotDePasse = hashMotDePasse;
     }
 
     public Role getRole() {
@@ -55,12 +46,12 @@ public class Utilisateur implements Serializable {
         this.role = role;
     }
 
-    public Personnel getPersonnel() {
-        return personnel;
+    public Integer getIdPersonnel() {
+        return idPersonnel;
     }
 
-    public void setPersonnel(Personnel personnel) {
-        this.personnel = personnel;
+    public void setIdPersonnel(Integer idPersonnel) {
+        this.idPersonnel = idPersonnel;
     }
 
     public String getMfaSecret() {
@@ -69,23 +60,5 @@ public class Utilisateur implements Serializable {
 
     public void setMfaSecret(String mfaSecret) {
         this.mfaSecret = mfaSecret;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Utilisateur that = (Utilisateur) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return login + " (" + role + ")";
     }
 }

@@ -23,9 +23,13 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         notification.setIdNotification(rs.getInt("id_notification"));
         notification.setIdUtilisateur(rs.getInt("id_utilisateur"));
         notification.setMessage(rs.getString("message"));
-        Timestamp dateCreationTs = rs.getTimestamp("date_creation");
-        notification.setDateCreation(dateCreationTs != null ? dateCreationTs.toLocalDateTime() : null);
-        notification.setEstLu(rs.getBoolean("est_lu"));
+        notification.setTitre(rs.getString("titre"));
+        notification.setDateCreation(
+                rs.getTimestamp("date_creation") != null ? rs.getTimestamp("date_creation").toLocalDateTime() : null);
+        notification.setEstLue(rs.getBoolean("est_lue"));
+        notification.setTypeNotification(rs.getString("type_notification"));
+        notification.setIdEntiteLiee(rs.getInt("id_entite_liee"));
+        notification.setTypeEntiteLiee(rs.getString("type_entite_liee"));
         return notification;
     }
 
@@ -50,7 +54,7 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         List<Notification> notifications = new ArrayList<>();
         String sql = "SELECT * FROM NOTIFICATION ORDER BY date_creation DESC";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 notifications.add(mapResultSetToNotification(rs));
             }
@@ -84,7 +88,9 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, notification.getIdUtilisateur());
             pstmt.setString(2, notification.getMessage());
-            pstmt.setTimestamp(3, notification.getDateCreation() != null ? Timestamp.valueOf(notification.getDateCreation()) : Timestamp.valueOf(LocalDateTime.now()));
+            pstmt.setTimestamp(3,
+                    notification.getDateCreation() != null ? Timestamp.valueOf(notification.getDateCreation())
+                            : Timestamp.valueOf(LocalDateTime.now()));
             pstmt.setBoolean(4, notification.isEstLu());
 
             int affectedRows = pstmt.executeUpdate();
@@ -99,7 +105,8 @@ public class NotificationRepositoryImpl implements NotificationRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde de la notification: " + notification.getMessage(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la sauvegarde de la notification: " + notification.getMessage(), e);
         }
         return notification;
     }
@@ -110,16 +117,19 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, notification.getIdUtilisateur());
             pstmt.setString(2, notification.getMessage());
-            pstmt.setTimestamp(3, notification.getDateCreation() != null ? Timestamp.valueOf(notification.getDateCreation()) : null);
+            pstmt.setTimestamp(3,
+                    notification.getDateCreation() != null ? Timestamp.valueOf(notification.getDateCreation()) : null);
             pstmt.setBoolean(4, notification.isEstLu());
             pstmt.setInt(5, notification.getIdNotification());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de la notification avec ID " + notification.getIdNotification() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de la notification avec ID "
+                        + notification.getIdNotification() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de la notification: " + notification.getIdNotification(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour de la notification: " + notification.getIdNotification(), e);
         }
         return notification;
     }
@@ -140,7 +150,7 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM NOTIFICATION";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -162,13 +172,15 @@ public class NotificationRepositoryImpl implements NotificationRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des notifications pour l'utilisateur ID: " + idUtilisateur, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des notifications pour l'utilisateur ID: " + idUtilisateur, e);
         }
         return notifications;
     }
 
     @Override
-    public List<Notification> findByUtilisateurIdAndEstLu(Connection conn, Integer idUtilisateur, boolean estLu) throws SQLException {
+    public List<Notification> findByUtilisateurIdAndEstLu(Connection conn, Integer idUtilisateur, boolean estLu)
+            throws SQLException {
         List<Notification> notifications = new ArrayList<>();
         String sql = "SELECT * FROM NOTIFICATION WHERE id_utilisateur = ? AND est_lu = ? ORDER BY date_creation DESC";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -180,7 +192,8 @@ public class NotificationRepositoryImpl implements NotificationRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des notifications pour l'utilisateur ID: " + idUtilisateur + " et état lu: " + estLu, e);
+            throw new DataAccessException("Erreur lors de la recherche des notifications pour l'utilisateur ID: "
+                    + idUtilisateur + " et état lu: " + estLu, e);
         }
         return notifications;
     }

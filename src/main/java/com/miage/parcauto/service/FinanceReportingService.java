@@ -19,11 +19,12 @@ public interface FinanceReportingService {
      * Calcule le bilan financier global pour une période donnée.
      *
      * @param dateDebut La date de début de la période.
-     * @param dateFin La date de fin de la période.
+     * @param dateFin   La date de fin de la période.
      * @return Un BilanFinancierDTO contenant les informations agrégées.
      * @throws OperationFailedException Si une erreur technique survient.
      */
-    BilanFinancierDTO genererBilanFinancierPeriode(LocalDate dateDebut, LocalDate dateFin) throws OperationFailedException;
+    BilanFinancierDTO genererBilanFinancierPeriode(LocalDate dateDebut, LocalDate dateFin)
+            throws OperationFailedException;
 
     /**
      * Calcule les coûts d'entretien par véhicule pour une année donnée.
@@ -35,19 +36,22 @@ public interface FinanceReportingService {
     List<CoutEntretienDTO> getCoutsEntretiensParVehiculeAnnee(int annee) throws OperationFailedException;
 
     /**
-     * Calcule le Coût Total de Possession (TCO) pour un véhicule spécifique sur sa durée de vie ou une période.
+     * Calcule le Coût Total de Possession (TCO) pour un véhicule spécifique sur sa
+     * durée de vie ou une période.
      *
      * @param idVehicule L'identifiant du véhicule.
      * @return Un TcoVehiculeDTO détaillé.
      * @throws VehiculeNotFoundException Si le véhicule n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws OperationFailedException  Si une erreur technique survient.
      */
     TcoVehiculeDTO calculerTCOVehicule(Integer idVehicule) throws VehiculeNotFoundException, OperationFailedException;
 
     /**
-     * Calcule le Coût Total de Possession (TCO) pour l'ensemble de la flotte sur une période donnée.
+     * Calcule le Coût Total de Possession (TCO) pour l'ensemble de la flotte sur
+     * une période donnée.
+     * 
      * @param dateDebut Date de début de la période.
-     * @param dateFin Date de fin de la période.
+     * @param dateFin   Date de fin de la période.
      * @return Un TCODTO global.
      * @throws OperationFailedException Si une erreur technique survient.
      */

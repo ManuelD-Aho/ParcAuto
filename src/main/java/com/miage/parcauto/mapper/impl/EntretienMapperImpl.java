@@ -13,62 +13,39 @@ import java.util.stream.Collectors;
 public class EntretienMapperImpl implements EntretienMapper {
 
     @Override
-    public EntretienDTO toDTO(Entretien entretien) {
-        if (entretien == null) {
+    public EntretienDTO toDTO(Entretien entity) {
+        if (entity == null)
             return null;
-        }
         EntretienDTO dto = new EntretienDTO();
-        dto.setIdEntretien(entretien.getIdEntretien());
-        dto.setIdVehicule(entretien.getIdVehicule());
-        dto.setDateEntree(entretien.getDateEntree());
-        dto.setDateSortie(entretien.getDateSortie());
-        dto.setMotif(entretien.getMotif());
-        dto.setObservations(entretien.getObservations());
-        dto.setCoutEstime(entretien.getCoutEstime()); // Renommé de cout_entr à coutEstime dans le DTO?
-        dto.setCoutReel(entretien.getCoutReel());     // Ajouté pour la clôture
-        dto.setLieu(entretien.getLieu());
-        dto.setTypeEntretien(entretien.getType() != null ? entretien.getType().name() : null);
-        dto.setStatutOt(entretien.getStatutOt() != null ? entretien.getStatutOt().name() : null);
-
-        // Si vous avez des champs spécifiques dans EntretienDTO non présents dans Entretien, mappez-les ici
-        // dto.setKmRealisation(entretien.getKmRealisation()); // Exemple
-        // dto.setKmProchainEntretien(entretien.getKmProchainEntretien()); // Exemple
-
+        dto.setIdEntretien(entity.getIdEntretien());
+        dto.setIdVehicule(entity.getIdVehicule());
+        dto.setDateEntree(entity.getDateEntree());
+        dto.setDateSortie(entity.getDateSortie());
+        dto.setMotif(entity.getMotif());
+        dto.setObservations(entity.getObservation());
+        dto.setCoutEstime(entity.getCout());
+        dto.setCoutReel(entity.getCout());
+        dto.setLieu(entity.getLieu());
+        dto.setTypeEntretien(entity.getType() != null ? entity.getType().name() : null);
+        dto.setStatutOT(entity.getStatut() != null ? entity.getStatut().name() : null);
         return dto;
     }
 
     @Override
     public Entretien toEntity(EntretienDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
         Entretien entity = new Entretien();
         entity.setIdEntretien(dto.getIdEntretien());
         entity.setIdVehicule(dto.getIdVehicule());
         entity.setDateEntree(dto.getDateEntree());
         entity.setDateSortie(dto.getDateSortie());
         entity.setMotif(dto.getMotif());
-        entity.setObservations(dto.getObservations());
-        entity.setCoutEstime(dto.getCoutEstime()); // Assurez-vous que le champ BD est cout_entr ou adaptez
-        entity.setCoutReel(dto.getCoutReel());
+        entity.setObservation(dto.getObservations());
+        entity.setCout(dto.getCoutReel() != null ? dto.getCoutReel() : dto.getCoutEstime());
         entity.setLieu(dto.getLieu());
-
-        if (dto.getTypeEntretien() != null) {
-            try {
-                entity.setType(TypeEntretien.valueOf(dto.getTypeEntretien()));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Type d'entretien invalide dans DTO: " + dto.getTypeEntretien());
-            }
-        }
-        if (dto.getStatutOt() != null) {
-            try {
-                entity.setStatutOt(StatutOT.valueOf(dto.getStatutOt()));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Statut OT invalide dans DTO: " + dto.getStatutOt());
-            }
-        }
-        // entity.setKmRealisation(dto.getKmRealisation());
-        // entity.setKmProchainEntretien(dto.getKmProchainEntretien());
+        entity.setType(dto.getTypeEntretien() != null ? TypeEntretien.valueOf(dto.getTypeEntretien()) : null);
+        entity.setStatut(dto.getStatutOT() != null ? StatutOT.valueOf(dto.getStatutOT()) : null);
         return entity;
     }
 

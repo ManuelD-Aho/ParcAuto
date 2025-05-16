@@ -1,34 +1,25 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.affectation.TypeAffectation;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class AffectationDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private Integer id;
+public class AffectationDTO {
+    private Integer idAffectation;
     private Integer idVehicule;
-    private String vehiculeInfo;
     private Integer idPersonnel;
-    private String personnelInfo;
     private Integer idSocietaire;
-    private String societaireInfo;
-    private TypeAffectation type;
+    private String typeAffectation;
     private LocalDateTime dateDebut;
     private LocalDateTime dateFin;
 
     public AffectationDTO() {
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdAffectation() {
+        return idAffectation;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdAffectation(Integer idAffectation) {
+        this.idAffectation = idAffectation;
     }
 
     public Integer getIdVehicule() {
@@ -39,28 +30,12 @@ public class AffectationDTO implements Serializable {
         this.idVehicule = idVehicule;
     }
 
-    public String getVehiculeInfo() {
-        return vehiculeInfo;
-    }
-
-    public void setVehiculeInfo(String vehiculeInfo) {
-        this.vehiculeInfo = vehiculeInfo;
-    }
-
     public Integer getIdPersonnel() {
         return idPersonnel;
     }
 
     public void setIdPersonnel(Integer idPersonnel) {
         this.idPersonnel = idPersonnel;
-    }
-
-    public String getPersonnelInfo() {
-        return personnelInfo;
-    }
-
-    public void setPersonnelInfo(String personnelInfo) {
-        this.personnelInfo = personnelInfo;
     }
 
     public Integer getIdSocietaire() {
@@ -71,20 +46,12 @@ public class AffectationDTO implements Serializable {
         this.idSocietaire = idSocietaire;
     }
 
-    public String getSocietaireInfo() {
-        return societaireInfo;
+    public String getTypeAffectation() {
+        return typeAffectation;
     }
 
-    public void setSocietaireInfo(String societaireInfo) {
-        this.societaireInfo = societaireInfo;
-    }
-
-    public TypeAffectation getType() {
-        return type;
-    }
-
-    public void setType(TypeAffectation type) {
-        this.type = type;
+    public void setTypeAffectation(String typeAffectation) {
+        this.typeAffectation = typeAffectation;
     }
 
     public LocalDateTime getDateDebut() {
@@ -101,23 +68,5 @@ public class AffectationDTO implements Serializable {
 
     public void setDateFin(LocalDateTime dateFin) {
         this.dateFin = dateFin;
-    }
-
-    @Override
-    public String toString() {
-        String beneficiaire = "N/A";
-        if (personnelInfo != null && !personnelInfo.isEmpty()) {
-            beneficiaire = personnelInfo;
-        } else if (societaireInfo != null && !societaireInfo.isEmpty()) {
-            beneficiaire = societaireInfo;
-        }
-        return "AffectationDTO{" +
-                "id=" + id +
-                ", vehiculeInfo='" + vehiculeInfo + '\'' +
-                ", beneficiaire='" + beneficiaire + '\'' +
-                ", type=" + (type != null ? type.getValeur() : "N/A") +
-                ", dateDebut=" + dateDebut +
-                ", dateFin=" + dateFin +
-                '}';
     }
 }

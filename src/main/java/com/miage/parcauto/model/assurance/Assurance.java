@@ -1,27 +1,23 @@
 package main.java.com.miage.parcauto.model.assurance;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-/**
- * Entité représentant une assurance de véhicule.
- */
-public class Assurance implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Assurance {
 
     private Integer numCarteAssurance;
-    private LocalDateTime dateDebutAssurance;
-    private LocalDateTime dateFinAssurance;
+    private LocalDateTime dateDebut; // SQL: date_debut_assurance
+    private LocalDateTime dateFin; // SQL: date_fin_assurance
     private String agence;
-    private BigDecimal coutAssurance;
+    private BigDecimal cout; // SQL: cout_assurance
+    private String compagnie;
+    private String adresse;
+    private String telephone;
+    private BigDecimal prix;
 
     public Assurance() {
     }
 
-    // Getters et Setters
     public Integer getNumCarteAssurance() {
         return numCarteAssurance;
     }
@@ -30,20 +26,20 @@ public class Assurance implements Serializable {
         this.numCarteAssurance = numCarteAssurance;
     }
 
-    public LocalDateTime getDateDebutAssurance() {
-        return dateDebutAssurance;
+    public LocalDateTime getDateDebut() {
+        return dateDebut;
     }
 
-    public void setDateDebutAssurance(LocalDateTime dateDebutAssurance) {
-        this.dateDebutAssurance = dateDebutAssurance;
+    public void setDateDebut(LocalDateTime dateDebut) {
+        this.dateDebut = dateDebut;
     }
 
-    public LocalDateTime getDateFinAssurance() {
-        return dateFinAssurance;
+    public LocalDateTime getDateFin() {
+        return dateFin;
     }
 
-    public void setDateFinAssurance(LocalDateTime dateFinAssurance) {
-        this.dateFinAssurance = dateFinAssurance;
+    public void setDateFin(LocalDateTime dateFin) {
+        this.dateFin = dateFin;
     }
 
     public String getAgence() {
@@ -54,29 +50,43 @@ public class Assurance implements Serializable {
         this.agence = agence;
     }
 
-    public BigDecimal getCoutAssurance() {
-        return coutAssurance;
+    public BigDecimal getCout() {
+        return cout;
     }
 
-    public void setCoutAssurance(BigDecimal coutAssurance) {
-        this.coutAssurance = coutAssurance;
+    public void setCout(BigDecimal cout) {
+        this.cout = cout;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Assurance assurance = (Assurance) o;
-        return Objects.equals(numCarteAssurance, assurance.numCarteAssurance);
+    public String getCompagnie() {
+        return compagnie;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(numCarteAssurance);
+    public void setCompagnie(String compagnie) {
+        this.compagnie = compagnie;
     }
 
-    @Override
-    public String toString() {
-        return "Police n°" + numCarteAssurance + " (" + agence + ")";
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+
+    public BigDecimal getPrix() {
+        return prix;
+    }
+
+    public void setPrix(BigDecimal prix) {
+        this.prix = prix;
     }
 }

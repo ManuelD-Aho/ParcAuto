@@ -10,60 +10,46 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class DepenseMissionMapperImpl implements DepenseMissionMapper {
-
     @Override
     public DepenseMissionDTO toDTO(DepenseMission depenseMission) {
-        if (depenseMission == null) {
+        if (depenseMission == null)
             return null;
-        }
         DepenseMissionDTO dto = new DepenseMissionDTO();
         dto.setIdDepense(depenseMission.getId());
         dto.setIdMission(depenseMission.getIdMission());
-        dto.setNature(depenseMission.getNature() != null ? depenseMission.getNature().name() : null);
+        dto.setNatureDepense(depenseMission.getNature() != null ? depenseMission.getNature().name() : null);
         dto.setMontant(depenseMission.getMontant());
-        dto.setJustificatifPath(depenseMission.getJustificatif()); // chemin du fichier
-        dto.setDateDepense(depenseMission.getDateDepense()); // Ajouter ce champ au modèle et DTO
+        dto.setJustificatifPath(depenseMission.getJustificatif());
+        dto.setDateDepense(depenseMission.getDateDepense());
         return dto;
     }
 
     @Override
     public DepenseMission toEntity(DepenseMissionDTO dto) {
-        if (dto == null) {
+        if (dto == null)
             return null;
-        }
-        DepenseMission entity = new DepenseMission();
-        entity.setId(dto.getIdDepense());
-        entity.setIdMission(dto.getIdMission());
-        if (dto.getNature() != null) {
-            try {
-                entity.setNature(NatureDepenseMission.valueOf(dto.getNature()));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Nature de dépense invalide dans DTO: " + dto.getNature());
-            }
-        }
-        entity.setMontant(dto.getMontant());
-        entity.setJustificatif(dto.getJustificatifPath());
-        entity.setDateDepense(dto.getDateDepense());
-        return entity;
+        DepenseMission depenseMission = new DepenseMission();
+        depenseMission.setId(dto.getIdDepense());
+        depenseMission.setIdMission(dto.getIdMission());
+        depenseMission.setNature(
+                dto.getNatureDepense() != null ? NatureDepenseMission.valueOf(dto.getNatureDepense()) : null);
+        depenseMission.setMontant(dto.getMontant());
+        depenseMission.setJustificatif(dto.getJustificatifPath());
+        depenseMission.setDateDepense(dto.getDateDepense());
+        return depenseMission;
     }
 
     @Override
     public List<DepenseMissionDTO> toDTOList(List<DepenseMission> depenseMissions) {
-        if (depenseMissions == null) {
+        if (depenseMissions == null)
             return Collections.emptyList();
-        }
-        return depenseMissions.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+        return depenseMissions.stream().map(this::toDTO).collect(Collectors.toList());
     }
 
     @Override
     public List<DepenseMission> toEntityList(List<DepenseMissionDTO> depenseMissionDTOs) {
-        if (depenseMissionDTOs == null) {
+        if (depenseMissionDTOs == null)
             return Collections.emptyList();
-        }
-        return depenseMissionDTOs.stream()
-                .map(this::toEntity)
-                .collect(Collectors.toList());
+        return depenseMissionDTOs.stream().map(this::toEntity).collect(Collectors.toList());
     }
 }

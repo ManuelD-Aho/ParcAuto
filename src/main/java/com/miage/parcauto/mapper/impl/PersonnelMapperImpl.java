@@ -20,20 +20,11 @@ public class PersonnelMapperImpl implements PersonnelMapper {
         dto.setIdPersonnel(personnel.getIdPersonnel());
         dto.setIdService(personnel.getIdService());
         dto.setIdFonction(personnel.getIdFonction());
-        // Note: id_vehicule dans PERSONNEL semble être pour une affectation permanente,
-        // cela devrait être géré par AffectationService.
-        // dto.setIdVehicule(personnel.getIdVehicule());
-        dto.setMatricule(personnel.getMatricule());
-        dto.setNom(personnel.getNom()); // nom_personnel dans DB
-        dto.setPrenom(personnel.getPrenom()); // prenom_personnel dans DB
-        dto.setEmail(personnel.getEmail());
-        dto.setTelephone(personnel.getTelephone());
-        dto.setAdresse(personnel.getAdresse());
-        dto.setDateNaissance(personnel.getDateNaissance());
+        dto.setNom(personnel.getNom());
+        dto.setPrenom(personnel.getPrenom());
         dto.setSexe(personnel.getSexe() != null ? personnel.getSexe().name() : null);
-        // dto.setDateAttributionVehicule(personnel.getDateAttribution()); // date_attribution dans DB
-        dto.setDateEmbauche(personnel.getDateEmbauche()); // Manquant dans DB PERSONNEL, ajouter si nécessaire
-        dto.setObservation(personnel.getObservation()); // Manquant dans DB PERSONNEL, ajouter si nécessaire
+        dto.setDateEmbauche(personnel.getDateAttributionVehicule());
+        dto.setObservation(personnel.getObservation());
         return dto;
     }
 
@@ -46,23 +37,10 @@ public class PersonnelMapperImpl implements PersonnelMapper {
         entity.setIdPersonnel(dto.getIdPersonnel());
         entity.setIdService(dto.getIdService());
         entity.setIdFonction(dto.getIdFonction());
-        // entity.setIdVehicule(dto.getIdVehicule());
-        entity.setMatricule(dto.getMatricule());
         entity.setNom(dto.getNom());
         entity.setPrenom(dto.getPrenom());
-        entity.setEmail(dto.getEmail());
-        entity.setTelephone(dto.getTelephone());
-        entity.setAdresse(dto.getAdresse());
-        entity.setDateNaissance(dto.getDateNaissance());
-        if (dto.getSexe() != null) {
-            try {
-                entity.setSexe(Sexe.valueOf(dto.getSexe()));
-            } catch (IllegalArgumentException e) {
-                System.err.println("Sexe invalide dans DTO: " + dto.getSexe());
-            }
-        }
-        // entity.setDateAttribution(dto.getDateAttributionVehicule());
-        entity.setDateEmbauche(dto.getDateEmbauche());
+        entity.setSexe(dto.getSexe() != null ? Sexe.valueOf(dto.getSexe()) : null);
+        entity.setDateAttributionVehicule(dto.getDateEmbauche());
         entity.setObservation(dto.getObservation());
         return entity;
     }

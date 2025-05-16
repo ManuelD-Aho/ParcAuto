@@ -1,29 +1,32 @@
 package main.java.com.miage.parcauto.model.entretien;
 
-/**
- * Statuts possibles pour un ordre de travail d'entretien.
- */
 public enum StatutOT {
     OUVERT("Ouvert"),
     EN_COURS("EnCours"),
     CLOTURE("Cloture");
 
-    private final String valeur;
+    private final String libelle;
 
-    StatutOT(String valeur) {
-        this.valeur = valeur;
+    StatutOT(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public static StatutOT fromString(String text) {
+    public static StatutOT fromLibelle(String libelle) {
         for (StatutOT statut : StatutOT.values()) {
-            if (statut.valeur.equalsIgnoreCase(text)) {
+            // Gestion de "EnCours" vs "EN_COURS"
+            if (statut.libelle.equalsIgnoreCase(libelle) || statut.name().replace("_", "").equalsIgnoreCase(libelle)) {
                 return statut;
             }
         }
-        throw new IllegalArgumentException("Statut OT inconnu: " + text);
+        throw new IllegalArgumentException("Aucun statut OT ne correspond au libellé : " + libelle);
+    }
+
+    @Override
+    public String toString() {
+        return this.libelle;
     }
 }

@@ -2,7 +2,7 @@ package main.java.com.miage.parcauto.mapper.impl;
 
 import main.java.com.miage.parcauto.dto.NotificationDTO;
 import main.java.com.miage.parcauto.mapper.NotificationMapper;
-import main.java.com.miage.parcauto.model.Notification; // Assurez-vous du bon chemin
+import main.java.com.miage.parcauto.model.notification.Notification; // Chemin corrigé
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 /**
  * Implémentation de {@link NotificationMapper}.
  */
-public class NotificationMapperImpl implements NotificationMapper {
+public abstract class NotificationMapperImpl implements NotificationMapper {
 
     /**
      * {@inheritDoc}
@@ -27,10 +27,10 @@ public class NotificationMapperImpl implements NotificationMapper {
         dto.setTitre(notification.getTitre());
         dto.setMessage(notification.getMessage());
         dto.setDateCreation(notification.getDateCreation());
-        dto.setEstLue(notification.isEstLue());
-        dto.setTypeNotification(notification.getTypeNotification()); // Assurez-vous que ce champ existe dans DTO et Entité
-        dto.setIdEntiteLiee(notification.getIdEntiteLiee()); // Assurez-vous que ce champ existe
-        dto.setTypeEntiteLiee(notification.getTypeEntiteLiee()); // Assurez-vous que ce champ existe
+        dto.setEstLue(notification.isEstLue()); // Correction ici
+        dto.setTypeNotification(notification.getTypeNotification());
+        dto.setIdEntiteLiee(notification.getIdEntiteLiee());
+        dto.setTypeEntiteLiee(notification.getTypeEntiteLiee());
         return dto;
     }
 
@@ -48,7 +48,7 @@ public class NotificationMapperImpl implements NotificationMapper {
         entity.setTitre(dto.getTitre());
         entity.setMessage(dto.getMessage());
         entity.setDateCreation(dto.getDateCreation());
-        entity.setEstLue(dto.isEstLue());
+        entity.setEstLue(dto.isEstLue()); // Correction ici
         entity.setTypeNotification(dto.getTypeNotification());
         entity.setIdEntiteLiee(dto.getIdEntiteLiee());
         entity.setTypeEntiteLiee(dto.getTypeEntiteLiee());

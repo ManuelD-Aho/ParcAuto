@@ -1,27 +1,20 @@
 package main.java.com.miage.parcauto.model.finance;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
+// import main.java.com.miage.parcauto.model.finance.TypeMouvement;
 
-/**
- * Entité représentant un mouvement financier.
- */
-public class Mouvement implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Mouvement {
 
     private Integer id;
-    private SocietaireCompte societaire;
-    private LocalDateTime date;
-    private TypeMouvement type;
+    private Integer idSocietaire;
+    private LocalDateTime dateMouvement; // SQL: date
+    private TypeMouvement typeMouvement; // SQL: type
     private BigDecimal montant;
 
     public Mouvement() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -30,28 +23,28 @@ public class Mouvement implements Serializable {
         this.id = id;
     }
 
-    public SocietaireCompte getSocietaire() {
-        return societaire;
+    public Integer getIdSocietaire() {
+        return idSocietaire;
     }
 
-    public void setSocietaire(SocietaireCompte societaire) {
-        this.societaire = societaire;
+    public void setIdSocietaire(Integer idSocietaire) {
+        this.idSocietaire = idSocietaire;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getDateMouvement() {
+        return dateMouvement;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setDateMouvement(LocalDateTime dateMouvement) {
+        this.dateMouvement = dateMouvement;
     }
 
-    public TypeMouvement getType() {
-        return type;
+    public TypeMouvement getTypeMouvement() {
+        return typeMouvement;
     }
 
-    public void setType(TypeMouvement type) {
-        this.type = type;
+    public void setTypeMouvement(TypeMouvement typeMouvement) {
+        this.typeMouvement = typeMouvement;
     }
 
     public BigDecimal getMontant() {
@@ -60,23 +53,5 @@ public class Mouvement implements Serializable {
 
     public void setMontant(BigDecimal montant) {
         this.montant = montant;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Mouvement mouvement = (Mouvement) o;
-        return Objects.equals(id, mouvement.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return type + ": " + montant + "€ le " + date;
     }
 }

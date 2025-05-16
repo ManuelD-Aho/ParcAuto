@@ -1,34 +1,26 @@
 package main.java.com.miage.parcauto.model.entretien;
 
-import main.java.com.miage.parcauto.model.vehicule.Vehicule;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
+// import main.java.com.miage.parcauto.model.entretien.TypeEntretien;
+// import main.java.com.miage.parcauto.model.entretien.StatutOT;
 
-/**
- * Entité représentant un entretien de véhicule.
- */
-public class Entretien implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Entretien {
 
     private Integer idEntretien;
-    private Vehicule vehicule;
-    private LocalDateTime dateEntreeEntr;
-    private LocalDateTime dateSortieEntr;
-    private String motifEntr;
+    private Integer idVehicule;
+    private LocalDateTime dateEntree; // SQL: date_entree_entr
+    private LocalDateTime dateSortie; // SQL: date_sortie_entr
+    private String motif;             // SQL: motif_entr
     private String observation;
-    private BigDecimal coutEntr;
-    private String lieuEntr;
+    private BigDecimal cout;          // SQL: cout_entr (mappé à coutReel dans DTO, ou un champ générique ici)
+    private String lieu;              // SQL: lieu_entr
     private TypeEntretien type;
-    private StatutOT statutOt;
+    private StatutOT statut;       // SQL: statut_ot
 
     public Entretien() {
     }
 
-    // Getters et Setters
     public Integer getIdEntretien() {
         return idEntretien;
     }
@@ -37,36 +29,36 @@ public class Entretien implements Serializable {
         this.idEntretien = idEntretien;
     }
 
-    public Vehicule getVehicule() {
-        return vehicule;
+    public Integer getIdVehicule() {
+        return idVehicule;
     }
 
-    public void setVehicule(Vehicule vehicule) {
-        this.vehicule = vehicule;
+    public void setIdVehicule(Integer idVehicule) {
+        this.idVehicule = idVehicule;
     }
 
-    public LocalDateTime getDateEntreeEntr() {
-        return dateEntreeEntr;
+    public LocalDateTime getDateEntree() {
+        return dateEntree;
     }
 
-    public void setDateEntreeEntr(LocalDateTime dateEntreeEntr) {
-        this.dateEntreeEntr = dateEntreeEntr;
+    public void setDateEntree(LocalDateTime dateEntree) {
+        this.dateEntree = dateEntree;
     }
 
-    public LocalDateTime getDateSortieEntr() {
-        return dateSortieEntr;
+    public LocalDateTime getDateSortie() {
+        return dateSortie;
     }
 
-    public void setDateSortieEntr(LocalDateTime dateSortieEntr) {
-        this.dateSortieEntr = dateSortieEntr;
+    public void setDateSortie(LocalDateTime dateSortie) {
+        this.dateSortie = dateSortie;
     }
 
-    public String getMotifEntr() {
-        return motifEntr;
+    public String getMotif() {
+        return motif;
     }
 
-    public void setMotifEntr(String motifEntr) {
-        this.motifEntr = motifEntr;
+    public void setMotif(String motif) {
+        this.motif = motif;
     }
 
     public String getObservation() {
@@ -77,20 +69,20 @@ public class Entretien implements Serializable {
         this.observation = observation;
     }
 
-    public BigDecimal getCoutEntr() {
-        return coutEntr;
+    public BigDecimal getCout() {
+        return cout;
     }
 
-    public void setCoutEntr(BigDecimal coutEntr) {
-        this.coutEntr = coutEntr;
+    public void setCout(BigDecimal cout) {
+        this.cout = cout;
     }
 
-    public String getLieuEntr() {
-        return lieuEntr;
+    public String getLieu() {
+        return lieu;
     }
 
-    public void setLieuEntr(String lieuEntr) {
-        this.lieuEntr = lieuEntr;
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
     }
 
     public TypeEntretien getType() {
@@ -101,29 +93,11 @@ public class Entretien implements Serializable {
         this.type = type;
     }
 
-    public StatutOT getStatutOt() {
-        return statutOt;
+    public StatutOT getStatut() {
+        return statut;
     }
 
-    public void setStatutOt(StatutOT statutOt) {
-        this.statutOt = statutOt;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Entretien entretien = (Entretien) o;
-        return Objects.equals(idEntretien, entretien.idEntretien);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idEntretien);
-    }
-
-    @Override
-    public String toString() {
-        return "Entretien #" + idEntretien + " pour " + vehicule + " (" + statutOt + ")";
+    public void setStatut(StatutOT statut) {
+        this.statut = statut;
     }
 }

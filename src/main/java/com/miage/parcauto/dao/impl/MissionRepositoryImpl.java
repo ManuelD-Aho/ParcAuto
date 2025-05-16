@@ -24,31 +24,22 @@ public class MissionRepositoryImpl implements MissionRepository {
         mission.setIdMission(rs.getInt("id_mission"));
         mission.setIdVehicule(rs.getInt("id_vehicule"));
         mission.setIdPersonnel(rs.getInt("id_personnel"));
-
-        int idSocietaireCompte = rs.getInt("id_compte_societaire");
-        mission.setIdCompteSocietaire(rs.wasNull() ? null : idSocietaireCompte);
-
-        String statutStr = rs.getString("status");
-        if (statutStr != null) {
-            mission.setStatus(StatutMission.fromString(statutStr));
-        }
-
-        Timestamp dateDebutTs = rs.getTimestamp("date_debut");
-        mission.setDateDebut(dateDebutTs != null ? dateDebutTs.toLocalDateTime() : null);
-
-        Timestamp dateFinTs = rs.getTimestamp("date_fin");
-        mission.setDateFin(dateFinTs != null ? dateFinTs.toLocalDateTime() : null);
-
-        mission.setMotif(rs.getString("motif"));
-        mission.setDestination(rs.getString("destination"));
-
-        int kmDepart = rs.getInt("km_depart");
-        mission.setKmDepart(rs.wasNull() ? null : kmDepart);
-
-        int kmRetour = rs.getInt("km_retour");
-        mission.setKmRetour(rs.wasNull() ? null : kmRetour);
-
-        mission.setObservation(rs.getString("observation"));
+        mission.setLibelle(rs.getString("libelle"));
+        mission.setSiteDestination(rs.getString("site_destination"));
+        mission.setDateDebut(
+                rs.getTimestamp("date_debut") != null ? rs.getTimestamp("date_debut").toLocalDateTime() : null);
+        mission.setDateFinPrevue(
+                rs.getTimestamp("date_fin_prevue") != null ? rs.getTimestamp("date_fin_prevue").toLocalDateTime()
+                        : null);
+        mission.setDateFinEffective(
+                rs.getTimestamp("date_fin_effective") != null ? rs.getTimestamp("date_fin_effective").toLocalDateTime()
+                        : null);
+        String statutStr = rs.getString("statut");
+        mission.setStatut(statutStr != null ? StatutMission.valueOf(statutStr) : null);
+        mission.setCoutEstime(rs.getBigDecimal("cout_estime"));
+        mission.setCoutTotalReel(rs.getBigDecimal("cout_total_reel"));
+        mission.setCircuit(rs.getString("circuit"));
+        mission.setObservations(rs.getString("observations"));
         return mission;
     }
 
@@ -73,7 +64,7 @@ public class MissionRepositoryImpl implements MissionRepository {
         List<Mission> missions = new ArrayList<>();
         String sql = "SELECT * FROM MISSION";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 missions.add(mapResultSetToMission(rs));
             }
@@ -107,14 +98,24 @@ public class MissionRepositoryImpl implements MissionRepository {
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, mission.getIdVehicule());
             pstmt.setInt(2, mission.getIdPersonnel());
-            if (mission.getIdCompteSocietaire() != null) pstmt.setInt(3, mission.getIdCompteSocietaire()); else pstmt.setNull(3, Types.INTEGER);
-            pstmt.setString(4, mission.getStatus() != null ? mission.getStatus().getValeur() : StatutMission.PLANIFIEE.getValeur()); // Défaut si non fourni
+            if (mission.getIdCompteSocietaire() != null)
+                pstmt.setInt(3, mission.getIdCompteSocietaire());
+            else
+                pstmt.setNull(3, Types.INTEGER);
+            pstmt.setString(4, mission.getStatus() != null ? mission.getStatus().getValeur()
+                    : StatutMission.PLANIFIEE.getValeur()); // Défaut si non fourni
             pstmt.setTimestamp(5, mission.getDateDebut() != null ? Timestamp.valueOf(mission.getDateDebut()) : null);
             pstmt.setTimestamp(6, mission.getDateFin() != null ? Timestamp.valueOf(mission.getDateFin()) : null);
             pstmt.setString(7, mission.getMotif());
             pstmt.setString(8, mission.getDestination());
-            if (mission.getKmDepart() != null) pstmt.setInt(9, mission.getKmDepart()); else pstmt.setNull(9, Types.INTEGER);
-            if (mission.getKmRetour() != null) pstmt.setInt(10, mission.getKmRetour()); else pstmt.setNull(10, Types.INTEGER);
+            if (mission.getKmDepart() != null)
+                pstmt.setInt(9, mission.getKmDepart());
+            else
+                pstmt.setNull(9, Types.INTEGER);
+            if (mission.getKmRetour() != null)
+                pstmt.setInt(10, mission.getKmRetour());
+            else
+                pstmt.setNull(10, Types.INTEGER);
             pstmt.setString(11, mission.getObservation());
 
             int affectedRows = pstmt.executeUpdate();
@@ -140,20 +141,30 @@ public class MissionRepositoryImpl implements MissionRepository {
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, mission.getIdVehicule());
             pstmt.setInt(2, mission.getIdPersonnel());
-            if (mission.getIdCompteSocietaire() != null) pstmt.setInt(3, mission.getIdCompteSocietaire()); else pstmt.setNull(3, Types.INTEGER);
+            if (mission.getIdCompteSocietaire() != null)
+                pstmt.setInt(3, mission.getIdCompteSocietaire());
+            else
+                pstmt.setNull(3, Types.INTEGER);
             pstmt.setString(4, mission.getStatus() != null ? mission.getStatus().getValeur() : null);
             pstmt.setTimestamp(5, mission.getDateDebut() != null ? Timestamp.valueOf(mission.getDateDebut()) : null);
             pstmt.setTimestamp(6, mission.getDateFin() != null ? Timestamp.valueOf(mission.getDateFin()) : null);
             pstmt.setString(7, mission.getMotif());
             pstmt.setString(8, mission.getDestination());
-            if (mission.getKmDepart() != null) pstmt.setInt(9, mission.getKmDepart()); else pstmt.setNull(9, Types.INTEGER);
-            if (mission.getKmRetour() != null) pstmt.setInt(10, mission.getKmRetour()); else pstmt.setNull(10, Types.INTEGER);
+            if (mission.getKmDepart() != null)
+                pstmt.setInt(9, mission.getKmDepart());
+            else
+                pstmt.setNull(9, Types.INTEGER);
+            if (mission.getKmRetour() != null)
+                pstmt.setInt(10, mission.getKmRetour());
+            else
+                pstmt.setNull(10, Types.INTEGER);
             pstmt.setString(11, mission.getObservation());
             pstmt.setInt(12, mission.getIdMission());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de la mission avec ID " + mission.getIdMission() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de la mission avec ID " + mission.getIdMission()
+                        + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
             throw new DataAccessException("Erreur lors de la mise à jour de la mission: " + mission.getIdMission(), e);
@@ -166,8 +177,10 @@ public class MissionRepositoryImpl implements MissionRepository {
         String sql = "DELETE FROM MISSION WHERE id_mission = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
-            // Avant de supprimer une mission, il faudrait peut-être gérer les DepenseMission associées
-            // (suppression en cascade configurée dans la DB ou suppression explicite ici/service)
+            // Avant de supprimer une mission, il faudrait peut-être gérer les
+            // DepenseMission associées
+            // (suppression en cascade configurée dans la DB ou suppression explicite
+            // ici/service)
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
@@ -179,7 +192,7 @@ public class MissionRepositoryImpl implements MissionRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM MISSION";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -202,7 +215,8 @@ public class MissionRepositoryImpl implements MissionRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des missions actives pour le véhicule " + idVehicule, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des missions actives pour le véhicule " + idVehicule, e);
         }
         return missions;
     }
@@ -210,12 +224,13 @@ public class MissionRepositoryImpl implements MissionRepository {
     @Override
     public List<Mission> findByPeriod(Connection conn, LocalDateTime debut, LocalDateTime fin) throws SQLException {
         List<Mission> missions = new ArrayList<>();
-        // Missions qui commencent ou finissent dans la période, ou qui englobent la période.
+        // Missions qui commencent ou finissent dans la période, ou qui englobent la
+        // période.
         String sql = "SELECT * FROM MISSION WHERE (date_debut <= ? AND date_fin >= ?) OR (date_debut BETWEEN ? AND ?) OR (date_fin BETWEEN ? AND ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             Timestamp tsDebut = Timestamp.valueOf(debut);
             Timestamp tsFin = Timestamp.valueOf(fin);
-            pstmt.setTimestamp(1, tsFin);   // date_debut <= finPeriode
+            pstmt.setTimestamp(1, tsFin); // date_debut <= finPeriode
             pstmt.setTimestamp(2, tsDebut); // date_fin >= debutPeriode
             pstmt.setTimestamp(3, tsDebut);
             pstmt.setTimestamp(4, tsFin);
@@ -227,7 +242,8 @@ public class MissionRepositoryImpl implements MissionRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des missions pour la période du " + debut + " au " + fin, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des missions pour la période du " + debut + " au " + fin, e);
         }
         return missions;
     }
@@ -250,7 +266,8 @@ public class MissionRepositoryImpl implements MissionRepository {
     }
 
     @Override
-    public List<Mission> findByVehiculeIdAndStatus(Connection conn, Integer idVehicule, StatutMission statut) throws SQLException {
+    public List<Mission> findByVehiculeIdAndStatus(Connection conn, Integer idVehicule, StatutMission statut)
+            throws SQLException {
         List<Mission> missions = new ArrayList<>();
         String sql = "SELECT * FROM MISSION WHERE id_vehicule = ? AND status = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -262,7 +279,8 @@ public class MissionRepositoryImpl implements MissionRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des missions pour le véhicule " + idVehicule + " avec statut " + statut, e);
+            throw new DataAccessException("Erreur lors de la recherche des missions pour le véhicule " + idVehicule
+                    + " avec statut " + statut, e);
         }
         return missions;
     }

@@ -1,35 +1,30 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.vehicule.Energie;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class VehiculeDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class VehiculeDTO {
 
     private Integer idVehicule;
     private Integer idEtatVoiture;
-    private String libEtatVoiture;
-    private Energie energie;
-    private String numeroChassi;
+    private String libelleEtatVoiture;
+    private String energie;
+    private String numeroChassis;
     private String immatriculation;
     private String marque;
     private String modele;
+    private Integer kilometrage;
+    private LocalDateTime dateMiseEnService;
+    private BigDecimal coutAchat;
+    private LocalDateTime dateAmortissement;
+    private Boolean actif;
     private Integer nbPlaces;
     private LocalDateTime dateAcquisition;
-    private LocalDateTime dateAmmortissement;
-    private LocalDateTime dateMiseEnService;
     private Integer puissance;
     private String couleur;
     private BigDecimal prixVehicule;
     private Integer kmActuels;
     private LocalDateTime dateEtat;
-
-    public VehiculeDTO() {
-    }
 
     public Integer getIdVehicule() {
         return idVehicule;
@@ -47,28 +42,28 @@ public class VehiculeDTO implements Serializable {
         this.idEtatVoiture = idEtatVoiture;
     }
 
-    public String getLibEtatVoiture() {
-        return libEtatVoiture;
+    public String getLibelleEtatVoiture() {
+        return libelleEtatVoiture;
     }
 
-    public void setLibEtatVoiture(String libEtatVoiture) {
-        this.libEtatVoiture = libEtatVoiture;
+    public void setLibelleEtatVoiture(String libelleEtatVoiture) {
+        this.libelleEtatVoiture = libelleEtatVoiture;
     }
 
-    public Energie getEnergie() {
+    public String getEnergie() {
         return energie;
     }
 
-    public void setEnergie(Energie energie) {
+    public void setEnergie(String energie) {
         this.energie = energie;
     }
 
-    public String getNumeroChassi() {
-        return numeroChassi;
+    public String getNumeroChassis() {
+        return numeroChassis;
     }
 
-    public void setNumeroChassi(String numeroChassi) {
-        this.numeroChassi = numeroChassi;
+    public void setNumeroChassis(String numeroChassis) {
+        this.numeroChassis = numeroChassis;
     }
 
     public String getImmatriculation() {
@@ -95,6 +90,46 @@ public class VehiculeDTO implements Serializable {
         this.modele = modele;
     }
 
+    public Integer getKilometrage() {
+        return kilometrage;
+    }
+
+    public void setKilometrage(Integer kilometrage) {
+        this.kilometrage = kilometrage;
+    }
+
+    public LocalDateTime getDateMiseEnService() {
+        return dateMiseEnService;
+    }
+
+    public void setDateMiseEnService(LocalDateTime dateMiseEnService) {
+        this.dateMiseEnService = dateMiseEnService;
+    }
+
+    public BigDecimal getCoutAchat() {
+        return coutAchat;
+    }
+
+    public void setCoutAchat(BigDecimal coutAchat) {
+        this.coutAchat = coutAchat;
+    }
+
+    public LocalDateTime getDateAmortissement() {
+        return dateAmortissement;
+    }
+
+    public void setDateAmortissement(LocalDateTime dateAmortissement) {
+        this.dateAmortissement = dateAmortissement;
+    }
+
+    public Boolean getActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
+
     public Integer getNbPlaces() {
         return nbPlaces;
     }
@@ -109,22 +144,6 @@ public class VehiculeDTO implements Serializable {
 
     public void setDateAcquisition(LocalDateTime dateAcquisition) {
         this.dateAcquisition = dateAcquisition;
-    }
-
-    public LocalDateTime getDateAmmortissement() {
-        return dateAmmortissement;
-    }
-
-    public void setDateAmmortissement(LocalDateTime dateAmmortissement) {
-        this.dateAmmortissement = dateAmmortissement;
-    }
-
-    public LocalDateTime getDateMiseEnService() {
-        return dateMiseEnService;
-    }
-
-    public void setDateMiseEnService(LocalDateTime dateMiseEnService) {
-        this.dateMiseEnService = dateMiseEnService;
     }
 
     public Integer getPuissance() {
@@ -165,10 +184,5 @@ public class VehiculeDTO implements Serializable {
 
     public void setDateEtat(LocalDateTime dateEtat) {
         this.dateEtat = dateEtat;
-    }
-
-    @Override
-    public String toString() {
-        return marque + " " + modele + " (" + immatriculation + ")";
     }
 }

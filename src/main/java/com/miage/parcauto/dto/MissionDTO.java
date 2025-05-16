@@ -1,31 +1,21 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.mission.StatutMission;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MissionDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class MissionDTO {
     private Integer idMission;
     private Integer idVehicule;
-    private String vehiculeInfo;
-    private String libMission;
-    private String site;
-    private LocalDateTime dateDebutMission;
-    private LocalDateTime dateFinMission;
-    private Integer kmPrevu;
-    private Integer kmReel;
-    private StatutMission status;
-    private BigDecimal coutTotal;
-    private String circuitMission;
-    private String observationMission;
-    private List<DepenseMissionDTO> depenses = new ArrayList<>();
+    private String libelle;
+    private String siteDestination;
+    private LocalDateTime dateDebut;
+    private LocalDateTime dateFinPrevue;
+    private LocalDateTime dateFinEffective;
+    private String statut;
+    private BigDecimal coutEstime;
+    private BigDecimal coutTotalReel;
+    private String circuit;
+    private String observations;
 
     public MissionDTO() {
     }
@@ -46,104 +36,83 @@ public class MissionDTO implements Serializable {
         this.idVehicule = idVehicule;
     }
 
-    public String getVehiculeInfo() {
-        return vehiculeInfo;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public void setVehiculeInfo(String vehiculeInfo) {
-        this.vehiculeInfo = vehiculeInfo;
+    public void setLibelle(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getLibMission() {
-        return libMission;
+    public String getSiteDestination() {
+        return siteDestination;
     }
 
-    public void setLibMission(String libMission) {
-        this.libMission = libMission;
+    public void setSiteDestination(String siteDestination) {
+        this.siteDestination = siteDestination;
     }
 
-    public String getSite() {
-        return site;
+    public LocalDateTime getDateDebut() {
+        return dateDebut;
     }
 
-    public void setSite(String site) {
-        this.site = site;
+    public void setDateDebut(LocalDateTime dateDebut) {
+        this.dateDebut = dateDebut;
     }
 
-    public LocalDateTime getDateDebutMission() {
-        return dateDebutMission;
+    public LocalDateTime getDateFinPrevue() {
+        return dateFinPrevue;
     }
 
-    public void setDateDebutMission(LocalDateTime dateDebutMission) {
-        this.dateDebutMission = dateDebutMission;
+    public void setDateFinPrevue(LocalDateTime dateFinPrevue) {
+        this.dateFinPrevue = dateFinPrevue;
     }
 
-    public LocalDateTime getDateFinMission() {
-        return dateFinMission;
+    public LocalDateTime getDateFinEffective() {
+        return dateFinEffective;
     }
 
-    public void setDateFinMission(LocalDateTime dateFinMission) {
-        this.dateFinMission = dateFinMission;
+    public void setDateFinEffective(LocalDateTime dateFinEffective) {
+        this.dateFinEffective = dateFinEffective;
     }
 
-    public Integer getKmPrevu() {
-        return kmPrevu;
+    public String getStatut() {
+        return statut;
     }
 
-    public void setKmPrevu(Integer kmPrevu) {
-        this.kmPrevu = kmPrevu;
+    public void setStatut(String statut) {
+        this.statut = statut;
     }
 
-    public Integer getKmReel() {
-        return kmReel;
+    public BigDecimal getCoutEstime() {
+        return coutEstime;
     }
 
-    public void setKmReel(Integer kmReel) {
-        this.kmReel = kmReel;
+    public void setCoutEstime(BigDecimal coutEstime) {
+        this.coutEstime = coutEstime;
     }
 
-    public StatutMission getStatus() {
-        return status;
+    public BigDecimal getCoutTotalReel() {
+        return coutTotalReel;
     }
 
-    public void setStatus(StatutMission status) {
-        this.status = status;
+    public void setCoutTotalReel(BigDecimal coutTotalReel) {
+        this.coutTotalReel = coutTotalReel;
     }
 
-    public BigDecimal getCoutTotal() {
-        return coutTotal;
+    public String getCircuit() {
+        return circuit;
     }
 
-    public void setCoutTotal(BigDecimal coutTotal) {
-        this.coutTotal = coutTotal;
+    public void setCircuit(String circuit) {
+        this.circuit = circuit;
     }
 
-    public String getCircuitMission() {
-        return circuitMission;
+    public String getObservations() {
+        return observations;
     }
 
-    public void setCircuitMission(String circuitMission) {
-        this.circuitMission = circuitMission;
-    }
-
-    public String getObservationMission() {
-        return observationMission;
-    }
-
-    public void setObservationMission(String observationMission) {
-        this.observationMission = observationMission;
-    }
-
-    public List<DepenseMissionDTO> getDepenses() {
-        return depenses;
-    }
-
-    public void setDepenses(List<DepenseMissionDTO> depenses) {
-        this.depenses = depenses;
-    }
-
-    @Override
-    public String toString() {
-        return libMission + " (" + (status != null ? status.getValeur() : "N/A") + ")";
+    public void setObservations(String observations) {
+        this.observations = observations;
     }
 }

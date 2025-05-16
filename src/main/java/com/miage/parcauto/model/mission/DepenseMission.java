@@ -1,26 +1,23 @@
 package main.java.com.miage.parcauto.model.mission;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Objects;
+// import main.java.com.miage.parcauto.model.mission.NatureDepenseMission;
+import java.time.LocalDateTime; // Ajout pour `dateDepense` si nécessaire
 
-/**
- * Entité représentant une dépense liée à une mission.
- */
-public class DepenseMission implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class DepenseMission {
 
     private Integer id;
-    private Mission mission;
+    private Integer idMission;
     private NatureDepenseMission nature;
     private BigDecimal montant;
     private String justificatif;
+    private LocalDateTime dateDepense; // Ajouté car utilisé par ValidationServiceImpl
+    private Integer idDepense;
+    private String observation;
 
     public DepenseMission() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -29,12 +26,12 @@ public class DepenseMission implements Serializable {
         this.id = id;
     }
 
-    public Mission getMission() {
-        return mission;
+    public Integer getIdMission() {
+        return idMission;
     }
 
-    public void setMission(Mission mission) {
-        this.mission = mission;
+    public void setIdMission(Integer idMission) {
+        this.idMission = idMission;
     }
 
     public NatureDepenseMission getNature() {
@@ -61,21 +58,28 @@ public class DepenseMission implements Serializable {
         this.justificatif = justificatif;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DepenseMission that = (DepenseMission) o;
-        return Objects.equals(id, that.id);
+    public LocalDateTime getDateDepense() {
+        return dateDepense;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setDateDepense(LocalDateTime dateDepense) {
+        this.dateDepense = dateDepense;
     }
 
-    @Override
-    public String toString() {
-        return nature + ": " + montant + "€";
+    public Integer getIdDepense() {
+        return idDepense != null ? idDepense : id;
+    }
+
+    public void setIdDepense(Integer idDepense) {
+        this.idDepense = idDepense;
+        this.id = idDepense;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 }

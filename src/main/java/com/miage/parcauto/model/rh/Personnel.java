@@ -1,29 +1,25 @@
 package main.java.com.miage.parcauto.model.rh;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Objects;
+// import main.java.com.miage.parcauto.model.rh.Sexe;
 
-/**
- * Entité représentant un membre du personnel.
- */
-public class Personnel implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Personnel {
 
     private Integer idPersonnel;
-    private Service service;
-    private Fonction fonction;
+    private Integer idService;
+    private Integer idFonction;
+    private Integer idVehicule; // Véhicule directement attribué
     private String matricule;
-    private String nomPersonnel;
-    private String prenomPersonnel;
+    private String nom; // SQL: nom_personnel
+    private String prenom; // SQL: prenom_personnel
     private String email;
     private String telephone;
     private String adresse;
     private LocalDate dateNaissance;
     private Sexe sexe;
-    private LocalDateTime dateAttribution;
+    private LocalDateTime dateAttributionVehicule; // SQL: date_attribution
+    private String observation; // Ajouté car utilisé par le mapper
 
     public Personnel() {
     }
@@ -36,20 +32,28 @@ public class Personnel implements Serializable {
         this.idPersonnel = idPersonnel;
     }
 
-    public Service getService() {
-        return service;
+    public Integer getIdService() {
+        return idService;
     }
 
-    public void setService(Service service) {
-        this.service = service;
+    public void setIdService(Integer idService) {
+        this.idService = idService;
     }
 
-    public Fonction getFonction() {
-        return fonction;
+    public Integer getIdFonction() {
+        return idFonction;
     }
 
-    public void setFonction(Fonction fonction) {
-        this.fonction = fonction;
+    public void setIdFonction(Integer idFonction) {
+        this.idFonction = idFonction;
+    }
+
+    public Integer getIdVehicule() {
+        return idVehicule;
+    }
+
+    public void setIdVehicule(Integer idVehicule) {
+        this.idVehicule = idVehicule;
     }
 
     public String getMatricule() {
@@ -60,20 +64,20 @@ public class Personnel implements Serializable {
         this.matricule = matricule;
     }
 
-    public String getNomPersonnel() {
-        return nomPersonnel;
+    public String getNom() {
+        return nom;
     }
 
-    public void setNomPersonnel(String nomPersonnel) {
-        this.nomPersonnel = nomPersonnel;
+    public void setNom(String nom) {
+        this.nom = nom;
     }
 
-    public String getPrenomPersonnel() {
-        return prenomPersonnel;
+    public String getPrenom() {
+        return prenom;
     }
 
-    public void setPrenomPersonnel(String prenomPersonnel) {
-        this.prenomPersonnel = prenomPersonnel;
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
     }
 
     public String getEmail() {
@@ -116,29 +120,19 @@ public class Personnel implements Serializable {
         this.sexe = sexe;
     }
 
-    public LocalDateTime getDateAttribution() {
-        return dateAttribution;
+    public LocalDateTime getDateAttributionVehicule() {
+        return dateAttributionVehicule;
     }
 
-    public void setDateAttribution(LocalDateTime dateAttribution) {
-        this.dateAttribution = dateAttribution;
+    public void setDateAttributionVehicule(LocalDateTime dateAttributionVehicule) {
+        this.dateAttributionVehicule = dateAttributionVehicule;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Personnel personnel = (Personnel) o;
-        return Objects.equals(idPersonnel, personnel.idPersonnel);
+    public String getObservation() {
+        return observation;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(idPersonnel);
-    }
-
-    @Override
-    public String toString() {
-        return prenomPersonnel + " " + nomPersonnel;
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 }

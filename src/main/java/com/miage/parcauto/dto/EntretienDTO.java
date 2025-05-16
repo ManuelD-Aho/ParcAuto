@@ -1,29 +1,38 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.entretien.StatutOT;
-import main.java.com.miage.parcauto.model.entretien.TypeEntretien;
-
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public class EntretienDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
+public class EntretienDTO {
     private Integer idEntretien;
     private Integer idVehicule;
-    private String vehiculeInfo;
-    private LocalDateTime dateEntreeEntr;
-    private LocalDateTime dateSortieEntr;
-    private String motifEntr;
-    private String observation;
-    private BigDecimal coutEntr;
-    private String lieuEntr;
-    private TypeEntretien type;
-    private StatutOT statutOt;
+    private LocalDateTime dateEntree;
+    private LocalDateTime dateSortie;
+    private String motif;
+    private String observations;
+    private BigDecimal coutEstime;
+    private BigDecimal coutReel;
+    private String lieu;
+    private String typeEntretien;
+    private String statutOT;
 
     public EntretienDTO() {
+    }
+
+    public EntretienDTO(Integer idEntretien, Integer idVehicule, java.time.LocalDateTime dateEntree,
+            java.time.LocalDateTime dateSortie, String motif, String observations, java.math.BigDecimal coutEstime,
+            java.math.BigDecimal coutReel, String lieu, String typeEntretien, String statutOT) {
+        this.idEntretien = idEntretien;
+        this.idVehicule = idVehicule;
+        this.dateEntree = dateEntree;
+        this.dateSortie = dateSortie;
+        this.motif = motif;
+        this.observations = observations;
+        this.coutEstime = coutEstime;
+        this.coutReel = coutReel;
+        this.lieu = lieu;
+        this.typeEntretien = typeEntretien;
+        this.statutOT = statutOT;
     }
 
     public Integer getIdEntretien() {
@@ -42,80 +51,75 @@ public class EntretienDTO implements Serializable {
         this.idVehicule = idVehicule;
     }
 
-    public String getVehiculeInfo() {
-        return vehiculeInfo;
+    public LocalDateTime getDateEntree() {
+        return dateEntree;
     }
 
-    public void setVehiculeInfo(String vehiculeInfo) {
-        this.vehiculeInfo = vehiculeInfo;
+    public void setDateEntree(LocalDateTime dateEntree) {
+        this.dateEntree = dateEntree;
     }
 
-    public LocalDateTime getDateEntreeEntr() {
-        return dateEntreeEntr;
+    public LocalDateTime getDateSortie() {
+        return dateSortie;
     }
 
-    public void setDateEntreeEntr(LocalDateTime dateEntreeEntr) {
-        this.dateEntreeEntr = dateEntreeEntr;
+    public void setDateSortie(LocalDateTime dateSortie) {
+        this.dateSortie = dateSortie;
     }
 
-    public LocalDateTime getDateSortieEntr() {
-        return dateSortieEntr;
+    public String getMotif() {
+        return motif;
     }
 
-    public void setDateSortieEntr(LocalDateTime dateSortieEntr) {
-        this.dateSortieEntr = dateSortieEntr;
+    public void setMotif(String motif) {
+        this.motif = motif;
     }
 
-    public String getMotifEntr() {
-        return motifEntr;
+    public String getObservations() {
+        return observations;
     }
 
-    public void setMotifEntr(String motifEntr) {
-        this.motifEntr = motifEntr;
+    public void setObservations(String observations) {
+        this.observations = observations;
     }
 
-    public String getObservation() {
-        return observation;
+    public BigDecimal getCoutEstime() {
+        return coutEstime;
     }
 
-    public void setObservation(String observation) {
-        this.observation = observation;
+    public void setCoutEstime(BigDecimal coutEstime) {
+        this.coutEstime = coutEstime;
     }
 
-    public BigDecimal getCoutEntr() {
-        return coutEntr;
+    public BigDecimal getCoutReel() {
+        return coutReel;
     }
 
-    public void setCoutEntr(BigDecimal coutEntr) {
-        this.coutEntr = coutEntr;
+    public void setCoutReel(BigDecimal coutReel) {
+        this.coutReel = coutReel;
     }
 
-    public String getLieuEntr() {
-        return lieuEntr;
+    public String getLieu() {
+        return lieu;
     }
 
-    public void setLieuEntr(String lieuEntr) {
-        this.lieuEntr = lieuEntr;
+    public void setLieu(String lieu) {
+        this.lieu = lieu;
     }
 
-    public TypeEntretien getType() {
-        return type;
+    public String getTypeEntretien() {
+        return typeEntretien;
     }
 
-    public void setType(TypeEntretien type) {
-        this.type = type;
+    public void setTypeEntretien(String typeEntretien) {
+        this.typeEntretien = typeEntretien;
     }
 
-    public StatutOT getStatutOt() {
-        return statutOt;
+    public String getStatutOT() {
+        return statutOT;
     }
 
-    public void setStatutOt(StatutOT statutOt) {
-        this.statutOt = statutOt;
-    }
-
-    @Override
-    public String toString() {
-        return "Entretien #" + idEntretien + " pour " + vehiculeInfo + " (" + (statutOt != null ? statutOt.getValeur() : "N/A") + ")";
+    public void setStatutOT(String statutOT) {
+        this.statutOT = statutOT;
     }
 }

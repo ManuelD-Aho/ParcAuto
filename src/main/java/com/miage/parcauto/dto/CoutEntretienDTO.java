@@ -20,6 +20,10 @@ public class CoutEntretienDTO implements Serializable {
     private int nombreEntretiens;
     private BigDecimal coutMoyenParEntretien;
 
+    private String immatriculationVehicule;
+    private int annee;
+    private BigDecimal totalCoutsEntretien;
+
     public CoutEntretienDTO() {
         this.coutTotalEntretiens = BigDecimal.ZERO;
         this.coutMoyenParEntretien = BigDecimal.ZERO;
@@ -87,6 +91,30 @@ public class CoutEntretienDTO implements Serializable {
 
     public void setCoutMoyenParEntretien(BigDecimal coutMoyenParEntretien) {
         this.coutMoyenParEntretien = coutMoyenParEntretien;
+    }
+
+    public String getImmatriculationVehicule() {
+        return immatriculationVehicule;
+    }
+
+    public void setImmatriculationVehicule(String immatriculationVehicule) {
+        this.immatriculationVehicule = immatriculationVehicule;
+    }
+
+    public int getAnnee() {
+        return annee;
+    }
+
+    public void setAnnee(int annee) {
+        this.annee = annee;
+    }
+
+    public BigDecimal getTotalCoutsEntretien() {
+        return totalCoutsEntretien;
+    }
+
+    public void setTotalCoutsEntretien(BigDecimal totalCoutsEntretien) {
+        this.totalCoutsEntretien = totalCoutsEntretien;
     }
 
     @Override

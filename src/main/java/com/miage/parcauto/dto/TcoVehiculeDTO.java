@@ -13,6 +13,16 @@ public class TcoVehiculeDTO implements Serializable {
     private Integer kmActuels;
     private BigDecimal coutParKm;
     private BigDecimal valeurResiduelleEstimee; // Optionnel
+    private String immatriculation;
+    private String marque;
+    private String modele;
+    private BigDecimal coutAchat;
+    private BigDecimal coutTotalEntretiens;
+    private BigDecimal coutTotalCarburant;
+    private BigDecimal coutTotalAutresDepenses;
+    private BigDecimal coutTotalAssurances;
+    private BigDecimal depreciation;
+    private BigDecimal tcoTotal;
 
     public TcoVehiculeDTO() {
     }
@@ -63,6 +73,86 @@ public class TcoVehiculeDTO implements Serializable {
 
     public void setValeurResiduelleEstimee(BigDecimal valeurResiduelleEstimee) {
         this.valeurResiduelleEstimee = valeurResiduelleEstimee;
+    }
+
+    public String getImmatriculation() {
+        return immatriculation;
+    }
+
+    public void setImmatriculation(String immatriculation) {
+        this.immatriculation = immatriculation;
+    }
+
+    public String getMarque() {
+        return marque;
+    }
+
+    public void setMarque(String marque) {
+        this.marque = marque;
+    }
+
+    public String getModele() {
+        return modele;
+    }
+
+    public void setModele(String modele) {
+        this.modele = modele;
+    }
+
+    public BigDecimal getCoutAchat() {
+        return coutAchat;
+    }
+
+    public void setCoutAchat(BigDecimal coutAchat) {
+        this.coutAchat = coutAchat;
+    }
+
+    public BigDecimal getCoutTotalEntretiens() {
+        return coutTotalEntretiens;
+    }
+
+    public void setCoutTotalEntretiens(BigDecimal coutTotalEntretiens) {
+        this.coutTotalEntretiens = coutTotalEntretiens;
+    }
+
+    public BigDecimal getCoutTotalCarburant() {
+        return coutTotalCarburant;
+    }
+
+    public void setCoutTotalCarburant(BigDecimal coutTotalCarburant) {
+        this.coutTotalCarburant = coutTotalCarburant;
+    }
+
+    public BigDecimal getCoutTotalAutresDepenses() {
+        return coutTotalAutresDepenses;
+    }
+
+    public void setCoutTotalAutresDepenses(BigDecimal coutTotalAutresDepenses) {
+        this.coutTotalAutresDepenses = coutTotalAutresDepenses;
+    }
+
+    public BigDecimal getCoutTotalAssurances() {
+        return coutTotalAssurances;
+    }
+
+    public void setCoutTotalAssurances(BigDecimal coutTotalAssurances) {
+        this.coutTotalAssurances = coutTotalAssurances;
+    }
+
+    public BigDecimal getDepreciation() {
+        return depreciation;
+    }
+
+    public void setDepreciation(BigDecimal depreciation) {
+        this.depreciation = depreciation;
+    }
+
+    public BigDecimal getTcoTotal() {
+        return tcoTotal;
+    }
+
+    public void setTcoTotal(BigDecimal tcoTotal) {
+        this.tcoTotal = tcoTotal;
     }
 
     @Override

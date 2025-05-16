@@ -32,8 +32,6 @@ public class ServiceRHRepositoryImpl implements ServiceRHRepository {
                     return Optional.of(mapResultSetToService(rs));
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche du service RH par ID: " + id, e);
         }
         return Optional.empty();
     }
@@ -43,12 +41,10 @@ public class ServiceRHRepositoryImpl implements ServiceRHRepository {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT id_service, libelle FROM SERVICE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 services.add(mapResultSetToService(rs));
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la récupération de tous les services RH", e);
         }
         return services;
     }
@@ -101,7 +97,8 @@ public class ServiceRHRepositoryImpl implements ServiceRHRepository {
             pstmt.setInt(2, service.getIdService());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour du service RH avec ID " + service.getIdService() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour du service RH avec ID " + service.getIdService()
+                        + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
             throw new DataAccessException("Erreur lors de la mise à jour du service RH: " + service.getIdService(), e);
@@ -125,7 +122,7 @@ public class ServiceRHRepositoryImpl implements ServiceRHRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM SERVICE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }

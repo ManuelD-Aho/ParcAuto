@@ -1,28 +1,23 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.rh.Sexe;
-
-import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class PersonnelDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class PersonnelDTO {
 
     private Integer idPersonnel;
-    private String serviceInfo;
-    private String fonctionInfo;
+    private Integer idService;
+    private Integer idFonction;
+    private String nom;
+    private String prenom;
+    private String sexe;
+    private LocalDateTime dateEmbauche;
+    private String observation;
     private String matricule;
-    private String nomPersonnel;
-    private String prenomPersonnel;
     private String email;
     private String telephone;
     private String adresse;
     private LocalDate dateNaissance;
-    private Sexe sexe;
-    private LocalDateTime dateAttributionVehicule;
-    private String vehiculeAttributionInfo;
 
     public PersonnelDTO() {
     }
@@ -35,20 +30,60 @@ public class PersonnelDTO implements Serializable {
         this.idPersonnel = idPersonnel;
     }
 
-    public String getServiceInfo() {
-        return serviceInfo;
+    public Integer getIdService() {
+        return idService;
     }
 
-    public void setServiceInfo(String serviceInfo) {
-        this.serviceInfo = serviceInfo;
+    public void setIdService(Integer idService) {
+        this.idService = idService;
     }
 
-    public String getFonctionInfo() {
-        return fonctionInfo;
+    public Integer getIdFonction() {
+        return idFonction;
     }
 
-    public void setFonctionInfo(String fonctionInfo) {
-        this.fonctionInfo = fonctionInfo;
+    public void setIdFonction(Integer idFonction) {
+        this.idFonction = idFonction;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public String getSexe() {
+        return sexe;
+    }
+
+    public void setSexe(String sexe) {
+        this.sexe = sexe;
+    }
+
+    public LocalDateTime getDateEmbauche() {
+        return dateEmbauche;
+    }
+
+    public void setDateEmbauche(LocalDateTime dateEmbauche) {
+        this.dateEmbauche = dateEmbauche;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 
     public String getMatricule() {
@@ -57,22 +92,6 @@ public class PersonnelDTO implements Serializable {
 
     public void setMatricule(String matricule) {
         this.matricule = matricule;
-    }
-
-    public String getNomPersonnel() {
-        return nomPersonnel;
-    }
-
-    public void setNomPersonnel(String nomPersonnel) {
-        this.nomPersonnel = nomPersonnel;
-    }
-
-    public String getPrenomPersonnel() {
-        return prenomPersonnel;
-    }
-
-    public void setPrenomPersonnel(String prenomPersonnel) {
-        this.prenomPersonnel = prenomPersonnel;
     }
 
     public String getEmail() {
@@ -105,39 +124,5 @@ public class PersonnelDTO implements Serializable {
 
     public void setDateNaissance(LocalDate dateNaissance) {
         this.dateNaissance = dateNaissance;
-    }
-
-    public Sexe getSexe() {
-        return sexe;
-    }
-
-    public void setSexe(Sexe sexe) {
-        this.sexe = sexe;
-    }
-
-    public LocalDateTime getDateAttributionVehicule() {
-        return dateAttributionVehicule;
-    }
-
-    public void setDateAttributionVehicule(LocalDateTime dateAttributionVehicule) {
-        this.dateAttributionVehicule = dateAttributionVehicule;
-    }
-
-    public String getVehiculeAttributionInfo() {
-        return vehiculeAttributionInfo;
-    }
-
-    public void setVehiculeAttributionInfo(String vehiculeAttributionInfo) {
-        this.vehiculeAttributionInfo = vehiculeAttributionInfo;
-    }
-
-    @Override
-    public String toString() {
-        return "PersonnelDTO{" +
-                "idPersonnel=" + idPersonnel +
-                ", nom='" + prenomPersonnel + " " + nomPersonnel + '\'' +
-                ", matricule='" + matricule + '\'' +
-                ", fonction='" + fonctionInfo + '\'' +
-                '}';
     }
 }

@@ -1,50 +1,49 @@
 package main.java.com.miage.parcauto.model.document;
 
-import main.java.com.miage.parcauto.model.finance.SocietaireCompte;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
-/**
- * Entité représentant un document associé à un sociétaire.
- */
-public class DocumentSocietaire implements Serializable {
+// Assurez-vous que l'enum TypeDocument est bien défini dans ce package ou importé correctement
+// import main.java.com.miage.parcauto.model.document.TypeDocument;
 
-    private static final long serialVersionUID = 1L;
+public class DocumentSocietaire {
 
-    private Integer idDoc;
-    private SocietaireCompte societaire;
-    private TypeDocument typeDoc;
+    private Integer idDocument; // Corresponds à id_doc
+    private Integer idSocietaire;
+    private TypeDocument typeDocument; // Corresponds à type_doc
     private String cheminFichier;
     private LocalDateTime dateUpload;
+    private Integer idCompteSocietaire;
+    private TypeDocument type;
+    private String nomFichier;
+    private LocalDateTime dateAjout;
+    private LocalDateTime dateExpiration;
+    private String observation;
 
     public DocumentSocietaire() {
     }
 
-    // Getters et Setters
-    public Integer getIdDoc() {
-        return idDoc;
+    public Integer getIdDocument() {
+        return idDocument;
     }
 
-    public void setIdDoc(Integer idDoc) {
-        this.idDoc = idDoc;
+    public void setIdDocument(Integer idDocument) {
+        this.idDocument = idDocument;
     }
 
-    public SocietaireCompte getSocietaire() {
-        return societaire;
+    public Integer getIdSocietaire() {
+        return idSocietaire;
     }
 
-    public void setSocietaire(SocietaireCompte societaire) {
-        this.societaire = societaire;
+    public void setIdSocietaire(Integer idSocietaire) {
+        this.idSocietaire = idSocietaire;
     }
 
-    public TypeDocument getTypeDoc() {
-        return typeDoc;
+    public TypeDocument getTypeDocument() {
+        return typeDocument;
     }
 
-    public void setTypeDoc(TypeDocument typeDoc) {
-        this.typeDoc = typeDoc;
+    public void setTypeDocument(TypeDocument typeDocument) {
+        this.typeDocument = typeDocument;
     }
 
     public String getCheminFichier() {
@@ -63,39 +62,55 @@ public class DocumentSocietaire implements Serializable {
         this.dateUpload = dateUpload;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DocumentSocietaire that = (DocumentSocietaire) o;
-        return Objects.equals(idDoc, that.idDoc);
+    public Integer getIdCompteSocietaire() {
+        return idCompteSocietaire != null ? idCompteSocietaire : idSocietaire;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(idDoc);
+    public void setIdCompteSocietaire(Integer idCompteSocietaire) {
+        this.idCompteSocietaire = idCompteSocietaire;
+        this.idSocietaire = idCompteSocietaire;
     }
 
-    @Override
-    public String toString() {
-        return typeDoc + " - " + getNomFichier();
+    public TypeDocument getType() {
+        return type != null ? type : typeDocument;
     }
 
-    /**
-     * Extrait le nom du fichier à partir du chemin complet.
-     * @return Le nom du fichier
-     */
+    public void setType(TypeDocument type) {
+        this.type = type;
+        this.typeDocument = type;
+    }
+
     public String getNomFichier() {
-        if (cheminFichier == null) {
-            return "";
-        }
-        int lastIndex = cheminFichier.lastIndexOf('/');
-        if (lastIndex == -1) {
-            lastIndex = cheminFichier.lastIndexOf('\\');
-        }
-        if (lastIndex == -1) {
-            return cheminFichier;
-        }
-        return cheminFichier.substring(lastIndex + 1);
+        return nomFichier != null ? nomFichier : cheminFichier;
+    }
+
+    public void setNomFichier(String nomFichier) {
+        this.nomFichier = nomFichier;
+        this.cheminFichier = nomFichier;
+    }
+
+    public LocalDateTime getDateAjout() {
+        return dateAjout != null ? dateAjout : dateUpload;
+    }
+
+    public void setDateAjout(LocalDateTime dateAjout) {
+        this.dateAjout = dateAjout;
+        this.dateUpload = dateAjout;
+    }
+
+    public LocalDateTime getDateExpiration() {
+        return dateExpiration;
+    }
+
+    public void setDateExpiration(LocalDateTime dateExpiration) {
+        this.dateExpiration = dateExpiration;
+    }
+
+    public String getObservation() {
+        return observation;
+    }
+
+    public void setObservation(String observation) {
+        this.observation = observation;
     }
 }

@@ -1,32 +1,21 @@
 package main.java.com.miage.parcauto.model.affectation;
 
-import main.java.com.miage.parcauto.model.finance.SocietaireCompte;
-import main.java.com.miage.parcauto.model.rh.Personnel;
-import main.java.com.miage.parcauto.model.vehicule.Vehicule;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Objects;
+// import main.java.com.miage.parcauto.model.affectation.TypeAffectation;
 
-/**
- * Entité représentant une affectation de véhicule.
- */
-public class Affectation implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Affectation {
 
     private Integer id;
-    private Vehicule vehicule;
-    private Personnel personnel;  // Personnel à qui le véhicule est affecté (facultatif)
-    private SocietaireCompte societaire;  // Sociétaire à qui le véhicule est affecté (facultatif)
-    private TypeAffectation type;
+    private Integer idVehicule;
+    private Integer idPersonnel;
+    private Integer idSocietaire;
+    private TypeAffectation typeAffectation; // SQL: type
     private LocalDateTime dateDebut;
-    private LocalDateTime dateFin;  // Peut être null si l'affectation est en cours
+    private LocalDateTime dateFin;
 
     public Affectation() {
     }
 
-    // Getters et Setters
     public Integer getId() {
         return id;
     }
@@ -35,36 +24,36 @@ public class Affectation implements Serializable {
         this.id = id;
     }
 
-    public Vehicule getVehicule() {
-        return vehicule;
+    public Integer getIdVehicule() {
+        return idVehicule;
     }
 
-    public void setVehicule(Vehicule vehicule) {
-        this.vehicule = vehicule;
+    public void setIdVehicule(Integer idVehicule) {
+        this.idVehicule = idVehicule;
     }
 
-    public Personnel getPersonnel() {
-        return personnel;
+    public Integer getIdPersonnel() {
+        return idPersonnel;
     }
 
-    public void setPersonnel(Personnel personnel) {
-        this.personnel = personnel;
+    public void setIdPersonnel(Integer idPersonnel) {
+        this.idPersonnel = idPersonnel;
     }
 
-    public SocietaireCompte getSocietaire() {
-        return societaire;
+    public Integer getIdSocietaire() {
+        return idSocietaire;
     }
 
-    public void setSocietaire(SocietaireCompte societaire) {
-        this.societaire = societaire;
+    public void setIdSocietaire(Integer idSocietaire) {
+        this.idSocietaire = idSocietaire;
     }
 
-    public TypeAffectation getType() {
-        return type;
+    public TypeAffectation getTypeAffectation() {
+        return typeAffectation;
     }
 
-    public void setType(TypeAffectation type) {
-        this.type = type;
+    public void setTypeAffectation(TypeAffectation typeAffectation) {
+        this.typeAffectation = typeAffectation;
     }
 
     public LocalDateTime getDateDebut() {
@@ -81,25 +70,5 @@ public class Affectation implements Serializable {
 
     public void setDateFin(LocalDateTime dateFin) {
         this.dateFin = dateFin;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Affectation that = (Affectation) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        String beneficiaire = personnel != null ? personnel.toString() :
-                (societaire != null ? societaire.toString() : "Inconnu");
-        return "Affectation de " + vehicule + " à " + beneficiaire;
     }
 }

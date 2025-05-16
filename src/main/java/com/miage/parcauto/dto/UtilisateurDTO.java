@@ -1,45 +1,28 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.utilisateur.Role;
+import java.time.LocalDateTime;
 
-import java.io.Serializable;
+public class UtilisateurDTO {
 
-public class UtilisateurDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private Integer id;
-    private String login;
-    private Role role;
+    private Integer idUtilisateur;
     private Integer idPersonnel;
-    private String personnelInfo;
-    private boolean mfaEnabled;
+    private String login;
+    private String motDePasse; // Pour la création/modification, sera haché par le service
+    private String mfaSecret;
+    private Boolean actif;
+    private LocalDateTime dateCreation;
+    private LocalDateTime dateDerniereConnexion;
+    private String role; // Ou Role enum
 
     public UtilisateurDTO() {
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getIdUtilisateur() {
+        return idUtilisateur;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public void setIdUtilisateur(Integer idUtilisateur) {
+        this.idUtilisateur = idUtilisateur;
     }
 
     public Integer getIdPersonnel() {
@@ -50,29 +33,59 @@ public class UtilisateurDTO implements Serializable {
         this.idPersonnel = idPersonnel;
     }
 
-    public String getPersonnelInfo() {
-        return personnelInfo;
+    public String getLogin() {
+        return login;
     }
 
-    public void setPersonnelInfo(String personnelInfo) {
-        this.personnelInfo = personnelInfo;
+    public void setLogin(String login) {
+        this.login = login;
     }
 
-    public boolean isMfaEnabled() {
-        return mfaEnabled;
+    public String getMotDePasse() {
+        return motDePasse;
     }
 
-    public void setMfaEnabled(boolean mfaEnabled) {
-        this.mfaEnabled = mfaEnabled;
+    public void setMotDePasse(String motDePasse) {
+        this.motDePasse = motDePasse;
     }
 
-    @Override
-    public String toString() {
-        return "UtilisateurDTO{" +
-                "id=" + id +
-                ", login='" + login + '\'' +
-                ", role=" + (role != null ? role.getValeur() : "N/A") +
-                ", personnelInfo='" + personnelInfo + '\'' +
-                '}';
+    public String getMfaSecret() {
+        return mfaSecret;
+    }
+
+    public void setMfaSecret(String mfaSecret) {
+        this.mfaSecret = mfaSecret;
+    }
+
+    public Boolean isActif() {
+        return actif;
+    }
+
+    public void setActif(Boolean actif) {
+        this.actif = actif;
+    }
+
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDateTime dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public LocalDateTime getDateDerniereConnexion() {
+        return dateDerniereConnexion;
+    }
+
+    public void setDateDerniereConnexion(LocalDateTime dateDerniereConnexion) {
+        this.dateDerniereConnexion = dateDerniereConnexion;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

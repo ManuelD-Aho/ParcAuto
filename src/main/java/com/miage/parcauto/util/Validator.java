@@ -15,58 +15,52 @@ import java.util.regex.Pattern;
  * @version 1.0
  */
 public class Validator {
-    
+
     private static final Logger LOGGER = Logger.getLogger(Validator.class.getName());
-    
+
     /**
      * Pattern pour la validation d'une adresse email.
      * Format attendu: nom@domaine.extension
      */
-    private static final Pattern EMAIL_PATTERN = 
-            Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
-    
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$");
+
     /**
      * Pattern pour la validation d'un numéro de téléphone français.
      * Format attendu: +33XXXXXXXXX ou 0XXXXXXXXX
      */
-    private static final Pattern TELEPHONE_PATTERN = 
-            Pattern.compile("^(\\+33|0)[1-9](\\d{2}){4}$");
-    
+    private static final Pattern TELEPHONE_PATTERN = Pattern.compile("^(\\+33|0)[1-9](\\d{2}){4}$");
+
     /**
      * Pattern pour la validation d'un numéro d'immatriculation français.
      * Format attendu: AA-123-AA (nouveau format)
      */
-    private static final Pattern IMMATRICULATION_PATTERN = 
-            Pattern.compile("^[A-Za-z]{2}-[0-9]{3}-[A-Za-z]{2}$");
-    
+    private static final Pattern IMMATRICULATION_PATTERN = Pattern.compile("^[A-Za-z]{2}-[0-9]{3}-[A-Za-z]{2}$");
+
     /**
      * Pattern pour la validation d'un code postal français.
      * Format attendu: 5 chiffres
      */
-    private static final Pattern CODE_POSTAL_PATTERN = 
-            Pattern.compile("^[0-9]{5}$");
-    
+    private static final Pattern CODE_POSTAL_PATTERN = Pattern.compile("^[0-9]{5}$");
+
     /**
      * Pattern pour la validation d'un numéro de permis de conduire français.
      * Format attendu: 12 chiffres
      */
-    private static final Pattern PERMIS_PATTERN = 
-            Pattern.compile("^[0-9]{12}$");
-    
+    private static final Pattern PERMIS_PATTERN = Pattern.compile("^[0-9]{12}$");
+
     /**
      * Pattern pour la validation d'un mot de passe fort.
      * Au moins 8 caractères, une majuscule, une minuscule, un chiffre.
      */
-    private static final Pattern PASSWORD_PATTERN = 
-            Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$");
-    
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$");
+
     /**
      * Constructeur privé pour empêcher l'instanciation de cette classe utilitaire.
      */
     private Validator() {
         throw new IllegalStateException("Classe utilitaire non instanciable");
     }
-    
+
     /**
      * Valide une adresse email.
      *
@@ -80,7 +74,7 @@ public class Validator {
         Matcher matcher = EMAIL_PATTERN.matcher(email);
         return matcher.matches();
     }
-    
+
     /**
      * Valide un numéro de téléphone.
      *
@@ -94,7 +88,7 @@ public class Validator {
         Matcher matcher = TELEPHONE_PATTERN.matcher(telephone);
         return matcher.matches();
     }
-    
+
     /**
      * Valide un numéro d'immatriculation.
      *
@@ -108,7 +102,7 @@ public class Validator {
         Matcher matcher = IMMATRICULATION_PATTERN.matcher(immatriculation);
         return matcher.matches();
     }
-    
+
     /**
      * Valide un code postal.
      *
@@ -122,7 +116,7 @@ public class Validator {
         Matcher matcher = CODE_POSTAL_PATTERN.matcher(codePostal);
         return matcher.matches();
     }
-    
+
     /**
      * Valide un numéro de permis de conduire.
      *
@@ -136,7 +130,7 @@ public class Validator {
         Matcher matcher = PERMIS_PATTERN.matcher(permis);
         return matcher.matches();
     }
-    
+
     /**
      * Valide un mot de passe.
      *
@@ -150,7 +144,7 @@ public class Validator {
         Matcher matcher = PASSWORD_PATTERN.matcher(password);
         return matcher.matches();
     }
-    
+
     /**
      * Valide un kilométrage.
      *
@@ -160,7 +154,7 @@ public class Validator {
     public static boolean isValidKilometrage(int kilometrage) {
         return kilometrage >= 0;
     }
-    
+
     /**
      * Valide une date au format français (JJ/MM/AAAA).
      *
@@ -171,7 +165,7 @@ public class Validator {
         if (dateStr == null || dateStr.trim().isEmpty()) {
             return false;
         }
-        
+
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDate.parse(dateStr, formatter);
@@ -180,7 +174,7 @@ public class Validator {
             return false;
         }
     }
-    
+
     /**
      * Valide qu'une date est antérieure à la date actuelle.
      *
@@ -193,7 +187,7 @@ public class Validator {
         }
         return date.isBefore(LocalDate.now());
     }
-    
+
     /**
      * Valide qu'une date est postérieure à la date actuelle.
      *
@@ -206,7 +200,7 @@ public class Validator {
         }
         return date.isAfter(LocalDate.now());
     }
-    
+
     /**
      * Valide un montant financier.
      *
@@ -216,7 +210,7 @@ public class Validator {
     public static boolean isValidMontant(double montant) {
         return montant >= 0;
     }
-    
+
     /**
      * Valide que la chaîne n'est pas vide ou null.
      *

@@ -26,21 +26,11 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
         personnel.setMatricule(rs.getString("matricule"));
         personnel.setNom(rs.getString("nom"));
         personnel.setPrenom(rs.getString("prenom"));
-
-        Timestamp dateNaissanceTs = rs.getTimestamp("date_naissance");
-        personnel.setDateNaissance(dateNaissanceTs != null ? dateNaissanceTs.toLocalDateTime().toLocalDate() : null);
-
-        String sexeStr = rs.getString("sexe");
-        if (sexeStr != null) {
-            personnel.setSexe(Sexe.fromString(sexeStr));
-        }
-        personnel.setAdresse(rs.getString("adresse"));
-        personnel.setTelephone(rs.getString("telephone"));
         personnel.setEmail(rs.getString("email"));
-
-        Timestamp dateEmbaucheTs = rs.getTimestamp("date_embauche");
-        personnel.setDateEmbauche(dateEmbaucheTs != null ? dateEmbaucheTs.toLocalDateTime().toLocalDate() : null);
-
+        String sexeStr = rs.getString("sexe");
+        personnel.setSexe(sexeStr != null ? Sexe.valueOf(sexeStr) : null);
+        personnel.setDateEmbauche(
+                rs.getTimestamp("date_embauche") != null ? rs.getTimestamp("date_embauche").toLocalDateTime() : null);
         personnel.setObservation(rs.getString("observation"));
         return personnel;
     }
@@ -66,7 +56,7 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
         List<Personnel> personnels = new ArrayList<>();
         String sql = "SELECT * FROM PERSONNEL";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 personnels.add(mapResultSetToPersonnel(rs));
             }
@@ -103,12 +93,17 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
             pstmt.setString(3, personnel.getMatricule());
             pstmt.setString(4, personnel.getNom());
             pstmt.setString(5, personnel.getPrenom());
-            pstmt.setTimestamp(6, personnel.getDateNaissance() != null ? Timestamp.valueOf(personnel.getDateNaissance().atStartOfDay()) : null);
+            pstmt.setTimestamp(6,
+                    personnel.getDateNaissance() != null
+                            ? Timestamp.valueOf(personnel.getDateNaissance().atStartOfDay())
+                            : null);
             pstmt.setString(7, personnel.getSexe() != null ? personnel.getSexe().getValeur() : null);
             pstmt.setString(8, personnel.getAdresse());
             pstmt.setString(9, personnel.getTelephone());
             pstmt.setString(10, personnel.getEmail());
-            pstmt.setTimestamp(11, personnel.getDateEmbauche() != null ? Timestamp.valueOf(personnel.getDateEmbauche().atStartOfDay()) : null);
+            pstmt.setTimestamp(11,
+                    personnel.getDateEmbauche() != null ? Timestamp.valueOf(personnel.getDateEmbauche().atStartOfDay())
+                            : null);
             pstmt.setString(12, personnel.getObservation());
 
             int affectedRows = pstmt.executeUpdate();
@@ -123,7 +118,8 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde du membre du personnel: " + personnel.getNom() + " " + personnel.getPrenom(), e);
+            throw new DataAccessException("Erreur lors de la sauvegarde du membre du personnel: " + personnel.getNom()
+                    + " " + personnel.getPrenom(), e);
         }
         return personnel;
     }
@@ -137,21 +133,28 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
             pstmt.setString(3, personnel.getMatricule());
             pstmt.setString(4, personnel.getNom());
             pstmt.setString(5, personnel.getPrenom());
-            pstmt.setTimestamp(6, personnel.getDateNaissance() != null ? Timestamp.valueOf(personnel.getDateNaissance().atStartOfDay()) : null);
+            pstmt.setTimestamp(6,
+                    personnel.getDateNaissance() != null
+                            ? Timestamp.valueOf(personnel.getDateNaissance().atStartOfDay())
+                            : null);
             pstmt.setString(7, personnel.getSexe() != null ? personnel.getSexe().getValeur() : null);
             pstmt.setString(8, personnel.getAdresse());
             pstmt.setString(9, personnel.getTelephone());
             pstmt.setString(10, personnel.getEmail());
-            pstmt.setTimestamp(11, personnel.getDateEmbauche() != null ? Timestamp.valueOf(personnel.getDateEmbauche().atStartOfDay()) : null);
+            pstmt.setTimestamp(11,
+                    personnel.getDateEmbauche() != null ? Timestamp.valueOf(personnel.getDateEmbauche().atStartOfDay())
+                            : null);
             pstmt.setString(12, personnel.getObservation());
             pstmt.setInt(13, personnel.getIdPersonnel());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour du membre du personnel avec ID " + personnel.getIdPersonnel() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour du membre du personnel avec ID "
+                        + personnel.getIdPersonnel() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour du membre du personnel: " + personnel.getIdPersonnel(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour du membre du personnel: " + personnel.getIdPersonnel(), e);
         }
         return personnel;
     }
@@ -175,7 +178,7 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM PERSONNEL";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -229,7 +232,8 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des membres du personnel par ID service: " + idService, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des membres du personnel par ID service: " + idService, e);
         }
         return personnels;
     }
@@ -246,7 +250,8 @@ public class PersonnelRepositoryImpl implements PersonnelRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des membres du personnel par ID fonction: " + idFonction, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des membres du personnel par ID fonction: " + idFonction, e);
         }
         return personnels;
     }

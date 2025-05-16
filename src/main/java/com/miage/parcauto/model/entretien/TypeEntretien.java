@@ -1,28 +1,30 @@
 package main.java.com.miage.parcauto.model.entretien;
 
-/**
- * Types d'entretien pour un véhicule.
- */
 public enum TypeEntretien {
     PREVENTIF("Preventif"),
     CORRECTIF("Correctif");
 
-    private final String valeur;
+    private final String libelle;
 
-    TypeEntretien(String valeur) {
-        this.valeur = valeur;
+    TypeEntretien(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public static TypeEntretien fromString(String text) {
+    public static TypeEntretien fromLibelle(String libelle) {
         for (TypeEntretien type : TypeEntretien.values()) {
-            if (type.valeur.equalsIgnoreCase(text)) {
+            if (type.libelle.equalsIgnoreCase(libelle)) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Type d'entretien inconnu: " + text);
+        throw new IllegalArgumentException("Aucun type d'entretien ne correspond au libellé : " + libelle);
+    }
+
+    @Override
+    public String toString() {
+        return this.libelle;
     }
 }

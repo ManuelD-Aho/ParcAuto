@@ -16,6 +16,7 @@ import main.java.com.miage.parcauto.service.PersonnelService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +37,7 @@ public class PersonnelServiceImpl implements PersonnelService {
     }
 
     public PersonnelServiceImpl(PersonnelRepository personnelRepository, ServiceRHRepository serviceRHRepository,
-                                FonctionRepository fonctionRepository, PersonnelMapper personnelMapper) {
+            FonctionRepository fonctionRepository, PersonnelMapper personnelMapper) {
         this.personnelRepository = personnelRepository;
         this.serviceRHRepository = serviceRHRepository;
         this.fonctionRepository = fonctionRepository;
@@ -44,9 +45,11 @@ public class PersonnelServiceImpl implements PersonnelService {
     }
 
     @Override
-    public PersonnelDTO createPersonnel(PersonnelDTO personnelDTO) throws ValidationException, DuplicateEntityException, OperationFailedException {
+    public PersonnelDTO createPersonnel(PersonnelDTO personnelDTO)
+            throws ValidationException, DuplicateEntityException, OperationFailedException {
         // validationService.validatePersonnel(personnelDTO);
-        if (personnelDTO == null || personnelDTO.getMatricule() == null || personnelDTO.getMatricule().trim().isEmpty() ||
+        if (personnelDTO == null || personnelDTO.getMatricule() == null || personnelDTO.getMatricule().trim().isEmpty()
+                ||
                 personnelDTO.getNom() == null || personnelDTO.getNom().trim().isEmpty() ||
                 personnelDTO.getEmail() == null || personnelDTO.getEmail().trim().isEmpty()) {
             throw new ValidationException("Matricule, nom et email sont requis.");
@@ -55,25 +58,25 @@ public class PersonnelServiceImpl implements PersonnelService {
             throw new ValidationException("Service et Fonction sont requis.");
         }
 
-
         Connection conn = null;
         try {
             conn = DbUtil.getConnection();
             conn.setAutoCommit(false);
 
             if (personnelRepository.findByMatricule(conn, personnelDTO.getMatricule()).isPresent()) {
-                throw new DuplicateEntityException("Un membre du personnel avec le matricule '" + personnelDTO.getMatricule() + "' existe déjà.");
+                throw new DuplicateEntityException(
+                        "Un membre du personnel avec le matricule '" + personnelDTO.getMatricule() + "' existe déjà.");
             }
             if (personnelRepository.findByEmail(conn, personnelDTO.getEmail()).isPresent()) {
-                throw new DuplicateEntityException("Un membre du personnel avec l'email '" + personnelDTO.getEmail() + "' existe déjà.");
+                throw new DuplicateEntityException(
+                        "Un membre du personnel avec l'email '" + personnelDTO.getEmail() + "' existe déjà.");
             }
-            if (serviceRHRepository.findById(conn, personnelDTO.getIdService()).isEmpty()){
+            if (serviceRHRepository.findById(conn, personnelDTO.getIdService()).isEmpty()) {
                 throw new ValidationException("Le service avec ID " + personnelDTO.getIdService() + " n'existe pas.");
             }
-            if (fonctionRepository.findById(conn, personnelDTO.getIdFonction()).isEmpty()){
+            if (fonctionRepository.findById(conn, personnelDTO.getIdFonction()).isEmpty()) {
                 throw new ValidationException("La fonction avec ID " + personnelDTO.getIdFonction() + " n'existe pas.");
             }
-
 
             Personnel personnel = personnelMapper.toEntity(personnelDTO);
             Personnel savedPersonnel = personnelRepository.save(conn, personnel);
@@ -110,12 +113,12 @@ public class PersonnelServiceImpl implements PersonnelService {
             Optional<Personnel> personnelOpt = personnelRepository.findByMatricule(conn, matricule);
             return personnelOpt.map(personnelMapper::toDTO);
         } catch (SQLException e) {
-            throw new OperationFailedException("Erreur technique lors de la récupération du personnel par matricule.", e);
+            throw new OperationFailedException("Erreur technique lors de la récupération du personnel par matricule.",
+                    e);
         } finally {
             DbUtil.close(conn);
         }
     }
-
 
     @Override
     public List<PersonnelDTO> getAllPersonnel() throws OperationFailedException {
@@ -125,14 +128,16 @@ public class PersonnelServiceImpl implements PersonnelService {
             List<Personnel> personnels = personnelRepository.findAll(conn);
             return personnelMapper.toDTOList(personnels);
         } catch (SQLException e) {
-            throw new OperationFailedException("Erreur technique lors de la récupération de tous les membres du personnel.", e);
+            throw new OperationFailedException(
+                    "Erreur technique lors de la récupération de tous les membres du personnel.", e);
         } finally {
             DbUtil.close(conn);
         }
     }
 
     @Override
-    public PersonnelDTO updatePersonnel(PersonnelDTO personnelDTO) throws ValidationException, EntityNotFoundException, DuplicateEntityException, OperationFailedException {
+    public PersonnelDTO updatePersonnel(PersonnelDTO personnelDTO)
+            throws ValidationException, EntityNotFoundException, DuplicateEntityException, OperationFailedException {
         // validationService.validatePersonnel(personnelDTO);
         if (personnelDTO == null || personnelDTO.getIdPersonnel() == null) {
             throw new ValidationException("ID Personnel est requis pour la mise à jour.");
@@ -144,47 +149,62 @@ public class PersonnelServiceImpl implements PersonnelService {
             conn.setAutoCommit(false);
 
             Personnel existingPersonnel = personnelRepository.findById(conn, personnelDTO.getIdPersonnel())
-                    .orElseThrow(() -> new EntityNotFoundException("Membre du personnel non trouvé avec l'ID: " + personnelDTO.getIdPersonnel()));
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Membre du personnel non trouvé avec l'ID: " + personnelDTO.getIdPersonnel()));
 
-            if (personnelDTO.getMatricule() != null && !personnelDTO.getMatricule().equals(existingPersonnel.getMatricule())) {
+            if (personnelDTO.getMatricule() != null
+                    && !personnelDTO.getMatricule().equals(existingPersonnel.getMatricule())) {
                 personnelRepository.findByMatricule(conn, personnelDTO.getMatricule()).ifPresent(p -> {
-                    if(!p.getIdPersonnel().equals(existingPersonnel.getIdPersonnel())) {
-                        throw new RuntimeException(new DuplicateEntityException("Un autre membre du personnel avec le matricule '" + personnelDTO.getMatricule() + "' existe déjà."));
+                    if (!p.getIdPersonnel().equals(existingPersonnel.getIdPersonnel())) {
+                        throw new RuntimeException(
+                                new DuplicateEntityException("Un autre membre du personnel avec le matricule '"
+                                        + personnelDTO.getMatricule() + "' existe déjà."));
                     }
                 });
                 existingPersonnel.setMatricule(personnelDTO.getMatricule());
             }
             if (personnelDTO.getEmail() != null && !personnelDTO.getEmail().equals(existingPersonnel.getEmail())) {
                 personnelRepository.findByEmail(conn, personnelDTO.getEmail()).ifPresent(p -> {
-                    if(!p.getIdPersonnel().equals(existingPersonnel.getIdPersonnel())) {
-                        throw new RuntimeException(new DuplicateEntityException("Un autre membre du personnel avec l'email '" + personnelDTO.getEmail() + "' existe déjà."));
+                    if (!p.getIdPersonnel().equals(existingPersonnel.getIdPersonnel())) {
+                        throw new RuntimeException(
+                                new DuplicateEntityException("Un autre membre du personnel avec l'email '"
+                                        + personnelDTO.getEmail() + "' existe déjà."));
                     }
                 });
                 existingPersonnel.setEmail(personnelDTO.getEmail());
             }
 
             if (personnelDTO.getIdService() != null) {
-                if (serviceRHRepository.findById(conn, personnelDTO.getIdService()).isEmpty()){
-                    throw new ValidationException("Le service avec ID " + personnelDTO.getIdService() + " n'existe pas.");
+                if (serviceRHRepository.findById(conn, personnelDTO.getIdService()).isEmpty()) {
+                    throw new ValidationException(
+                            "Le service avec ID " + personnelDTO.getIdService() + " n'existe pas.");
                 }
                 existingPersonnel.setIdService(personnelDTO.getIdService());
             }
             if (personnelDTO.getIdFonction() != null) {
-                if (fonctionRepository.findById(conn, personnelDTO.getIdFonction()).isEmpty()){
-                    throw new ValidationException("La fonction avec ID " + personnelDTO.getIdFonction() + " n'existe pas.");
+                if (fonctionRepository.findById(conn, personnelDTO.getIdFonction()).isEmpty()) {
+                    throw new ValidationException(
+                            "La fonction avec ID " + personnelDTO.getIdFonction() + " n'existe pas.");
                 }
                 existingPersonnel.setIdFonction(personnelDTO.getIdFonction());
             }
 
-            if(personnelDTO.getNom() != null) existingPersonnel.setNom(personnelDTO.getNom());
-            if(personnelDTO.getPrenom() != null) existingPersonnel.setPrenom(personnelDTO.getPrenom());
-            if(personnelDTO.getTelephone() != null) existingPersonnel.setTelephone(personnelDTO.getTelephone());
-            if(personnelDTO.getAdresse() != null) existingPersonnel.setAdresse(personnelDTO.getAdresse());
-            if(personnelDTO.getDateNaissance() != null) existingPersonnel.setDateNaissance(personnelDTO.getDateNaissance());
-            if(personnelDTO.getSexe() != null) existingPersonnel.setSexe(main.java.com.miage.parcauto.model.rh.Sexe.valueOf(personnelDTO.getSexe()));
-            if(personnelDTO.getDateEmbauche() != null) existingPersonnel.setDateEmbauche(personnelDTO.getDateEmbauche());
-            if(personnelDTO.getObservation() != null) existingPersonnel.setObservation(personnelDTO.getObservation());
-
+            if (personnelDTO.getNom() != null)
+                existingPersonnel.setNom(personnelDTO.getNom());
+            if (personnelDTO.getPrenom() != null)
+                existingPersonnel.setPrenom(personnelDTO.getPrenom());
+            if (personnelDTO.getTelephone() != null)
+                existingPersonnel.setTelephone(personnelDTO.getTelephone());
+            if (personnelDTO.getAdresse() != null)
+                existingPersonnel.setAdresse(personnelDTO.getAdresse());
+            if (personnelDTO.getDateNaissance() != null)
+                existingPersonnel.setDateNaissance(personnelDTO.getDateNaissance());
+            if (personnelDTO.getSexe() != null)
+                existingPersonnel.setSexe(main.java.com.miage.parcauto.model.rh.Sexe.valueOf(personnelDTO.getSexe()));
+            if (personnelDTO.getDateEmbauche() != null)
+                existingPersonnel.setDateEmbauche(personnelDTO.getDateEmbauche());
+            if (personnelDTO.getObservation() != null)
+                existingPersonnel.setObservation(personnelDTO.getObservation());
 
             Personnel updatedPersonnel = personnelRepository.update(conn, existingPersonnel);
             conn.commit();
@@ -215,17 +235,20 @@ public class PersonnelServiceImpl implements PersonnelService {
                 throw new EntityNotFoundException("Membre du personnel non trouvé avec l'ID: " + idPersonnel);
             }
             // Gérer les dépendances (Utilisateur, Affectation, SocietaireCompte, Mission)
-            // Exemple: si un personnel est lié à un utilisateur, la suppression pourrait échouer ou nécessiter une action.
+            // Exemple: si un personnel est lié à un utilisateur, la suppression pourrait
+            // échouer ou nécessiter une action.
 
             boolean deleted = personnelRepository.delete(conn, idPersonnel);
-            if(!deleted) {
+            if (!deleted) {
                 throw new OperationFailedException("La suppression du membre du personnel a échoué.");
             }
             conn.commit();
         } catch (SQLException e) {
             DbUtil.rollback(conn);
             if (e.getSQLState().startsWith("23")) {
-                throw new OperationFailedException("Impossible de supprimer le membre du personnel car il est référencé (ex: utilisateur, affectations).", e);
+                throw new OperationFailedException(
+                        "Impossible de supprimer le membre du personnel car il est référencé (ex: utilisateur, affectations).",
+                        e);
             }
             throw new OperationFailedException("Erreur technique lors de la suppression du membre du personnel.", e);
         } finally {

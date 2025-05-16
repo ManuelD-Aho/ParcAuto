@@ -20,16 +20,12 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
     private SocietaireCompte mapResultSetToSocietaireCompte(ResultSet rs) throws SQLException {
         SocietaireCompte compte = new SocietaireCompte();
         compte.setIdCompteSocietaire(rs.getInt("id_compte_societaire"));
-
-        int idPersonnel = rs.getInt("id_personnel"); // Clé étrangère vers PERSONNEL
+        int idPersonnel = rs.getInt("id_personnel");
         compte.setIdPersonnel(rs.wasNull() ? null : idPersonnel);
-
         compte.setNumeroCompte(rs.getString("numero_compte"));
         compte.setSolde(rs.getBigDecimal("solde"));
-
-        Timestamp dateCreationTs = rs.getTimestamp("date_creation");
-        compte.setDateCreation(dateCreationTs != null ? dateCreationTs.toLocalDateTime() : null);
-
+        compte.setDateCreation(
+                rs.getTimestamp("date_creation") != null ? rs.getTimestamp("date_creation").toLocalDateTime() : null);
         compte.setActif(rs.getBoolean("actif"));
         return compte;
     }
@@ -55,7 +51,7 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
         List<SocietaireCompte> comptes = new ArrayList<>();
         String sql = "SELECT * FROM SOCIETAIRE_COMPTE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 comptes.add(mapResultSetToSocietaireCompte(rs));
             }
@@ -87,10 +83,14 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
     public SocietaireCompte save(Connection conn, SocietaireCompte compte) throws SQLException {
         String sql = "INSERT INTO SOCIETAIRE_COMPTE (id_personnel, numero_compte, solde, date_creation, actif) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            if (compte.getIdPersonnel() != null) pstmt.setInt(1, compte.getIdPersonnel()); else pstmt.setNull(1, Types.INTEGER);
+            if (compte.getIdPersonnel() != null)
+                pstmt.setInt(1, compte.getIdPersonnel());
+            else
+                pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, compte.getNumeroCompte());
             pstmt.setBigDecimal(3, compte.getSolde());
-            pstmt.setTimestamp(4, compte.getDateCreation() != null ? Timestamp.valueOf(compte.getDateCreation()) : Timestamp.valueOf(java.time.LocalDateTime.now()));
+            pstmt.setTimestamp(4, compte.getDateCreation() != null ? Timestamp.valueOf(compte.getDateCreation())
+                    : Timestamp.valueOf(java.time.LocalDateTime.now()));
             pstmt.setBoolean(5, compte.isActif());
 
             int affectedRows = pstmt.executeUpdate();
@@ -105,7 +105,8 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde du compte sociétaire: " + compte.getNumeroCompte(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la sauvegarde du compte sociétaire: " + compte.getNumeroCompte(), e);
         }
         return compte;
     }
@@ -114,19 +115,29 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
     public SocietaireCompte update(Connection conn, SocietaireCompte compte) throws SQLException {
         String sql = "UPDATE SOCIETAIRE_COMPTE SET id_personnel = ?, numero_compte = ?, solde = ?, date_creation = ?, actif = ? WHERE id_compte_societaire = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (compte.getIdPersonnel() != null) pstmt.setInt(1, compte.getIdPersonnel()); else pstmt.setNull(1, Types.INTEGER);
+            if (compte.getIdPersonnel() != null)
+                pstmt.setInt(1, compte.getIdPersonnel());
+            else
+                pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, compte.getNumeroCompte());
             pstmt.setBigDecimal(3, compte.getSolde());
-            pstmt.setTimestamp(4, compte.getDateCreation() != null ? Timestamp.valueOf(compte.getDateCreation()) : null); // Ne pas changer date_creation à la légère
+            pstmt.setTimestamp(4,
+                    compte.getDateCreation() != null ? Timestamp.valueOf(compte.getDateCreation()) : null); // Ne pas
+                                                                                                            // changer
+                                                                                                            // date_creation
+                                                                                                            // à la
+                                                                                                            // légère
             pstmt.setBoolean(5, compte.isActif());
             pstmt.setInt(6, compte.getIdCompteSocietaire());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour du compte sociétaire avec ID " + compte.getIdCompteSocietaire() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour du compte sociétaire avec ID "
+                        + compte.getIdCompteSocietaire() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour du compte sociétaire: " + compte.getIdCompteSocietaire(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour du compte sociétaire: " + compte.getIdCompteSocietaire(), e);
         }
         return compte;
     }
@@ -148,7 +159,7 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM SOCIETAIRE_COMPTE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -169,7 +180,8 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche du compte sociétaire par numéro: " + numeroCompte, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche du compte sociétaire par numéro: " + numeroCompte, e);
         }
         return Optional.empty();
     }
@@ -185,7 +197,8 @@ public class SocietaireCompteRepositoryImpl implements SocietaireCompteRepositor
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche du compte sociétaire par ID Personnel: " + idPersonnel, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche du compte sociétaire par ID Personnel: " + idPersonnel, e);
         }
         return Optional.empty();
     }

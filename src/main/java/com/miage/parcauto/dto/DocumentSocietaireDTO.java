@@ -1,30 +1,24 @@
 package main.java.com.miage.parcauto.dto;
 
-import main.java.com.miage.parcauto.model.document.TypeDocument;
-
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class DocumentSocietaireDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private Integer idDoc;
+public class DocumentSocietaireDTO {
+    private Integer idDocument;
     private Integer idSocietaire;
-    private String societaireInfo;
-    private TypeDocument typeDoc;
+    private String typeDocument;
+    private LocalDateTime dateDebutValidite;
+    private LocalDateTime dateFinValidite;
     private String cheminFichier;
-    private LocalDateTime dateUpload;
 
     public DocumentSocietaireDTO() {
     }
 
-    public Integer getIdDoc() {
-        return idDoc;
+    public Integer getIdDocument() {
+        return idDocument;
     }
 
-    public void setIdDoc(Integer idDoc) {
-        this.idDoc = idDoc;
+    public void setIdDocument(Integer idDocument) {
+        this.idDocument = idDocument;
     }
 
     public Integer getIdSocietaire() {
@@ -35,20 +29,28 @@ public class DocumentSocietaireDTO implements Serializable {
         this.idSocietaire = idSocietaire;
     }
 
-    public String getSocietaireInfo() {
-        return societaireInfo;
+    public String getTypeDocument() {
+        return typeDocument;
     }
 
-    public void setSocietaireInfo(String societaireInfo) {
-        this.societaireInfo = societaireInfo;
+    public void setTypeDocument(String typeDocument) {
+        this.typeDocument = typeDocument;
     }
 
-    public TypeDocument getTypeDoc() {
-        return typeDoc;
+    public LocalDateTime getDateDebutValidite() {
+        return dateDebutValidite;
     }
 
-    public void setTypeDoc(TypeDocument typeDoc) {
-        this.typeDoc = typeDoc;
+    public void setDateDebutValidite(LocalDateTime dateDebutValidite) {
+        this.dateDebutValidite = dateDebutValidite;
+    }
+
+    public LocalDateTime getDateFinValidite() {
+        return dateFinValidite;
+    }
+
+    public void setDateFinValidite(LocalDateTime dateFinValidite) {
+        this.dateFinValidite = dateFinValidite;
     }
 
     public String getCheminFichier() {
@@ -57,23 +59,5 @@ public class DocumentSocietaireDTO implements Serializable {
 
     public void setCheminFichier(String cheminFichier) {
         this.cheminFichier = cheminFichier;
-    }
-
-    public LocalDateTime getDateUpload() {
-        return dateUpload;
-    }
-
-    public void setDateUpload(LocalDateTime dateUpload) {
-        this.dateUpload = dateUpload;
-    }
-
-    @Override
-    public String toString() {
-        return "DocumentSocietaireDTO{" +
-                "idDoc=" + idDoc +
-                ", societaireInfo='" + societaireInfo + '\'' +
-                ", typeDoc=" + (typeDoc != null ? typeDoc.getValeur() : "N/A") +
-                ", cheminFichier='" + cheminFichier + '\'' +
-                '}';
     }
 }

@@ -1,29 +1,31 @@
 package main.java.com.miage.parcauto.model.mission;
 
-/**
- * Statuts possibles pour une mission.
- */
 public enum StatutMission {
     PLANIFIEE("Planifiee"),
     EN_COURS("EnCours"),
     CLOTUREE("Cloturee");
 
-    private final String valeur;
+    private final String libelle;
 
-    StatutMission(String valeur) {
-        this.valeur = valeur;
+    StatutMission(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public static StatutMission fromString(String text) {
+    public static StatutMission fromLibelle(String libelle) {
         for (StatutMission statut : StatutMission.values()) {
-            if (statut.valeur.equalsIgnoreCase(text)) {
+            if (statut.libelle.equalsIgnoreCase(libelle) || statut.name().replace("_", "").equalsIgnoreCase(libelle)) {
                 return statut;
             }
         }
-        throw new IllegalArgumentException("Statut de mission inconnu: " + text);
+        throw new IllegalArgumentException("Aucun statut de mission ne correspond au libellé : " + libelle);
+    }
+
+    @Override
+    public String toString() {
+        return this.libelle;
     }
 }

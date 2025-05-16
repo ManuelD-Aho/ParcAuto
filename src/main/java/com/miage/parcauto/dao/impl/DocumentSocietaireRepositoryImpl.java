@@ -21,21 +21,11 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
         DocumentSocietaire document = new DocumentSocietaire();
         document.setIdDocument(rs.getInt("id_document"));
         document.setIdCompteSocietaire(rs.getInt("id_compte_societaire"));
-
         String typeDocStr = rs.getString("type_doc");
-        if (typeDocStr != null) {
-            document.setTypeDoc(TypeDocument.fromString(typeDocStr));
-        }
+        document.setType(typeDocStr != null ? TypeDocument.valueOf(typeDocStr) : null);
         document.setNomFichier(rs.getString("nom_fichier"));
-        document.setCheminFichier(rs.getString("chemin_fichier"));
-
-        Timestamp dateUploadTs = rs.getTimestamp("date_upload");
-        document.setDateUpload(dateUploadTs != null ? dateUploadTs.toLocalDateTime() : null);
-
-        Timestamp dateExpirationTs = rs.getTimestamp("date_expiration");
-        document.setDateExpiration(dateExpirationTs != null ? dateExpirationTs.toLocalDateTime() : null);
-
-        document.setObservation(rs.getString("observation"));
+        document.setDateAjout(
+                rs.getTimestamp("date_ajout") != null ? rs.getTimestamp("date_ajout").toLocalDateTime() : null);
         return document;
     }
 
@@ -60,7 +50,7 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
         List<DocumentSocietaire> documents = new ArrayList<>();
         String sql = "SELECT * FROM DOCUMENT_SOCIETAIRE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 documents.add(mapResultSetToDocumentSocietaire(rs));
             }
@@ -96,8 +86,10 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
             pstmt.setString(2, document.getTypeDoc() != null ? document.getTypeDoc().getValeur() : null);
             pstmt.setString(3, document.getNomFichier());
             pstmt.setString(4, document.getCheminFichier());
-            pstmt.setTimestamp(5, document.getDateUpload() != null ? Timestamp.valueOf(document.getDateUpload()) : null);
-            pstmt.setTimestamp(6, document.getDateExpiration() != null ? Timestamp.valueOf(document.getDateExpiration()) : null);
+            pstmt.setTimestamp(5,
+                    document.getDateUpload() != null ? Timestamp.valueOf(document.getDateUpload()) : null);
+            pstmt.setTimestamp(6,
+                    document.getDateExpiration() != null ? Timestamp.valueOf(document.getDateExpiration()) : null);
             pstmt.setString(7, document.getObservation());
 
             int affectedRows = pstmt.executeUpdate();
@@ -112,7 +104,8 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde du document sociétaire: " + document.getNomFichier(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la sauvegarde du document sociétaire: " + document.getNomFichier(), e);
         }
         return document;
     }
@@ -125,17 +118,21 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
             pstmt.setString(2, document.getTypeDoc() != null ? document.getTypeDoc().getValeur() : null);
             pstmt.setString(3, document.getNomFichier());
             pstmt.setString(4, document.getCheminFichier());
-            pstmt.setTimestamp(5, document.getDateUpload() != null ? Timestamp.valueOf(document.getDateUpload()) : null);
-            pstmt.setTimestamp(6, document.getDateExpiration() != null ? Timestamp.valueOf(document.getDateExpiration()) : null);
+            pstmt.setTimestamp(5,
+                    document.getDateUpload() != null ? Timestamp.valueOf(document.getDateUpload()) : null);
+            pstmt.setTimestamp(6,
+                    document.getDateExpiration() != null ? Timestamp.valueOf(document.getDateExpiration()) : null);
             pstmt.setString(7, document.getObservation());
             pstmt.setInt(8, document.getIdDocument());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour du document sociétaire avec ID " + document.getIdDocument() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour du document sociétaire avec ID "
+                        + document.getIdDocument() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour du document sociétaire: " + document.getIdDocument(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour du document sociétaire: " + document.getIdDocument(), e);
         }
         return document;
     }
@@ -156,7 +153,7 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM DOCUMENT_SOCIETAIRE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -167,7 +164,8 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
     }
 
     @Override
-    public List<DocumentSocietaire> findBySocietaireCompteId(Connection conn, Integer idCompteSocietaire) throws SQLException {
+    public List<DocumentSocietaire> findBySocietaireCompteId(Connection conn, Integer idCompteSocietaire)
+            throws SQLException {
         List<DocumentSocietaire> documents = new ArrayList<>();
         String sql = "SELECT * FROM DOCUMENT_SOCIETAIRE WHERE id_compte_societaire = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -178,13 +176,15 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des documents pour le compte sociétaire ID: " + idCompteSocietaire, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des documents pour le compte sociétaire ID: " + idCompteSocietaire, e);
         }
         return documents;
     }
 
     @Override
-    public List<DocumentSocietaire> findBySocietaireCompteIdAndType(Connection conn, Integer idCompteSocietaire, TypeDocument typeDocument) throws SQLException {
+    public List<DocumentSocietaire> findBySocietaireCompteIdAndType(Connection conn, Integer idCompteSocietaire,
+            TypeDocument typeDocument) throws SQLException {
         List<DocumentSocietaire> documents = new ArrayList<>();
         String sql = "SELECT * FROM DOCUMENT_SOCIETAIRE WHERE id_compte_societaire = ? AND type_doc = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -196,7 +196,8 @@ public class DocumentSocietaireRepositoryImpl implements DocumentSocietaireRepos
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des documents pour le compte sociétaire ID: " + idCompteSocietaire + " et type: " + typeDocument, e);
+            throw new DataAccessException("Erreur lors de la recherche des documents pour le compte sociétaire ID: "
+                    + idCompteSocietaire + " et type: " + typeDocument, e);
         }
         return documents;
     }

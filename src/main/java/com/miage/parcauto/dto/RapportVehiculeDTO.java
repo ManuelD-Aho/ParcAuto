@@ -1,24 +1,11 @@
 package main.java.com.miage.parcauto.dto;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
-public class RapportVehiculeDTO implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    private VehiculeDTO vehicule; // Informations de base du véhicule
-    private TCODTO tcoActuel;
-    private List<EntretienDTO> historiqueEntretiens;
-    private List<MissionDTO> historiqueMissions;
-    private List<AffectationDTO> historiqueAffectations;
-    private AssuranceDTO assuranceActuelle; // Ou List<AssuranceDTO> si plusieurs peuvent être actives/historiques
-    private BigDecimal totalCoutsEntretiens;
-    private BigDecimal totalCoutsMissions; // Carburant, etc.
-    private Integer totalKmParcourusEnMission;
-    private Double tauxUtilisation; // Pourcentage de temps en mission ou affecté
+public class RapportVehiculeDTO {
+    private VehiculeDTO vehicule;
+    private List<EntretienDTO> entretiens;
+    private List<MissionDTO> missions;
 
     public RapportVehiculeDTO() {
     }
@@ -31,82 +18,19 @@ public class RapportVehiculeDTO implements Serializable {
         this.vehicule = vehicule;
     }
 
-    public TCODTO getTcoActuel() {
-        return tcoActuel;
+    public List<EntretienDTO> getEntretiens() {
+        return entretiens;
     }
 
-    public void setTcoActuel(TCODTO tcoActuel) {
-        this.tcoActuel = tcoActuel;
+    public void setEntretiens(List<EntretienDTO> entretiens) {
+        this.entretiens = entretiens;
     }
 
-    public List<EntretienDTO> getHistoriqueEntretiens() {
-        return historiqueEntretiens;
+    public List<MissionDTO> getMissions() {
+        return missions;
     }
 
-    public void setHistoriqueEntretiens(List<EntretienDTO> historiqueEntretiens) {
-        this.historiqueEntretiens = historiqueEntretiens;
-    }
-
-    public List<MissionDTO> getHistoriqueMissions() {
-        return historiqueMissions;
-    }
-
-    public void setHistoriqueMissions(List<MissionDTO> historiqueMissions) {
-        this.historiqueMissions = historiqueMissions;
-    }
-
-    public List<AffectationDTO> getHistoriqueAffectations() {
-        return historiqueAffectations;
-    }
-
-    public void setHistoriqueAffectations(List<AffectationDTO> historiqueAffectations) {
-        this.historiqueAffectations = historiqueAffectations;
-    }
-
-    public AssuranceDTO getAssuranceActuelle() {
-        return assuranceActuelle;
-    }
-
-    public void setAssuranceActuelle(AssuranceDTO assuranceActuelle) {
-        this.assuranceActuelle = assuranceActuelle;
-    }
-
-    public BigDecimal getTotalCoutsEntretiens() {
-        return totalCoutsEntretiens;
-    }
-
-    public void setTotalCoutsEntretiens(BigDecimal totalCoutsEntretiens) {
-        this.totalCoutsEntretiens = totalCoutsEntretiens;
-    }
-
-    public BigDecimal getTotalCoutsMissions() {
-        return totalCoutsMissions;
-    }
-
-    public void setTotalCoutsMissions(BigDecimal totalCoutsMissions) {
-        this.totalCoutsMissions = totalCoutsMissions;
-    }
-
-    public Integer getTotalKmParcourusEnMission() {
-        return totalKmParcourusEnMission;
-    }
-
-    public void setTotalKmParcourusEnMission(Integer totalKmParcourusEnMission) {
-        this.totalKmParcourusEnMission = totalKmParcourusEnMission;
-    }
-
-    public Double getTauxUtilisation() {
-        return tauxUtilisation;
-    }
-
-    public void setTauxUtilisation(Double tauxUtilisation) {
-        this.tauxUtilisation = tauxUtilisation;
-    }
-
-    @Override
-    public String toString() {
-        return "RapportVehiculeDTO{" +
-                "vehicule=" + (vehicule != null ? vehicule.getImmatriculation() : "N/A") +
-                '}';
+    public void setMissions(List<MissionDTO> missions) {
+        this.missions = missions;
     }
 }

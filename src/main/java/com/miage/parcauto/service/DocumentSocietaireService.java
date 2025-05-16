@@ -20,11 +20,15 @@ public interface DocumentSocietaireService {
      *
      * @param documentDTO Le DTO contenant les informations du document.
      * @return Le DocumentSocietaireDTO enregistré avec son ID.
-     * @throws ValidationException Si les données du document sont invalides.
-     * @throws SocietaireNotFoundException Si le compte sociétaire associé n'existe pas.
-     * @throws OperationFailedException Si une erreur technique survient (ex: échec de sauvegarde du fichier).
+     * @throws ValidationException         Si les données du document sont
+     *                                     invalides.
+     * @throws SocietaireNotFoundException Si le compte sociétaire associé n'existe
+     *                                     pas.
+     * @throws OperationFailedException    Si une erreur technique survient (ex:
+     *                                     échec de sauvegarde du fichier).
      */
-    DocumentSocietaireDTO createDocumentSocietaire(DocumentSocietaireDTO documentDTO) throws ValidationException, SocietaireNotFoundException, OperationFailedException;
+    DocumentSocietaireDTO createDocumentSocietaire(DocumentSocietaireDTO documentDTO)
+            throws ValidationException, SocietaireNotFoundException, OperationFailedException;
 
     /**
      * Récupère un document par son identifiant.
@@ -41,40 +45,44 @@ public interface DocumentSocietaireService {
      * @param idCompteSocietaire L'identifiant du compte sociétaire.
      * @return Une liste de DocumentSocietaireDTO.
      * @throws SocietaireNotFoundException Si le compte sociétaire n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws OperationFailedException    Si une erreur technique survient.
      */
-    List<DocumentSocietaireDTO> getDocumentsByCompteSocietaireId(Integer idCompteSocietaire) throws SocietaireNotFoundException, OperationFailedException;
+    List<DocumentSocietaireDTO> getDocumentsByCompteSocietaireId(Integer idCompteSocietaire)
+            throws SocietaireNotFoundException, OperationFailedException;
 
     /**
      * Récupère tous les documents d'un type spécifique pour un compte sociétaire.
      *
      * @param idCompteSocietaire L'identifiant du compte sociétaire.
-     * @param typeDocument Le type de document.
+     * @param typeDocument       Le type de document.
      * @return Une liste de DocumentSocietaireDTO.
      * @throws SocietaireNotFoundException Si le compte sociétaire n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws OperationFailedException    Si une erreur technique survient.
      */
-    List<DocumentSocietaireDTO> getDocumentsByCompteSocietaireIdAndType(Integer idCompteSocietaire, TypeDocument typeDocument) throws SocietaireNotFoundException, OperationFailedException;
-
+    List<DocumentSocietaireDTO> getDocumentsByCompteSocietaireIdAndType(Integer idCompteSocietaire,
+            TypeDocument typeDocument) throws SocietaireNotFoundException, OperationFailedException;
 
     /**
      * Met à jour les informations d'un document existant.
      *
      * @param documentDTO Le DTO du document avec les informations mises à jour.
      * @return Le DocumentSocietaireDTO mis à jour.
-     * @throws ValidationException Si les données sont invalides.
-     * @throws DocumentNotFoundException Si le document à mettre à jour n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws ValidationException       Si les données sont invalides.
+     * @throws DocumentNotFoundException Si le document à mettre à jour n'est pas
+     *                                   trouvé.
+     * @throws OperationFailedException  Si une erreur technique survient.
      */
-    DocumentSocietaireDTO updateDocumentSocietaire(DocumentSocietaireDTO documentDTO) throws ValidationException, DocumentNotFoundException, OperationFailedException;
+    DocumentSocietaireDTO updateDocumentSocietaire(DocumentSocietaireDTO documentDTO)
+            throws ValidationException, DocumentNotFoundException, OperationFailedException;
 
     /**
      * Supprime un document par son identifiant.
      * Ceci devrait aussi gérer la suppression du fichier physique si nécessaire.
      *
      * @param idDocument L'identifiant du document à supprimer.
-     * @throws DocumentNotFoundException Si le document à supprimer n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws DocumentNotFoundException Si le document à supprimer n'est pas
+     *                                   trouvé.
+     * @throws OperationFailedException  Si une erreur technique survient.
      */
     void deleteDocumentSocietaire(Integer idDocument) throws DocumentNotFoundException, OperationFailedException;
 }

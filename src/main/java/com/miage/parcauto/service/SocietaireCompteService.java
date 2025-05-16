@@ -7,7 +7,6 @@ import main.java.com.miage.parcauto.exception.OperationFailedException;
 import main.java.com.miage.parcauto.exception.ValidationException;
 import main.java.com.miage.parcauto.exception.SocietaireNotFoundException;
 
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -22,11 +21,13 @@ public interface SocietaireCompteService {
      *
      * @param compteDTO Le DTO contenant les informations du compte.
      * @return Le SocietaireCompteDTO créé avec son ID.
-     * @throws ValidationException Si les données sont invalides.
-     * @throws DuplicateEntityException Si un numéro de compte identique existe déjà.
+     * @throws ValidationException      Si les données sont invalides.
+     * @throws DuplicateEntityException Si un numéro de compte identique existe
+     *                                  déjà.
      * @throws OperationFailedException Si une erreur technique survient.
      */
-    SocietaireCompteDTO createSocietaireCompte(SocietaireCompteDTO compteDTO) throws ValidationException, DuplicateEntityException, OperationFailedException;
+    SocietaireCompteDTO createSocietaireCompte(SocietaireCompteDTO compteDTO)
+            throws ValidationException, DuplicateEntityException, OperationFailedException;
 
     /**
      * Récupère un compte sociétaire par son identifiant.
@@ -68,30 +69,35 @@ public interface SocietaireCompteService {
      *
      * @param compteDTO Le DTO avec les informations mises à jour.
      * @return Le SocietaireCompteDTO mis à jour.
-     * @throws ValidationException Si les données sont invalides.
+     * @throws ValidationException         Si les données sont invalides.
      * @throws SocietaireNotFoundException Si le compte n'est pas trouvé.
-     * @throws DuplicateEntityException Si le numéro de compte modifié entre en conflit.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws DuplicateEntityException    Si le numéro de compte modifié entre en
+     *                                     conflit.
+     * @throws OperationFailedException    Si une erreur technique survient.
      */
-    SocietaireCompteDTO updateSocietaireCompte(SocietaireCompteDTO compteDTO) throws ValidationException, SocietaireNotFoundException, DuplicateEntityException, OperationFailedException;
+    SocietaireCompteDTO updateSocietaireCompte(SocietaireCompteDTO compteDTO)
+            throws ValidationException, SocietaireNotFoundException, DuplicateEntityException, OperationFailedException;
 
     /**
      * Supprime un compte sociétaire par son identifiant.
      *
      * @param idCompteSocietaire L'identifiant du compte à supprimer.
      * @throws SocietaireNotFoundException Si le compte n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient (ex: solde non nul, dépendances).
+     * @throws OperationFailedException    Si une erreur technique survient (ex:
+     *                                     solde non nul, dépendances).
      */
-    void deleteSocietaireCompte(Integer idCompteSocietaire) throws SocietaireNotFoundException, OperationFailedException;
+    void deleteSocietaireCompte(Integer idCompteSocietaire)
+            throws SocietaireNotFoundException, OperationFailedException;
 
     /**
      * Met à jour le solde d'un compte sociétaire.
      *
      * @param idCompteSocietaire L'identifiant du compte.
-     * @param nouveauSolde Le nouveau solde du compte.
+     * @param nouveauSolde       Le nouveau solde du compte.
      * @throws SocietaireNotFoundException Si le compte n'est pas trouvé.
-     * @throws ValidationException Si le nouveau solde est invalide.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws ValidationException         Si le nouveau solde est invalide.
+     * @throws OperationFailedException    Si une erreur technique survient.
      */
-    void updateSolde(Integer idCompteSocietaire, BigDecimal nouveauSolde) throws SocietaireNotFoundException, ValidationException, OperationFailedException;
+    void updateSolde(Integer idCompteSocietaire, BigDecimal nouveauSolde)
+            throws SocietaireNotFoundException, ValidationException, OperationFailedException;
 }

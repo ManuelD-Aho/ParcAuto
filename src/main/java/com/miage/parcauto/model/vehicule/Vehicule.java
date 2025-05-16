@@ -1,21 +1,16 @@
 package main.java.com.miage.parcauto.model.vehicule;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Objects;
+// import main.java.com.miage.parcauto.model.vehicule.Energie;
+// import main.java.com.miage.parcauto.model.vehicule.EtatVoiture;
 
-/**
- * Entité représentant un véhicule du parc automobile.
- */
-public class Vehicule implements Serializable {
-
-    private static final long serialVersionUID = 1L;
+public class Vehicule {
 
     private Integer idVehicule;
-    private EtatVoiture etatVoiture;
+    private Integer idEtatVoiture; // Référence à EtatVoiture, l'objet EtatVoiture peut être chargé par le service
     private Energie energie;
-    private String numeroChassi;
+    private String numeroChassis; // Nom SQL: numero_chassi
     private String immatriculation;
     private String marque;
     private String modele;
@@ -29,10 +24,12 @@ public class Vehicule implements Serializable {
     private Integer kmActuels;
     private LocalDateTime dateEtat;
 
+    // Référence à l'objet EtatVoiture si vous souhaitez le charger directement
+    // private EtatVoiture etatVoiture;
+
     public Vehicule() {
     }
 
-    // Getters et Setters
     public Integer getIdVehicule() {
         return idVehicule;
     }
@@ -41,12 +38,12 @@ public class Vehicule implements Serializable {
         this.idVehicule = idVehicule;
     }
 
-    public EtatVoiture getEtatVoiture() {
-        return etatVoiture;
+    public Integer getIdEtatVoiture() {
+        return idEtatVoiture;
     }
 
-    public void setEtatVoiture(EtatVoiture etatVoiture) {
-        this.etatVoiture = etatVoiture;
+    public void setIdEtatVoiture(Integer idEtatVoiture) {
+        this.idEtatVoiture = idEtatVoiture;
     }
 
     public Energie getEnergie() {
@@ -57,12 +54,12 @@ public class Vehicule implements Serializable {
         this.energie = energie;
     }
 
-    public String getNumeroChassi() {
-        return numeroChassi;
+    public String getNumeroChassis() {
+        return numeroChassis;
     }
 
-    public void setNumeroChassi(String numeroChassi) {
-        this.numeroChassi = numeroChassi;
+    public void setNumeroChassis(String numeroChassis) {
+        this.numeroChassis = numeroChassis;
     }
 
     public String getImmatriculation() {
@@ -161,21 +158,12 @@ public class Vehicule implements Serializable {
         this.dateEtat = dateEtat;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Vehicule vehicule = (Vehicule) o;
-        return Objects.equals(idVehicule, vehicule.idVehicule);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(idVehicule);
-    }
-
-    @Override
-    public String toString() {
-        return marque + " " + modele + " (" + immatriculation + ")";
-    }
+    // Getter et Setter pour l'objet EtatVoiture si vous l'ajoutez
+    // public EtatVoiture getEtatVoiture() {
+    // return etatVoiture;
+    // }
+    //
+    // public void setEtatVoiture(EtatVoiture etatVoiture) {
+    // this.etatVoiture = etatVoiture;
+    // }
 }

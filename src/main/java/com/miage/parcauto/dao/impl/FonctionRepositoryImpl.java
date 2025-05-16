@@ -32,8 +32,6 @@ public class FonctionRepositoryImpl implements FonctionRepository {
                     return Optional.of(mapResultSetToFonction(rs));
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche de la fonction par ID: " + id, e);
         }
         return Optional.empty();
     }
@@ -43,12 +41,10 @@ public class FonctionRepositoryImpl implements FonctionRepository {
         List<Fonction> fonctions = new ArrayList<>();
         String sql = "SELECT id_fonction, libelle FROM FONCTION";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 fonctions.add(mapResultSetToFonction(rs));
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la récupération de toutes les fonctions", e);
         }
         return fonctions;
     }
@@ -101,10 +97,12 @@ public class FonctionRepositoryImpl implements FonctionRepository {
             pstmt.setInt(2, fonction.getIdFonction());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de la fonction avec ID " + fonction.getIdFonction() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de la fonction avec ID " + fonction.getIdFonction()
+                        + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de la fonction: " + fonction.getIdFonction(), e);
+            throw new DataAccessException("Erreur lors de la mise à jour de la fonction: " + fonction.getIdFonction(),
+                    e);
         }
         return fonction;
     }
@@ -125,7 +123,7 @@ public class FonctionRepositoryImpl implements FonctionRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM FONCTION";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }

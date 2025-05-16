@@ -21,26 +21,20 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     private Utilisateur mapResultSetToUtilisateur(ResultSet rs) throws SQLException {
         Utilisateur utilisateur = new Utilisateur();
         utilisateur.setIdUtilisateur(rs.getInt("id_utilisateur"));
-
         int idPersonnel = rs.getInt("id_personnel");
         utilisateur.setIdPersonnel(rs.wasNull() ? null : idPersonnel);
-
         utilisateur.setLogin(rs.getString("login"));
         utilisateur.setMotDePasse(rs.getString("mot_de_passe"));
         utilisateur.setSalt(rs.getString("salt"));
-
         String roleStr = rs.getString("role");
-        if (roleStr != null) {
-            utilisateur.setRole(Role.fromString(roleStr));
-        }
-
-        Timestamp dateCreationTs = rs.getTimestamp("date_creation");
-        utilisateur.setDateCreation(dateCreationTs != null ? dateCreationTs.toLocalDateTime() : null);
-
-        Timestamp dateDerniereConnexionTs = rs.getTimestamp("date_derniere_connexion");
-        utilisateur.setDateDerniereConnexion(dateDerniereConnexionTs != null ? dateDerniereConnexionTs.toLocalDateTime() : null);
-
+        utilisateur.setRole(roleStr != null ? Role.valueOf(roleStr) : null);
+        utilisateur.setMfaSecret(rs.getString("mfa_secret"));
         utilisateur.setActif(rs.getBoolean("actif"));
+        utilisateur.setDateCreation(
+                rs.getTimestamp("date_creation") != null ? rs.getTimestamp("date_creation").toLocalDateTime() : null);
+        utilisateur.setDateDerniereConnexion(rs.getTimestamp("date_derniere_connexion") != null
+                ? rs.getTimestamp("date_derniere_connexion").toLocalDateTime()
+                : null);
         return utilisateur;
     }
 
@@ -65,7 +59,7 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
         List<Utilisateur> utilisateurs = new ArrayList<>();
         String sql = "SELECT * FROM UTILISATEUR";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 utilisateurs.add(mapResultSetToUtilisateur(rs));
             }
@@ -97,13 +91,21 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     public Utilisateur save(Connection conn, Utilisateur utilisateur) throws SQLException {
         String sql = "INSERT INTO UTILISATEUR (id_personnel, login, mot_de_passe, salt, role, date_creation, date_derniere_connexion, actif) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            if (utilisateur.getIdPersonnel() != null) pstmt.setInt(1, utilisateur.getIdPersonnel()); else pstmt.setNull(1, Types.INTEGER);
+            if (utilisateur.getIdPersonnel() != null)
+                pstmt.setInt(1, utilisateur.getIdPersonnel());
+            else
+                pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, utilisateur.getLogin());
             pstmt.setString(3, utilisateur.getMotDePasse());
             pstmt.setString(4, utilisateur.getSalt());
             pstmt.setString(5, utilisateur.getRole() != null ? utilisateur.getRole().getValeur() : null);
-            pstmt.setTimestamp(6, utilisateur.getDateCreation() != null ? Timestamp.valueOf(utilisateur.getDateCreation()) : Timestamp.valueOf(LocalDateTime.now()));
-            pstmt.setTimestamp(7, utilisateur.getDateDerniereConnexion() != null ? Timestamp.valueOf(utilisateur.getDateDerniereConnexion()) : null);
+            pstmt.setTimestamp(6,
+                    utilisateur.getDateCreation() != null ? Timestamp.valueOf(utilisateur.getDateCreation())
+                            : Timestamp.valueOf(LocalDateTime.now()));
+            pstmt.setTimestamp(7,
+                    utilisateur.getDateDerniereConnexion() != null
+                            ? Timestamp.valueOf(utilisateur.getDateDerniereConnexion())
+                            : null);
             pstmt.setBoolean(8, utilisateur.isActif());
 
             int affectedRows = pstmt.executeUpdate();
@@ -118,7 +120,8 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde de l'utilisateur: " + utilisateur.getLogin(), e);
+            throw new DataAccessException("Erreur lors de la sauvegarde de l'utilisateur: " + utilisateur.getLogin(),
+                    e);
         }
         return utilisateur;
     }
@@ -127,21 +130,29 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     public Utilisateur update(Connection conn, Utilisateur utilisateur) throws SQLException {
         String sql = "UPDATE UTILISATEUR SET id_personnel = ?, login = ?, mot_de_passe = ?, salt = ?, role = ?, date_derniere_connexion = ?, actif = ? WHERE id_utilisateur = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            if (utilisateur.getIdPersonnel() != null) pstmt.setInt(1, utilisateur.getIdPersonnel()); else pstmt.setNull(1, Types.INTEGER);
+            if (utilisateur.getIdPersonnel() != null)
+                pstmt.setInt(1, utilisateur.getIdPersonnel());
+            else
+                pstmt.setNull(1, Types.INTEGER);
             pstmt.setString(2, utilisateur.getLogin());
             pstmt.setString(3, utilisateur.getMotDePasse());
             pstmt.setString(4, utilisateur.getSalt());
             pstmt.setString(5, utilisateur.getRole() != null ? utilisateur.getRole().getValeur() : null);
-            pstmt.setTimestamp(6, utilisateur.getDateDerniereConnexion() != null ? Timestamp.valueOf(utilisateur.getDateDerniereConnexion()) : null);
+            pstmt.setTimestamp(6,
+                    utilisateur.getDateDerniereConnexion() != null
+                            ? Timestamp.valueOf(utilisateur.getDateDerniereConnexion())
+                            : null);
             pstmt.setBoolean(7, utilisateur.isActif());
             pstmt.setInt(8, utilisateur.getIdUtilisateur());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de l'utilisateur avec ID " + utilisateur.getIdUtilisateur() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de l'utilisateur avec ID "
+                        + utilisateur.getIdUtilisateur() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de l'utilisateur: " + utilisateur.getIdUtilisateur(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour de l'utilisateur: " + utilisateur.getIdUtilisateur(), e);
         }
         return utilisateur;
     }
@@ -162,7 +173,7 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM UTILISATEUR";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -203,7 +214,8 @@ public class UtilisateurRepositoryImpl implements UtilisateurRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche de l'utilisateur par ID Personnel: " + idPersonnel, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche de l'utilisateur par ID Personnel: " + idPersonnel, e);
         }
         return Optional.empty();
     }

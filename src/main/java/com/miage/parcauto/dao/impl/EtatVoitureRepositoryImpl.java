@@ -32,8 +32,6 @@ public class EtatVoitureRepositoryImpl implements EtatVoitureRepository {
                     return Optional.of(mapResultSetToEtatVoiture(rs));
                 }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche de l'état de voiture par ID: " + id, e);
         }
         return Optional.empty();
     }
@@ -43,12 +41,10 @@ public class EtatVoitureRepositoryImpl implements EtatVoitureRepository {
         List<EtatVoiture> etats = new ArrayList<>();
         String sql = "SELECT id_etat_voiture, lib_etat_voiture FROM ETAT_VOITURE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 etats.add(mapResultSetToEtatVoiture(rs));
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la récupération de tous les états de voiture", e);
         }
         return etats;
     }
@@ -88,7 +84,8 @@ public class EtatVoitureRepositoryImpl implements EtatVoitureRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde de l'état de voiture: " + etatVoiture.getLibelle(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la sauvegarde de l'état de voiture: " + etatVoiture.getLibelle(), e);
         }
         return etatVoiture;
     }
@@ -101,10 +98,12 @@ public class EtatVoitureRepositoryImpl implements EtatVoitureRepository {
             pstmt.setInt(2, etatVoiture.getIdEtatVoiture());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de l'état de voiture avec ID " + etatVoiture.getIdEtatVoiture() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de l'état de voiture avec ID "
+                        + etatVoiture.getIdEtatVoiture() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de l'état de voiture: " + etatVoiture.getIdEtatVoiture(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour de l'état de voiture: " + etatVoiture.getIdEtatVoiture(), e);
         }
         return etatVoiture;
     }
@@ -125,7 +124,7 @@ public class EtatVoitureRepositoryImpl implements EtatVoitureRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM ETAT_VOITURE";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -146,7 +145,8 @@ public class EtatVoitureRepositoryImpl implements EtatVoitureRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche de l'état de voiture par libellé: " + libelle, e);
+            throw new DataAccessException("Erreur lors de la recherche de l'état de voiture par libellé: " + libelle,
+                    e);
         }
         return Optional.empty();
     }

@@ -24,37 +24,19 @@ public class EntretienRepositoryImpl implements EntretienRepository {
         Entretien entretien = new Entretien();
         entretien.setIdEntretien(rs.getInt("id_entretien"));
         entretien.setIdVehicule(rs.getInt("id_vehicule"));
-
         String typeStr = rs.getString("type");
-        if (typeStr != null) {
-            entretien.setType(TypeEntretien.fromString(typeStr));
-        }
-
-        String statutOtStr = rs.getString("statut_ot");
-        if (statutOtStr != null) {
-            entretien.setStatutOt(StatutOT.fromString(statutOtStr));
-        }
-
-        Timestamp datePrevueTs = rs.getTimestamp("date_prevue");
-        entretien.setDatePrevue(datePrevueTs != null ? datePrevueTs.toLocalDateTime() : null);
-
-        Timestamp dateRealisationTs = rs.getTimestamp("date_realisation");
-        entretien.setDateRealisation(dateRealisationTs != null ? dateRealisationTs.toLocalDateTime() : null);
-
-        entretien.setLibelle(rs.getString("libelle"));
-        entretien.setDetails(rs.getString("details"));
-        entretien.setPrestataire(rs.getString("prestataire"));
-        entretien.setPiecesDetachees(rs.getString("pieces_detachees"));
+        entretien.setType(typeStr != null ? TypeEntretien.valueOf(typeStr) : null);
+        String statutStr = rs.getString("statut");
+        entretien.setStatut(statutStr != null ? StatutOT.valueOf(statutStr) : null);
+        entretien.setDateEntree(
+                rs.getTimestamp("date_entree") != null ? rs.getTimestamp("date_entree").toLocalDateTime() : null);
+        entretien.setDateSortie(
+                rs.getTimestamp("date_sortie") != null ? rs.getTimestamp("date_sortie").toLocalDateTime() : null);
+        entretien.setMotif(rs.getString("motif"));
+        entretien.setObservations(rs.getString("observations"));
         entretien.setCoutEstime(rs.getBigDecimal("cout_estime"));
         entretien.setCoutReel(rs.getBigDecimal("cout_reel"));
-
-        int kmVehicule = rs.getInt("km_vehicule");
-        entretien.setKmVehicule(rs.wasNull() ? null : kmVehicule);
-
-        int kmProchainEntretien = rs.getInt("km_prochain_entretien");
-        entretien.setKmProchainEntretien(rs.wasNull() ? null : kmProchainEntretien);
-
-        entretien.setObservation(rs.getString("observation"));
+        entretien.setLieu(rs.getString("lieu"));
         return entretien;
     }
 
@@ -79,7 +61,7 @@ public class EntretienRepositoryImpl implements EntretienRepository {
         List<Entretien> entretiens = new ArrayList<>();
         String sql = "SELECT * FROM ENTRETIEN";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 entretiens.add(mapResultSetToEntretien(rs));
             }
@@ -113,17 +95,26 @@ public class EntretienRepositoryImpl implements EntretienRepository {
         try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, entretien.getIdVehicule());
             pstmt.setString(2, entretien.getType() != null ? entretien.getType().getValeur() : null);
-            pstmt.setString(3, entretien.getStatutOt() != null ? entretien.getStatutOt().getValeur() : StatutOT.OUVERT.getValeur()); // Défaut si non fourni
-            pstmt.setTimestamp(4, entretien.getDatePrevue() != null ? Timestamp.valueOf(entretien.getDatePrevue()) : null);
-            pstmt.setTimestamp(5, entretien.getDateRealisation() != null ? Timestamp.valueOf(entretien.getDateRealisation()) : null);
+            pstmt.setString(3, entretien.getStatutOt() != null ? entretien.getStatutOt().getValeur()
+                    : StatutOT.OUVERT.getValeur()); // Défaut si non fourni
+            pstmt.setTimestamp(4,
+                    entretien.getDatePrevue() != null ? Timestamp.valueOf(entretien.getDatePrevue()) : null);
+            pstmt.setTimestamp(5,
+                    entretien.getDateRealisation() != null ? Timestamp.valueOf(entretien.getDateRealisation()) : null);
             pstmt.setString(6, entretien.getLibelle());
             pstmt.setString(7, entretien.getDetails());
             pstmt.setString(8, entretien.getPrestataire());
             pstmt.setString(9, entretien.getPiecesDetachees());
             pstmt.setBigDecimal(10, entretien.getCoutEstime());
             pstmt.setBigDecimal(11, entretien.getCoutReel());
-            if (entretien.getKmVehicule() != null) pstmt.setInt(12, entretien.getKmVehicule()); else pstmt.setNull(12, Types.INTEGER);
-            if (entretien.getKmProchainEntretien() != null) pstmt.setInt(13, entretien.getKmProchainEntretien()); else pstmt.setNull(13, Types.INTEGER);
+            if (entretien.getKmVehicule() != null)
+                pstmt.setInt(12, entretien.getKmVehicule());
+            else
+                pstmt.setNull(12, Types.INTEGER);
+            if (entretien.getKmProchainEntretien() != null)
+                pstmt.setInt(13, entretien.getKmProchainEntretien());
+            else
+                pstmt.setNull(13, Types.INTEGER);
             pstmt.setString(14, entretien.getObservation());
 
             int affectedRows = pstmt.executeUpdate();
@@ -150,25 +141,35 @@ public class EntretienRepositoryImpl implements EntretienRepository {
             pstmt.setInt(1, entretien.getIdVehicule());
             pstmt.setString(2, entretien.getType() != null ? entretien.getType().getValeur() : null);
             pstmt.setString(3, entretien.getStatutOt() != null ? entretien.getStatutOt().getValeur() : null);
-            pstmt.setTimestamp(4, entretien.getDatePrevue() != null ? Timestamp.valueOf(entretien.getDatePrevue()) : null);
-            pstmt.setTimestamp(5, entretien.getDateRealisation() != null ? Timestamp.valueOf(entretien.getDateRealisation()) : null);
+            pstmt.setTimestamp(4,
+                    entretien.getDatePrevue() != null ? Timestamp.valueOf(entretien.getDatePrevue()) : null);
+            pstmt.setTimestamp(5,
+                    entretien.getDateRealisation() != null ? Timestamp.valueOf(entretien.getDateRealisation()) : null);
             pstmt.setString(6, entretien.getLibelle());
             pstmt.setString(7, entretien.getDetails());
             pstmt.setString(8, entretien.getPrestataire());
             pstmt.setString(9, entretien.getPiecesDetachees());
             pstmt.setBigDecimal(10, entretien.getCoutEstime());
             pstmt.setBigDecimal(11, entretien.getCoutReel());
-            if (entretien.getKmVehicule() != null) pstmt.setInt(12, entretien.getKmVehicule()); else pstmt.setNull(12, Types.INTEGER);
-            if (entretien.getKmProchainEntretien() != null) pstmt.setInt(13, entretien.getKmProchainEntretien()); else pstmt.setNull(13, Types.INTEGER);
+            if (entretien.getKmVehicule() != null)
+                pstmt.setInt(12, entretien.getKmVehicule());
+            else
+                pstmt.setNull(12, Types.INTEGER);
+            if (entretien.getKmProchainEntretien() != null)
+                pstmt.setInt(13, entretien.getKmProchainEntretien());
+            else
+                pstmt.setNull(13, Types.INTEGER);
             pstmt.setString(14, entretien.getObservation());
             pstmt.setInt(15, entretien.getIdEntretien());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de l'entretien avec ID " + entretien.getIdEntretien() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de l'entretien avec ID " + entretien.getIdEntretien()
+                        + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de l'entretien: " + entretien.getIdEntretien(), e);
+            throw new DataAccessException("Erreur lors de la mise à jour de l'entretien: " + entretien.getIdEntretien(),
+                    e);
         }
         return entretien;
     }
@@ -189,7 +190,7 @@ public class EntretienRepositoryImpl implements EntretienRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM ENTRETIEN";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -211,13 +212,15 @@ public class EntretienRepositoryImpl implements EntretienRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des entretiens par ID véhicule: " + idVehicule, e);
+            throw new DataAccessException("Erreur lors de la recherche des entretiens par ID véhicule: " + idVehicule,
+                    e);
         }
         return entretiens;
     }
 
     @Override
-    public List<Entretien> findScheduledBetween(Connection conn, LocalDateTime debut, LocalDateTime fin) throws SQLException {
+    public List<Entretien> findScheduledBetween(Connection conn, LocalDateTime debut, LocalDateTime fin)
+            throws SQLException {
         List<Entretien> entretiens = new ArrayList<>();
         String sql = "SELECT * FROM ENTRETIEN WHERE date_prevue >= ? AND date_prevue <= ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -229,13 +232,15 @@ public class EntretienRepositoryImpl implements EntretienRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des entretiens planifiés entre " + debut + " et " + fin, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des entretiens planifiés entre " + debut + " et " + fin, e);
         }
         return entretiens;
     }
 
     @Override
-    public List<Entretien> findByVehiculeIdAndStatut(Connection conn, Integer idVehicule, StatutOT statut) throws SQLException {
+    public List<Entretien> findByVehiculeIdAndStatut(Connection conn, Integer idVehicule, StatutOT statut)
+            throws SQLException {
         List<Entretien> entretiens = new ArrayList<>();
         String sql = "SELECT * FROM ENTRETIEN WHERE id_vehicule = ? AND statut_ot = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -247,7 +252,8 @@ public class EntretienRepositoryImpl implements EntretienRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des entretiens pour le véhicule " + idVehicule + " avec statut " + statut, e);
+            throw new DataAccessException("Erreur lors de la recherche des entretiens pour le véhicule " + idVehicule
+                    + " avec statut " + statut, e);
         }
         return entretiens;
     }

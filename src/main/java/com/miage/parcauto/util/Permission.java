@@ -2,10 +2,12 @@ package main.java.com.miage.parcauto.util;
 
 /**
  * Enumération des permissions possibles dans l'application.
- * Cette classe définit toutes les actions qui peuvent être autorisées ou refusées
+ * Cette classe définit toutes les actions qui peuvent être autorisées ou
+ * refusées
  * en fonction du profil utilisateur.
  * <p>
- * Les permissions sont organisées par module fonctionnel pour faciliter la gestion
+ * Les permissions sont organisées par module fonctionnel pour faciliter la
+ * gestion
  * des droits d'accès et la maintenance du code.
  *
  * @author MIAGE Holding
@@ -21,7 +23,7 @@ public enum Permission {
     CHANGEMENT_MDP_PERSONNEL,
     /** Permission de réinitialiser les mots de passe des utilisateurs */
     REINIT_MDP_UTILISATEURS,
-    
+
     // =========================================================================
     // MODULE GESTION DES VÉHICULES
     // =========================================================================
@@ -37,7 +39,10 @@ public enum Permission {
     MODIFIER_VEHICULE,
     /** Permission de supprimer un véhicule du parc */
     SUPPRIMER_VEHICULE,
-    /** Permission de changer l'état de tous les véhicules (service/panne/hors service) */
+    /**
+     * Permission de changer l'état de tous les véhicules (service/panne/hors
+     * service)
+     */
     CHANGER_ETAT_VEHICULE_TOUS,
     /** Permission de changer l'état des véhicules avec restrictions */
     CHANGER_ETAT_VEHICULE_LIMITE,
@@ -45,7 +50,7 @@ public enum Permission {
     DECLARER_PANNE_TOUS,
     /** Permission de déclarer une panne uniquement sur les véhicules personnels */
     DECLARER_PANNE_PERSONNEL,
-    
+
     // =========================================================================
     // MODULE AFFECTATION DES VÉHICULES
     // =========================================================================
@@ -59,7 +64,7 @@ public enum Permission {
     SUIVI_AFFECTATIONS_LECTURE,
     /** Permission de consulter uniquement ses affectations personnelles */
     SUIVI_AFFECTATIONS_PERSONNEL,
-    
+
     // =========================================================================
     // MODULE MISSIONS
     // =========================================================================
@@ -79,7 +84,7 @@ public enum Permission {
     SAISIR_DEPENSES_MISSION,
     /** Permission de valider les dépenses d'une mission */
     VALIDER_DEPENSES_MISSION,
-    
+
     // =========================================================================
     // MODULE ENTRETIEN ET MAINTENANCE
     // =========================================================================
@@ -95,7 +100,7 @@ public enum Permission {
     CLOTURER_INTERVENTION,
     /** Permission de gérer les prestataires d'entretien */
     GERER_PRESTATAIRES,
-    
+
     // =========================================================================
     // MODULE ASSURANCES ET VISITES TECHNIQUES
     // =========================================================================
@@ -109,7 +114,7 @@ public enum Permission {
     ALERTES_ECHEANCES_TOUS,
     /** Permission de voir uniquement ses alertes d'échéances personnelles */
     ALERTES_ECHEANCES_PERSONNEL,
-    
+
     // =========================================================================
     // MODULE GESTION FINANCIÈRE
     // =========================================================================
@@ -133,7 +138,7 @@ public enum Permission {
     CONSULTER_MENSUALITES,
     /** Permission de calculer l'amortissement des véhicules */
     CALCULER_AMORTISSEMENT,
-    
+
     // =========================================================================
     // MODULE GESTION DOCUMENTAIRE
     // =========================================================================
@@ -153,7 +158,7 @@ public enum Permission {
     VALIDER_DOCUMENTS,
     /** Permission de supprimer des documents */
     SUPPRIMER_DOCUMENTS,
-    
+
     // =========================================================================
     // MODULE REPORTING ET STATISTIQUES
     // =========================================================================
@@ -187,7 +192,7 @@ public enum Permission {
     EXPORT_DONNEES_PERSONNEL,
     /** Permission d'exporter des données système */
     EXPORT_DONNEES_SYSTEM,
-    
+
     // =========================================================================
     // MODULE ADMINISTRATION SYSTÈME
     // =========================================================================
@@ -207,7 +212,7 @@ public enum Permission {
     LOGS_AUDIT_COMPLET,
     /** Permission d'effectuer la maintenance de la base de données */
     MAINTENANCE_BDD,
-    
+
     // =========================================================================
     // MODULE ALERTES ET NOTIFICATIONS
     // =========================================================================
@@ -221,7 +226,7 @@ public enum Permission {
     ALERTES_PERSONNEL,
     /** Permission de recevoir les notifications d'échéances */
     NOTIFICATIONS_ECHEANCES,
-    
+
     // =========================================================================
     // MODULE KILOMÉTRAGE ET CARBURANT
     // =========================================================================
@@ -231,11 +236,13 @@ public enum Permission {
     SAISIR_KILOMETRAGE_PERSONNEL,
     /** Permission de suivre la consommation de carburant de tous les véhicules */
     SUIVI_CARBURANT,
-    /** Permission de suivre la consommation de carburant de ses véhicules personnels */
+    /**
+     * Permission de suivre la consommation de carburant de ses véhicules personnels
+     */
     SUIVI_CARBURANT_PERSONNEL,
     /** Permission d'analyser les performances des véhicules */
     ANALYSER_PERFORMANCE;
-    
+
     /**
      * Retourne une représentation lisible de la permission
      * 
@@ -245,18 +252,18 @@ public enum Permission {
     public String toString() {
         return name().replace('_', ' ').toLowerCase();
     }
-    
+
     /**
      * Vérifie si cette permission appartient au module d'administration
      * 
      * @return true si la permission concerne l'administration système
      */
     public boolean isAdminPermission() {
-        return name().startsWith("CREER_UTILISATEURS") || 
-               name().startsWith("GERER_DROITS") || 
-               name().startsWith("PARAMETRAGE_") ||
-               name().startsWith("SAUVEGARDE_") ||
-               name().startsWith("LOGS_AUDIT_") ||
-               name().equals("MAINTENANCE_BDD");
+        return name().startsWith("CREER_UTILISATEURS") ||
+                name().startsWith("GERER_DROITS") ||
+                name().startsWith("PARAMETRAGE_") ||
+                name().startsWith("SAUVEGARDE_") ||
+                name().startsWith("LOGS_AUDIT_") ||
+                name().equals("MAINTENANCE_BDD");
     }
 }

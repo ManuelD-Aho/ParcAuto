@@ -19,11 +19,13 @@ public interface PersonnelService {
      *
      * @param personnelDTO Le DTO contenant les informations du personnel.
      * @return Le PersonnelDTO créé avec son ID.
-     * @throws ValidationException Si les données sont invalides.
-     * @throws DuplicateEntityException Si un matricule ou email identique existe déjà.
+     * @throws ValidationException      Si les données sont invalides.
+     * @throws DuplicateEntityException Si un matricule ou email identique existe
+     *                                  déjà.
      * @throws OperationFailedException Si une erreur technique survient.
      */
-    PersonnelDTO createPersonnel(PersonnelDTO personnelDTO) throws ValidationException, DuplicateEntityException, OperationFailedException;
+    PersonnelDTO createPersonnel(PersonnelDTO personnelDTO)
+            throws ValidationException, DuplicateEntityException, OperationFailedException;
 
     /**
      * Récupère un membre du personnel par son identifiant.
@@ -56,24 +58,28 @@ public interface PersonnelService {
      *
      * @param personnelDTO Le DTO avec les informations mises à jour.
      * @return Le PersonnelDTO mis à jour.
-     * @throws ValidationException Si les données sont invalides.
-     * @throws EntityNotFoundException Si le personnel n'est pas trouvé.
-     * @throws DuplicateEntityException Si le matricule ou email modifié entre en conflit.
+     * @throws ValidationException      Si les données sont invalides.
+     * @throws EntityNotFoundException  Si le personnel n'est pas trouvé.
+     * @throws DuplicateEntityException Si le matricule ou email modifié entre en
+     *                                  conflit.
      * @throws OperationFailedException Si une erreur technique survient.
      */
-    PersonnelDTO updatePersonnel(PersonnelDTO personnelDTO) throws ValidationException, EntityNotFoundException, DuplicateEntityException, OperationFailedException;
+    PersonnelDTO updatePersonnel(PersonnelDTO personnelDTO)
+            throws ValidationException, EntityNotFoundException, DuplicateEntityException, OperationFailedException;
 
     /**
      * Supprime un membre du personnel par son identifiant.
      *
      * @param idPersonnel L'identifiant du personnel à supprimer.
-     * @throws EntityNotFoundException Si le personnel n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient (ex: dépendances existantes).
+     * @throws EntityNotFoundException  Si le personnel n'est pas trouvé.
+     * @throws OperationFailedException Si une erreur technique survient (ex:
+     *                                  dépendances existantes).
      */
     void deletePersonnel(Integer idPersonnel) throws EntityNotFoundException, OperationFailedException;
 
     /**
      * Récupère les membres du personnel par identifiant de service.
+     * 
      * @param idService L'identifiant du service.
      * @return Liste de PersonnelDTO.
      * @throws OperationFailedException Si une erreur technique survient.
@@ -82,6 +88,7 @@ public interface PersonnelService {
 
     /**
      * Récupère les membres du personnel par identifiant de fonction.
+     * 
      * @param idFonction L'identifiant de la fonction.
      * @return Liste de PersonnelDTO.
      * @throws OperationFailedException Si une erreur technique survient.

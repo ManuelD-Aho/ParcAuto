@@ -17,13 +17,18 @@ public interface UtilisateurManagementService {
     /**
      * Crée un nouvel utilisateur dans le système.
      *
-     * @param utilisateurDTO Le DTO contenant les informations du nouvel utilisateur. Le mot de passe doit être en clair.
+     * @param utilisateurDTO Le DTO contenant les informations du nouvel
+     *                       utilisateur. Le mot de passe doit être en clair.
      * @return L'UtilisateurDTO créé, incluant son ID généré.
-     * @throws ValidationException Si les données de l'utilisateur ne sont pas valides.
-     * @throws DuplicateEntityException Si un utilisateur avec le même login existe déjà.
-     * @throws OperationFailedException Si une erreur technique survient durant la création.
+     * @throws ValidationException      Si les données de l'utilisateur ne sont pas
+     *                                  valides.
+     * @throws DuplicateEntityException Si un utilisateur avec le même login existe
+     *                                  déjà.
+     * @throws OperationFailedException Si une erreur technique survient durant la
+     *                                  création.
      */
-    UtilisateurDTO createUtilisateur(UtilisateurDTO utilisateurDTO) throws ValidationException, DuplicateEntityException, OperationFailedException;
+    UtilisateurDTO createUtilisateur(UtilisateurDTO utilisateurDTO)
+            throws ValidationException, DuplicateEntityException, OperationFailedException;
 
     /**
      * Récupère un utilisateur par son identifiant.
@@ -57,40 +62,49 @@ public interface UtilisateurManagementService {
      *
      * @param utilisateurDTO Le DTO contenant les informations mises à jour.
      * @return L'UtilisateurDTO mis à jour.
-     * @throws ValidationException Si les données de l'utilisateur ne sont pas valides.
-     * @throws UtilisateurNotFoundException Si l'utilisateur à mettre à jour n'est pas trouvé.
-     * @throws DuplicateEntityException Si le nouveau login entre en conflit avec un autre utilisateur.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws ValidationException          Si les données de l'utilisateur ne sont
+     *                                      pas valides.
+     * @throws UtilisateurNotFoundException Si l'utilisateur à mettre à jour n'est
+     *                                      pas trouvé.
+     * @throws DuplicateEntityException     Si le nouveau login entre en conflit
+     *                                      avec un autre utilisateur.
+     * @throws OperationFailedException     Si une erreur technique survient.
      */
-    UtilisateurDTO updateUtilisateur(UtilisateurDTO utilisateurDTO) throws ValidationException, UtilisateurNotFoundException, DuplicateEntityException, OperationFailedException;
+    UtilisateurDTO updateUtilisateur(UtilisateurDTO utilisateurDTO) throws ValidationException,
+            UtilisateurNotFoundException, DuplicateEntityException, OperationFailedException;
 
     /**
      * Supprime un utilisateur par son identifiant.
      *
      * @param idUtilisateur L'identifiant de l'utilisateur à supprimer.
-     * @throws UtilisateurNotFoundException Si l'utilisateur à supprimer n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient (par exemple, contraintes d'intégrité).
+     * @throws UtilisateurNotFoundException Si l'utilisateur à supprimer n'est pas
+     *                                      trouvé.
+     * @throws OperationFailedException     Si une erreur technique survient (par
+     *                                      exemple, contraintes d'intégrité).
      */
     void deleteUtilisateur(Integer idUtilisateur) throws UtilisateurNotFoundException, OperationFailedException;
 
     /**
      * Change le mot de passe d'un utilisateur.
      *
-     * @param idUtilisateur L'identifiant de l'utilisateur.
+     * @param idUtilisateur     L'identifiant de l'utilisateur.
      * @param nouveauMotDePasse Le nouveau mot de passe en clair.
-     * @throws ValidationException Si le nouveau mot de passe n'est pas valide.
+     * @throws ValidationException          Si le nouveau mot de passe n'est pas
+     *                                      valide.
      * @throws UtilisateurNotFoundException Si l'utilisateur n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws OperationFailedException     Si une erreur technique survient.
      */
-    void changePassword(Integer idUtilisateur, String nouveauMotDePasse) throws ValidationException, UtilisateurNotFoundException, OperationFailedException;
+    void changePassword(Integer idUtilisateur, String nouveauMotDePasse)
+            throws ValidationException, UtilisateurNotFoundException, OperationFailedException;
 
     /**
      * Active ou désactive un compte utilisateur.
      *
      * @param idUtilisateur L'identifiant de l'utilisateur.
-     * @param actif true pour activer, false pour désactiver.
+     * @param actif         true pour activer, false pour désactiver.
      * @throws UtilisateurNotFoundException Si l'utilisateur n'est pas trouvé.
-     * @throws OperationFailedException Si une erreur technique survient.
+     * @throws OperationFailedException     Si une erreur technique survient.
      */
-    void setUtilisateurActif(Integer idUtilisateur, boolean actif) throws UtilisateurNotFoundException, OperationFailedException;
+    void setUtilisateurActif(Integer idUtilisateur, boolean actif)
+            throws UtilisateurNotFoundException, OperationFailedException;
 }

@@ -1,29 +1,31 @@
 package main.java.com.miage.parcauto.model.finance;
 
-/**
- * Types de mouvement financier.
- */
 public enum TypeMouvement {
     DEPOT("Depot"),
     RETRAIT("Retrait"),
     MENSUALITE("Mensualite");
 
-    private final String valeur;
+    private final String libelle;
 
-    TypeMouvement(String valeur) {
-        this.valeur = valeur;
+    TypeMouvement(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public static TypeMouvement fromString(String text) {
+    public static TypeMouvement fromLibelle(String libelle) {
         for (TypeMouvement type : TypeMouvement.values()) {
-            if (type.valeur.equalsIgnoreCase(text)) {
+            if (type.libelle.equalsIgnoreCase(libelle)) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Type de mouvement inconnu: " + text);
+        throw new IllegalArgumentException("Aucun type de mouvement ne correspond au libellé : " + libelle);
+    }
+
+    @Override
+    public String toString() {
+        return this.libelle;
     }
 }

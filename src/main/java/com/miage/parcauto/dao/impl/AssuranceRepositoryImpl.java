@@ -2,14 +2,10 @@ package main.java.com.miage.parcauto.dao.impl;
 
 import main.java.com.miage.parcauto.dao.AssuranceRepository;
 import main.java.com.miage.parcauto.model.assurance.Assurance;
+import main.java.com.miage.parcauto.util.DbUtil;
 import main.java.com.miage.parcauto.exception.DataAccessException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +17,6 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
         Assurance assurance = new Assurance();
         assurance.setNumCarteAssurance(rs.getInt("num_carte_assurance"));
         assurance.setCompagnie(rs.getString("compagnie"));
-        assurance.setAdresse(rs.getString("adresse"));
-        assurance.setTelephone(rs.getString("telephone"));
-
         Timestamp dateDebutTs = rs.getTimestamp("date_debut");
         if (dateDebutTs != null) {
             assurance.setDateDebut(dateDebutTs.toLocalDateTime());
@@ -32,14 +25,15 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
         if (dateFinTs != null) {
             assurance.setDateFin(dateFinTs.toLocalDateTime());
         }
-        assurance.setPrix(rs.getBigDecimal("prix"));
+        assurance.setCout(rs.getBigDecimal("cout"));
         return assurance;
     }
 
     @Override
-    public Optional<Assurance> findById(Connection conn, Integer id) throws SQLException {
-        String sql = "SELECT num_carte_assurance, compagnie, adresse, telephone, date_debut, date_fin, prix FROM ASSURANCE WHERE num_carte_assurance = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    public Optional<Assurance> findById(Integer id) throws DataAccessException {
+        String sql = "SELECT num_carte_assurance, compagnie, date_debut, date_fin, cout FROM assurances WHERE num_carte_assurance = ?";
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
@@ -53,11 +47,12 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
     }
 
     @Override
-    public List<Assurance> findAll(Connection conn) throws SQLException {
+    public List<Assurance> findAll() throws DataAccessException {
         List<Assurance> assurances = new ArrayList<>();
-        String sql = "SELECT num_carte_assurance, compagnie, adresse, telephone, date_debut, date_fin, prix FROM ASSURANCE";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        String sql = "SELECT num_carte_assurance, compagnie, date_debut, date_fin, cout FROM assurances";
+        try (Connection conn = DbUtil.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 assurances.add(mapResultSetToAssurance(rs));
             }
@@ -68,12 +63,13 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
     }
 
     @Override
-    public List<Assurance> findAll(Connection conn, int page, int size) throws SQLException {
+    public List<Assurance> findAll(int page, int size) throws DataAccessException {
         List<Assurance> assurances = new ArrayList<>();
-        String sql = "SELECT num_carte_assurance, compagnie, adresse, telephone, date_debut, date_fin, prix FROM ASSURANCE LIMIT ? OFFSET ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        String sql = "SELECT num_carte_assurance, compagnie, date_debut, date_fin, cout FROM assurances LIMIT ? OFFSET ?";
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, size);
-            pstmt.setInt(2, (page - 1) * size);
+            pstmt.setInt(2, page * size); // Assumant que 'page' est 0-indexed
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     assurances.add(mapResultSetToAssurance(rs));
@@ -86,59 +82,53 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
     }
 
     @Override
-    public Assurance save(Connection conn, Assurance assurance) throws SQLException {
-        String sql = "INSERT INTO ASSURANCE (compagnie, adresse, telephone, date_debut, date_fin, prix) VALUES (?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, assurance.getCompagnie());
-            pstmt.setString(2, assurance.getAdresse());
-            pstmt.setString(3, assurance.getTelephone());
-            pstmt.setTimestamp(4, assurance.getDateDebut() != null ? Timestamp.valueOf(assurance.getDateDebut()) : null);
-            pstmt.setTimestamp(5, assurance.getDateFin() != null ? Timestamp.valueOf(assurance.getDateFin()) : null);
-            pstmt.setBigDecimal(6, assurance.getPrix());
-
-            int affectedRows = pstmt.executeUpdate();
-            if (affectedRows == 0) {
-                throw new DataAccessException("La création de l'assurance a échoué, aucune ligne affectée.");
-            }
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    assurance.setNumCarteAssurance(generatedKeys.getInt(1));
-                } else {
-                    throw new DataAccessException("La création de l'assurance a échoué, aucun ID (num_carte_assurance) obtenu. Vérifiez si la colonne est auto-incrémentée.");
-                }
-            }
+    public Assurance save(Assurance assurance) throws DataAccessException {
+        String sql = "INSERT INTO assurances (num_carte_assurance, compagnie, date_debut, date_fin, cout) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // num_carte_assurance est l'ID et doit être fourni
+            pstmt.setInt(1, assurance.getNumCarteAssurance());
+            pstmt.setString(2, assurance.getCompagnie());
+            pstmt.setTimestamp(3,
+                    assurance.getDateDebut() != null ? Timestamp.valueOf(assurance.getDateDebut()) : null);
+            pstmt.setTimestamp(4, assurance.getDateFin() != null ? Timestamp.valueOf(assurance.getDateFin()) : null);
+            pstmt.setBigDecimal(5, assurance.getCout());
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde de l'assurance pour la compagnie: " + assurance.getCompagnie(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la sauvegarde de l'assurance: " + assurance.getNumCarteAssurance(), e);
         }
         return assurance;
     }
 
     @Override
-    public Assurance update(Connection conn, Assurance assurance) throws SQLException {
-        String sql = "UPDATE ASSURANCE SET compagnie = ?, adresse = ?, telephone = ?, date_debut = ?, date_fin = ?, prix = ? WHERE num_carte_assurance = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    public Assurance update(Assurance assurance) throws DataAccessException {
+        String sql = "UPDATE assurances SET compagnie = ?, date_debut = ?, date_fin = ?, cout = ? WHERE num_carte_assurance = ?";
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, assurance.getCompagnie());
-            pstmt.setString(2, assurance.getAdresse());
-            pstmt.setString(3, assurance.getTelephone());
-            pstmt.setTimestamp(4, assurance.getDateDebut() != null ? Timestamp.valueOf(assurance.getDateDebut()) : null);
-            pstmt.setTimestamp(5, assurance.getDateFin() != null ? Timestamp.valueOf(assurance.getDateFin()) : null);
-            pstmt.setBigDecimal(6, assurance.getPrix());
-            pstmt.setInt(7, assurance.getNumCarteAssurance());
-
+            pstmt.setTimestamp(2,
+                    assurance.getDateDebut() != null ? Timestamp.valueOf(assurance.getDateDebut()) : null);
+            pstmt.setTimestamp(3, assurance.getDateFin() != null ? Timestamp.valueOf(assurance.getDateFin()) : null);
+            pstmt.setBigDecimal(4, assurance.getCout());
+            pstmt.setInt(5, assurance.getNumCarteAssurance());
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour de l'assurance avec ID " + assurance.getNumCarteAssurance() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour de l'assurance avec ID "
+                        + assurance.getNumCarteAssurance() + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la mise à jour de l'assurance: " + assurance.getNumCarteAssurance(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la mise à jour de l'assurance: " + assurance.getNumCarteAssurance(), e);
         }
         return assurance;
     }
 
     @Override
-    public boolean delete(Connection conn, Integer id) throws SQLException {
-        String sql = "DELETE FROM ASSURANCE WHERE num_carte_assurance = ?";
-        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    public boolean delete(Integer id) throws DataAccessException {
+        String sql = "DELETE FROM assurances WHERE num_carte_assurance = ?";
+        try (Connection conn = DbUtil.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -148,10 +138,11 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
     }
 
     @Override
-    public long count(Connection conn) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM ASSURANCE";
-        try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+    public long count() throws DataAccessException {
+        String sql = "SELECT COUNT(*) FROM assurances";
+        try (Connection conn = DbUtil.getConnection();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -162,9 +153,10 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
     }
 
     @Override
-    public List<Assurance> findExpiringSoon(Connection conn, LocalDateTime dateLimite) throws SQLException {
+    public List<Assurance> findExpiringSoon(Connection conn, LocalDateTime dateLimite) throws DataAccessException {
         List<Assurance> assurances = new ArrayList<>();
-        String sql = "SELECT num_carte_assurance, compagnie, adresse, telephone, date_debut, date_fin, prix FROM ASSURANCE WHERE date_fin <= ?";
+        String sql = "SELECT num_carte_assurance, compagnie, date_debut, date_fin, cout FROM assurances WHERE date_fin <= ?";
+        // La connexion est passée en paramètre, nous l'utilisons directement.
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setTimestamp(1, Timestamp.valueOf(dateLimite));
             try (ResultSet rs = pstmt.executeQuery()) {
@@ -173,7 +165,8 @@ public class AssuranceRepositoryImpl implements AssuranceRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des assurances expirant avant " + dateLimite, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des assurances expirant bientôt avant: " + dateLimite, e);
         }
         return assurances;
     }

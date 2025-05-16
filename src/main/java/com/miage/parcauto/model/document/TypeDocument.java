@@ -1,35 +1,32 @@
 package main.java.com.miage.parcauto.model.document;
 
-/**
- * Types de documents associés à un sociétaire.
- */
 public enum TypeDocument {
     CARTE_GRISE("CarteGrise"),
     ASSURANCE("Assurance"),
     ID("ID"),
-    FACTURE("Facture"),
-    CONTRAT("Contrat"),
-    ACCORD("Accord"),
-    ATTESTATION("Attestation"),
-    AUTRE("Autre"),
     PERMIS("Permis");
 
-    private final String valeur;
+    private final String libelle;
 
-    TypeDocument(String valeur) {
-        this.valeur = valeur;
+    TypeDocument(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public static TypeDocument fromString(String text) {
+    public static TypeDocument fromLibelle(String libelle) {
         for (TypeDocument type : TypeDocument.values()) {
-            if (type.valeur.equalsIgnoreCase(text)) {
+            if (type.libelle.equalsIgnoreCase(libelle)) {
                 return type;
             }
         }
-        throw new IllegalArgumentException("Type de document inconnu: " + text);
+        throw new IllegalArgumentException("Aucun type de document ne correspond au libellé : " + libelle);
+    }
+
+    @Override
+    public String toString() {
+        return this.libelle;
     }
 }

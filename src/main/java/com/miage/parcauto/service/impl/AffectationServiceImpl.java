@@ -36,15 +36,16 @@ public class AffectationServiceImpl implements AffectationService {
         this.personnelRepository = new PersonnelRepositoryImpl();
         this.societaireCompteRepository = new SocietaireCompteRepositoryImpl();
         this.affectationMapper = new AffectationMapperImpl();
-        this.vehiculeService = new VehiculeServiceImpl(); // Risque de dépendance circulaire si VehiculeService utilise AffectationService
+        this.vehiculeService = new VehiculeServiceImpl(); // Risque de dépendance circulaire si VehiculeService utilise
+                                                          // AffectationService
     }
 
     /**
      * Constructeur avec injection de dépendances.
      */
     public AffectationServiceImpl(AffectationRepository affectationRepository, VehiculeRepository vehiculeRepository,
-                                  PersonnelRepository personnelRepository, SocietaireCompteRepository societaireCompteRepository,
-                                  AffectationMapper affectationMapper, VehiculeService vehiculeService) {
+            PersonnelRepository personnelRepository, SocietaireCompteRepository societaireCompteRepository,
+            AffectationMapper affectationMapper, VehiculeService vehiculeService) {
         this.affectationRepository = affectationRepository;
         this.vehiculeRepository = vehiculeRepository;
         this.personnelRepository = personnelRepository;
@@ -53,20 +54,22 @@ public class AffectationServiceImpl implements AffectationService {
         this.vehiculeService = vehiculeService;
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public AffectationDTO createAffectation(AffectationDTO affectationDTO) throws ValidationException, VehiculeNotFoundException, EntityNotFoundException, OperationFailedException {
-        if (affectationDTO == null || affectationDTO.getIdVehicule() == null || affectationDTO.getTypeAffectation() == null || affectationDTO.getDateDebut() == null) {
+    public AffectationDTO createAffectation(AffectationDTO affectationDTO)
+            throws ValidationException, VehiculeNotFoundException, EntityNotFoundException, OperationFailedException {
+        if (affectationDTO == null || affectationDTO.getIdVehicule() == null
+                || affectationDTO.getTypeAffectation() == null || affectationDTO.getDateDebut() == null) {
             throw new ValidationException("ID Véhicule, type d'affectation et date de début sont requis.");
         }
         if (affectationDTO.getIdPersonnel() == null && affectationDTO.getIdSocietaire() == null) {
             throw new ValidationException("Une affectation doit être liée soit à un personnel, soit à un sociétaire.");
         }
         if (affectationDTO.getIdPersonnel() != null && affectationDTO.getIdSocietaire() != null) {
-            throw new ValidationException("Une affectation ne peut pas être liée à la fois à un personnel et à un sociétaire.");
+            throw new ValidationException(
+                    "Une affectation ne peut pas être liée à la fois à un personnel et à un sociétaire.");
         }
         if (affectationDTO.getDateFin() != null && affectationDTO.getDateDebut().isAfter(affectationDTO.getDateFin())) {
             throw new ValidationException("La date de début ne peut être postérieure à la date de fin.");
@@ -80,19 +83,28 @@ public class AffectationServiceImpl implements AffectationService {
             if (vehiculeRepository.findById(conn, affectationDTO.getIdVehicule()).isEmpty()) {
                 throw new VehiculeNotFoundException("Véhicule non trouvé avec l'ID: " + affectationDTO.getIdVehicule());
             }
-            if (affectationDTO.getIdPersonnel() != null && personnelRepository.findById(conn, affectationDTO.getIdPersonnel()).isEmpty()) {
+            if (affectationDTO.getIdPersonnel() != null
+                    && personnelRepository.findById(conn, affectationDTO.getIdPersonnel()).isEmpty()) {
                 throw new EntityNotFoundException("Personnel non trouvé avec l'ID: " + affectationDTO.getIdPersonnel());
             }
-            if (affectationDTO.getIdSocietaire() != null && societaireCompteRepository.findById(conn, affectationDTO.getIdSocietaire()).isEmpty()) {
-                throw new EntityNotFoundException("Compte sociétaire non trouvé avec l'ID: " + affectationDTO.getIdSocietaire());
+            if (affectationDTO.getIdSocietaire() != null
+                    && societaireCompteRepository.findById(conn, affectationDTO.getIdSocietaire()).isEmpty()) {
+                throw new EntityNotFoundException(
+                        "Compte sociétaire non trouvé avec l'ID: " + affectationDTO.getIdSocietaire());
             }
 
             // Vérifier la disponibilité du véhicule sur la période
-            if (!vehiculeService.getVehiculesDisponibles(affectationDTO.getDateDebut(), affectationDTO.getDateFin() != null ? affectationDTO.getDateFin() : affectationDTO.getDateDebut().plusYears(5) /* Pour affectation longue durée sans date de fin explicite */)
+            if (!vehiculeService
+                    .getVehiculesDisponibles(affectationDTO.getDateDebut(),
+                            affectationDTO.getDateFin() != null ? affectationDTO.getDateFin()
+                                    : affectationDTO.getDateDebut().plusYears(5) /*
+                                                                                  * Pour affectation longue durée sans
+                                                                                  * date de fin explicite
+                                                                                  */)
                     .stream().anyMatch(v -> v.getIdVehicule().equals(affectationDTO.getIdVehicule()))) {
-                throw new OperationFailedException("Le véhicule ID " + affectationDTO.getIdVehicule() + " n'est pas disponible pour la période demandée.");
+                throw new OperationFailedException("Le véhicule ID " + affectationDTO.getIdVehicule()
+                        + " n'est pas disponible pour la période demandée.");
             }
-
 
             Affectation affectation = affectationMapper.toEntity(affectationDTO);
             Affectation savedAffectation = affectationRepository.save(conn, affectation);
@@ -133,7 +145,8 @@ public class AffectationServiceImpl implements AffectationService {
             conn = DbUtil.getConnection();
             return affectationMapper.toDTOList(affectationRepository.findAll(conn));
         } catch (SQLException e) {
-            throw new OperationFailedException("Erreur technique lors de la récupération de toutes les affectations.", e);
+            throw new OperationFailedException("Erreur technique lors de la récupération de toutes les affectations.",
+                    e);
         } finally {
             DbUtil.close(conn);
         }
@@ -143,7 +156,8 @@ public class AffectationServiceImpl implements AffectationService {
      * {@inheritDoc}
      */
     @Override
-    public List<AffectationDTO> getAffectationsByVehiculeId(Integer idVehicule) throws VehiculeNotFoundException, OperationFailedException {
+    public List<AffectationDTO> getAffectationsByVehiculeId(Integer idVehicule)
+            throws VehiculeNotFoundException, OperationFailedException {
         Connection conn = null;
         try {
             conn = DbUtil.getConnection();
@@ -152,7 +166,8 @@ public class AffectationServiceImpl implements AffectationService {
             }
             return affectationMapper.toDTOList(affectationRepository.findByVehiculeId(conn, idVehicule));
         } catch (SQLException e) {
-            throw new OperationFailedException("Erreur technique lors de la récupération des affectations pour le véhicule ID: " + idVehicule, e);
+            throw new OperationFailedException(
+                    "Erreur technique lors de la récupération des affectations pour le véhicule ID: " + idVehicule, e);
         } finally {
             DbUtil.close(conn);
         }
@@ -162,7 +177,8 @@ public class AffectationServiceImpl implements AffectationService {
      * {@inheritDoc}
      */
     @Override
-    public List<AffectationDTO> getAffectationsByPersonnelId(Integer idPersonnel) throws EntityNotFoundException, OperationFailedException {
+    public List<AffectationDTO> getAffectationsByPersonnelId(Integer idPersonnel)
+            throws EntityNotFoundException, OperationFailedException {
         Connection conn = null;
         try {
             conn = DbUtil.getConnection();
@@ -171,7 +187,9 @@ public class AffectationServiceImpl implements AffectationService {
             }
             return affectationMapper.toDTOList(affectationRepository.findByPersonnelId(conn, idPersonnel));
         } catch (SQLException e) {
-            throw new OperationFailedException("Erreur technique lors de la récupération des affectations pour le personnel ID: " + idPersonnel, e);
+            throw new OperationFailedException(
+                    "Erreur technique lors de la récupération des affectations pour le personnel ID: " + idPersonnel,
+                    e);
         } finally {
             DbUtil.close(conn);
         }
@@ -181,7 +199,8 @@ public class AffectationServiceImpl implements AffectationService {
      * {@inheritDoc}
      */
     @Override
-    public List<AffectationDTO> getAffectationsBySocietaireId(Integer idSocietaireCompte) throws SocietaireNotFoundException, OperationFailedException {
+    public List<AffectationDTO> getAffectationsBySocietaireId(Integer idSocietaireCompte)
+            throws SocietaireNotFoundException, OperationFailedException {
         Connection conn = null;
         try {
             conn = DbUtil.getConnection();
@@ -190,25 +209,28 @@ public class AffectationServiceImpl implements AffectationService {
             }
             return affectationMapper.toDTOList(affectationRepository.findBySocietaireId(conn, idSocietaireCompte));
         } catch (SQLException e) {
-            throw new OperationFailedException("Erreur technique lors de la récupération des affectations pour le sociétaire ID: " + idSocietaireCompte, e);
+            throw new OperationFailedException(
+                    "Erreur technique lors de la récupération des affectations pour le sociétaire ID: "
+                            + idSocietaireCompte,
+                    e);
         } finally {
             DbUtil.close(conn);
         }
     }
 
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public AffectationDTO updateAffectation(AffectationDTO affectationDTO) throws ValidationException, EntityNotFoundException, OperationFailedException {
+    public AffectationDTO updateAffectation(AffectationDTO affectationDTO)
+            throws ValidationException, EntityNotFoundException, OperationFailedException {
         if (affectationDTO == null || affectationDTO.getIdAffectation() == null) {
             throw new ValidationException("L'ID de l'affectation est requis pour la mise à jour.");
         }
-        if (affectationDTO.getDateFin() != null && affectationDTO.getDateDebut() != null && affectationDTO.getDateDebut().isAfter(affectationDTO.getDateFin())) {
+        if (affectationDTO.getDateFin() != null && affectationDTO.getDateDebut() != null
+                && affectationDTO.getDateDebut().isAfter(affectationDTO.getDateFin())) {
             throw new ValidationException("La date de début ne peut être postérieure à la date de fin.");
         }
-
 
         Connection conn = null;
         try {
@@ -216,33 +238,42 @@ public class AffectationServiceImpl implements AffectationService {
             conn.setAutoCommit(false);
 
             Affectation existingAffectation = affectationRepository.findById(conn, affectationDTO.getIdAffectation())
-                    .orElseThrow(() -> new EntityNotFoundException("Affectation non trouvée avec l'ID: " + affectationDTO.getIdAffectation()));
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "Affectation non trouvée avec l'ID: " + affectationDTO.getIdAffectation()));
 
-            if (affectationDTO.getIdVehicule() != null && !affectationDTO.getIdVehicule().equals(existingAffectation.getIdVehicule())) {
+            if (affectationDTO.getIdVehicule() != null
+                    && !affectationDTO.getIdVehicule().equals(existingAffectation.getIdVehicule())) {
                 if (vehiculeRepository.findById(conn, affectationDTO.getIdVehicule()).isEmpty()) {
-                    throw new VehiculeNotFoundException("Nouveau véhicule non trouvé avec l'ID: " + affectationDTO.getIdVehicule());
+                    throw new VehiculeNotFoundException(
+                            "Nouveau véhicule non trouvé avec l'ID: " + affectationDTO.getIdVehicule());
                 }
                 existingAffectation.setIdVehicule(affectationDTO.getIdVehicule());
             }
-            if (affectationDTO.getIdPersonnel() != null && (existingAffectation.getIdPersonnel() == null || !affectationDTO.getIdPersonnel().equals(existingAffectation.getIdPersonnel()))) {
+            if (affectationDTO.getIdPersonnel() != null && (existingAffectation.getIdPersonnel() == null
+                    || !affectationDTO.getIdPersonnel().equals(existingAffectation.getIdPersonnel()))) {
                 if (personnelRepository.findById(conn, affectationDTO.getIdPersonnel()).isEmpty()) {
-                    throw new EntityNotFoundException("Nouveau personnel non trouvé avec l'ID: " + affectationDTO.getIdPersonnel());
+                    throw new EntityNotFoundException(
+                            "Nouveau personnel non trouvé avec l'ID: " + affectationDTO.getIdPersonnel());
                 }
                 existingAffectation.setIdPersonnel(affectationDTO.getIdPersonnel());
                 existingAffectation.setIdSocietaire(null); // Assurer l'exclusivité
-            } else if (affectationDTO.getIdSocietaire() != null && (existingAffectation.getIdSocietaire() == null || !affectationDTO.getIdSocietaire().equals(existingAffectation.getIdSocietaire()))) {
+            } else if (affectationDTO.getIdSocietaire() != null && (existingAffectation.getIdSocietaire() == null
+                    || !affectationDTO.getIdSocietaire().equals(existingAffectation.getIdSocietaire()))) {
                 if (societaireCompteRepository.findById(conn, affectationDTO.getIdSocietaire()).isEmpty()) {
-                    throw new EntityNotFoundException("Nouveau compte sociétaire non trouvé avec l'ID: " + affectationDTO.getIdSocietaire());
+                    throw new EntityNotFoundException(
+                            "Nouveau compte sociétaire non trouvé avec l'ID: " + affectationDTO.getIdSocietaire());
                 }
                 existingAffectation.setIdSocietaire(affectationDTO.getIdSocietaire());
                 existingAffectation.setIdPersonnel(null); // Assurer l'exclusivité
             }
 
-
-            if(affectationDTO.getTypeAffectation() != null) existingAffectation.setType(main.java.com.miage.parcauto.model.affectation.TypeAffectation.valueOf(affectationDTO.getTypeAffectation()));
-            if(affectationDTO.getDateDebut() != null) existingAffectation.setDateDebut(affectationDTO.getDateDebut());
-            if(affectationDTO.getDateFin() != null) existingAffectation.setDateFin(affectationDTO.getDateFin());
-
+            if (affectationDTO.getTypeAffectation() != null)
+                existingAffectation.setType(main.java.com.miage.parcauto.model.affectation.TypeAffectation
+                        .valueOf(affectationDTO.getTypeAffectation()));
+            if (affectationDTO.getDateDebut() != null)
+                existingAffectation.setDateDebut(affectationDTO.getDateDebut());
+            if (affectationDTO.getDateFin() != null)
+                existingAffectation.setDateFin(affectationDTO.getDateFin());
 
             Affectation updatedAffectation = affectationRepository.update(conn, existingAffectation);
             conn.commit();
@@ -270,7 +301,7 @@ public class AffectationServiceImpl implements AffectationService {
             }
 
             boolean deleted = affectationRepository.delete(conn, idAffectation);
-            if(!deleted) {
+            if (!deleted) {
                 throw new OperationFailedException("La suppression de l'affectation a échoué.");
             }
             conn.commit();

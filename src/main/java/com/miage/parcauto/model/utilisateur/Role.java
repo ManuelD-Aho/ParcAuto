@@ -1,30 +1,35 @@
 package main.java.com.miage.parcauto.model.utilisateur;
 
-/**
- * Rôles des utilisateurs du système.
- */
 public enum Role {
-    U1("U1"), // Responsable Logistique
-    U2("U2"), // Agent Logistique
-    U3("U3"), // Sociétaire
-    U4("U4"); // Administrateur Système
+    U1("Utilisateur Standard"), // A adapter selon la signification de U1, U2 etc.
+    U2("Gestionnaire"),
+    U3("Administrateur"),
+    U4("Super Administrateur");
 
-    private final String valeur;
+    private final String libelle;
 
-    Role(String valeur) {
-        this.valeur = valeur;
+    Role(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
     public static Role fromString(String text) {
-        for (Role role : Role.values()) {
-            if (role.valeur.equalsIgnoreCase(text)) {
-                return role;
+        for (Role r : Role.values()) {
+            if (r.name().equalsIgnoreCase(text) || r.libelle.equalsIgnoreCase(text)) {
+                return r;
             }
         }
-        throw new IllegalArgumentException("Rôle inconnu: " + text);
+        // Pour la validation 'trim' in 'Role', on va supposer que ValidationService reçoit un String
+        // et doit le convertir en Role. Le .trim() sera appliqué sur le String avant la conversion.
+        throw new IllegalArgumentException("Aucun rôle ne correspond à : " + text);
+    }
+
+    @Override
+    public String toString() {
+        // Pour correspondre à enum('U1','U2','U3','U4') dans SQL
+        return this.name();
     }
 }

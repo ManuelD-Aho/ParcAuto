@@ -23,41 +23,20 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
     private Vehicule mapResultSetToVehicule(ResultSet rs) throws SQLException {
         Vehicule vehicule = new Vehicule();
         vehicule.setIdVehicule(rs.getInt("id_vehicule"));
-        vehicule.setIdEtatVoiture(rs.getInt("id_etat_voiture"));
-
-        String energieStr = rs.getString("energie");
-        if (energieStr != null) {
-            vehicule.setEnergie(Energie.fromString(energieStr));
-        }
-        vehicule.setNumeroChassi(rs.getString("numero_chassi"));
         vehicule.setImmatriculation(rs.getString("immatriculation"));
+        vehicule.setNumeroChassis(rs.getString("numero_chassis"));
+        vehicule.setIdEtatVoiture(rs.getInt("id_etat_voiture"));
+        String energieStr = rs.getString("energie");
+        vehicule.setEnergie(energieStr != null ? Energie.valueOf(energieStr) : null);
         vehicule.setMarque(rs.getString("marque"));
         vehicule.setModele(rs.getString("modele"));
-
-        int nbPlaces = rs.getInt("nb_places");
-        vehicule.setNbPlaces(rs.wasNull() ? null : nbPlaces);
-
-        Timestamp dateAcquisitionTs = rs.getTimestamp("date_acquisition");
-        vehicule.setDateAcquisition(dateAcquisitionTs != null ? dateAcquisitionTs.toLocalDateTime() : null);
-
-        Timestamp dateAmmortissementTs = rs.getTimestamp("date_ammortissement");
-        vehicule.setDateAmmortissement(dateAmmortissementTs != null ? dateAmmortissementTs.toLocalDateTime() : null);
-
-        Timestamp dateMiseEnServiceTs = rs.getTimestamp("date_mise_en_service");
-        vehicule.setDateMiseEnService(dateMiseEnServiceTs != null ? dateMiseEnServiceTs.toLocalDateTime() : null);
-
-        int puissance = rs.getInt("puissance");
-        vehicule.setPuissance(rs.wasNull() ? null : puissance);
-
-        vehicule.setCouleur(rs.getString("couleur"));
-        vehicule.setPrixVehicule(rs.getBigDecimal("prix_vehicule"));
-
-        int kmActuels = rs.getInt("km_actuels");
-        vehicule.setKmActuels(rs.wasNull() ? null : kmActuels);
-
-        Timestamp dateEtatTs = rs.getTimestamp("date_etat");
-        vehicule.setDateEtat(dateEtatTs != null ? dateEtatTs.toLocalDateTime() : null);
-
+        vehicule.setDateAchat(
+                rs.getTimestamp("date_achat") != null ? rs.getTimestamp("date_achat").toLocalDateTime() : null);
+        vehicule.setCoutAchat(rs.getBigDecimal("cout_achat"));
+        vehicule.setKilometrage(rs.getInt("kilometrage"));
+        vehicule.setDateAmortissement(
+                rs.getTimestamp("date_amortissement") != null ? rs.getTimestamp("date_amortissement").toLocalDateTime()
+                        : null);
         return vehicule;
     }
 
@@ -82,7 +61,7 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
         List<Vehicule> vehicules = new ArrayList<>();
         String sql = "SELECT * FROM VEHICULES";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 vehicules.add(mapResultSetToVehicule(rs));
             }
@@ -120,14 +99,28 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
             pstmt.setString(4, vehicule.getImmatriculation());
             pstmt.setString(5, vehicule.getMarque());
             pstmt.setString(6, vehicule.getModele());
-            if (vehicule.getNbPlaces() != null) pstmt.setInt(7, vehicule.getNbPlaces()); else pstmt.setNull(7, Types.INTEGER);
-            pstmt.setTimestamp(8, vehicule.getDateAcquisition() != null ? Timestamp.valueOf(vehicule.getDateAcquisition()) : null);
-            pstmt.setTimestamp(9, vehicule.getDateAmmortissement() != null ? Timestamp.valueOf(vehicule.getDateAmmortissement()) : null);
-            pstmt.setTimestamp(10, vehicule.getDateMiseEnService() != null ? Timestamp.valueOf(vehicule.getDateMiseEnService()) : null);
-            if (vehicule.getPuissance() != null) pstmt.setInt(11, vehicule.getPuissance()); else pstmt.setNull(11, Types.INTEGER);
+            if (vehicule.getNbPlaces() != null)
+                pstmt.setInt(7, vehicule.getNbPlaces());
+            else
+                pstmt.setNull(7, Types.INTEGER);
+            pstmt.setTimestamp(8,
+                    vehicule.getDateAcquisition() != null ? Timestamp.valueOf(vehicule.getDateAcquisition()) : null);
+            pstmt.setTimestamp(9,
+                    vehicule.getDateAmmortissement() != null ? Timestamp.valueOf(vehicule.getDateAmmortissement())
+                            : null);
+            pstmt.setTimestamp(10,
+                    vehicule.getDateMiseEnService() != null ? Timestamp.valueOf(vehicule.getDateMiseEnService())
+                            : null);
+            if (vehicule.getPuissance() != null)
+                pstmt.setInt(11, vehicule.getPuissance());
+            else
+                pstmt.setNull(11, Types.INTEGER);
             pstmt.setString(12, vehicule.getCouleur());
             pstmt.setBigDecimal(13, vehicule.getPrixVehicule());
-            if (vehicule.getKmActuels() != null) pstmt.setInt(14, vehicule.getKmActuels()); else pstmt.setNull(14, Types.INTEGER);
+            if (vehicule.getKmActuels() != null)
+                pstmt.setInt(14, vehicule.getKmActuels());
+            else
+                pstmt.setNull(14, Types.INTEGER);
             pstmt.setTimestamp(15, vehicule.getDateEtat() != null ? Timestamp.valueOf(vehicule.getDateEtat()) : null);
 
             int affectedRows = pstmt.executeUpdate();
@@ -142,7 +135,8 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la sauvegarde du véhicule: " + vehicule.getImmatriculation(), e);
+            throw new DataAccessException("Erreur lors de la sauvegarde du véhicule: " + vehicule.getImmatriculation(),
+                    e);
         }
         return vehicule;
     }
@@ -157,20 +151,35 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
             pstmt.setString(4, vehicule.getImmatriculation());
             pstmt.setString(5, vehicule.getMarque());
             pstmt.setString(6, vehicule.getModele());
-            if (vehicule.getNbPlaces() != null) pstmt.setInt(7, vehicule.getNbPlaces()); else pstmt.setNull(7, Types.INTEGER);
-            pstmt.setTimestamp(8, vehicule.getDateAcquisition() != null ? Timestamp.valueOf(vehicule.getDateAcquisition()) : null);
-            pstmt.setTimestamp(9, vehicule.getDateAmmortissement() != null ? Timestamp.valueOf(vehicule.getDateAmmortissement()) : null);
-            pstmt.setTimestamp(10, vehicule.getDateMiseEnService() != null ? Timestamp.valueOf(vehicule.getDateMiseEnService()) : null);
-            if (vehicule.getPuissance() != null) pstmt.setInt(11, vehicule.getPuissance()); else pstmt.setNull(11, Types.INTEGER);
+            if (vehicule.getNbPlaces() != null)
+                pstmt.setInt(7, vehicule.getNbPlaces());
+            else
+                pstmt.setNull(7, Types.INTEGER);
+            pstmt.setTimestamp(8,
+                    vehicule.getDateAcquisition() != null ? Timestamp.valueOf(vehicule.getDateAcquisition()) : null);
+            pstmt.setTimestamp(9,
+                    vehicule.getDateAmmortissement() != null ? Timestamp.valueOf(vehicule.getDateAmmortissement())
+                            : null);
+            pstmt.setTimestamp(10,
+                    vehicule.getDateMiseEnService() != null ? Timestamp.valueOf(vehicule.getDateMiseEnService())
+                            : null);
+            if (vehicule.getPuissance() != null)
+                pstmt.setInt(11, vehicule.getPuissance());
+            else
+                pstmt.setNull(11, Types.INTEGER);
             pstmt.setString(12, vehicule.getCouleur());
             pstmt.setBigDecimal(13, vehicule.getPrixVehicule());
-            if (vehicule.getKmActuels() != null) pstmt.setInt(14, vehicule.getKmActuels()); else pstmt.setNull(14, Types.INTEGER);
+            if (vehicule.getKmActuels() != null)
+                pstmt.setInt(14, vehicule.getKmActuels());
+            else
+                pstmt.setNull(14, Types.INTEGER);
             pstmt.setTimestamp(15, vehicule.getDateEtat() != null ? Timestamp.valueOf(vehicule.getDateEtat()) : null);
             pstmt.setInt(16, vehicule.getIdVehicule());
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows == 0) {
-                throw new DataAccessException("La mise à jour du véhicule avec ID " + vehicule.getIdVehicule() + " a échoué, aucune ligne affectée.");
+                throw new DataAccessException("La mise à jour du véhicule avec ID " + vehicule.getIdVehicule()
+                        + " a échoué, aucune ligne affectée.");
             }
         } catch (SQLException e) {
             throw new DataAccessException("Erreur lors de la mise à jour du véhicule: " + vehicule.getIdVehicule(), e);
@@ -194,7 +203,7 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
     public long count(Connection conn) throws SQLException {
         String sql = "SELECT COUNT(*) FROM VEHICULES";
         try (Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+                ResultSet rs = stmt.executeQuery(sql)) {
             if (rs.next()) {
                 return rs.getLong(1);
             }
@@ -224,17 +233,23 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
     @Override
     public List<Vehicule> findRequiringMaintenance(Connection conn, int kmSeuilProchainEntretien) throws SQLException {
         List<Vehicule> vehicules = new ArrayList<>();
-        // Cette requête est un exemple et doit être adaptée à votre logique métier exacte
+        // Cette requête est un exemple et doit être adaptée à votre logique métier
+        // exacte
         // pour déterminer la nécessité d'une maintenance.
-        // Par exemple, si vous avez une table d'entretiens planifiés ou un champ 'km_prochain_entretien'.
+        // Par exemple, si vous avez une table d'entretiens planifiés ou un champ
+        // 'km_prochain_entretien'.
         // Ici, une logique simplifiée : véhicules ayant dépassé un certain kilométrage.
         String sql = "SELECT * FROM VEHICULES v " +
                 "LEFT JOIN ENTRETIEN e ON v.id_vehicule = e.id_vehicule " +
-                "AND e.date_realisation = (SELECT MAX(e2.date_realisation) FROM ENTRETIEN e2 WHERE e2.id_vehicule = v.id_vehicule) " + // Dernier entretien réalisé
-                "WHERE v.km_actuels >= COALESCE(e.km_prochain_entretien, 0) - ? " + // km_prochain_entretien du dernier entretien
-                "OR (e.id_entretien IS NULL AND v.km_actuels >= ?)"; // Cas où aucun entretien n'a encore été fait, seuil initial
+                "AND e.date_realisation = (SELECT MAX(e2.date_realisation) FROM ENTRETIEN e2 WHERE e2.id_vehicule = v.id_vehicule) "
+                + // Dernier entretien réalisé
+                "WHERE v.km_actuels >= COALESCE(e.km_prochain_entretien, 0) - ? " + // km_prochain_entretien du dernier
+                                                                                    // entretien
+                "OR (e.id_entretien IS NULL AND v.km_actuels >= ?)"; // Cas où aucun entretien n'a encore été fait,
+                                                                     // seuil initial
 
-        // Si la logique est plus simple, par exemple juste un seuil sur km_actuels par rapport à une valeur de référence
+        // Si la logique est plus simple, par exemple juste un seuil sur km_actuels par
+        // rapport à une valeur de référence
         // String sql_simple = "SELECT * FROM VEHICULES WHERE km_actuels > ?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -248,7 +263,10 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des véhicules nécessitant une maintenance avec seuil " + kmSeuilProchainEntretien, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des véhicules nécessitant une maintenance avec seuil "
+                            + kmSeuilProchainEntretien,
+                    e);
         }
         return vehicules;
     }
@@ -264,7 +282,8 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche du véhicule par immatriculation: " + immatriculation, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche du véhicule par immatriculation: " + immatriculation, e);
         }
         return Optional.empty();
     }
@@ -280,7 +299,8 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche du véhicule par numéro de châssis: " + numeroChassi, e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche du véhicule par numéro de châssis: " + numeroChassi, e);
         }
         return Optional.empty();
     }
@@ -297,7 +317,8 @@ public class VehiculeRepositoryImpl implements VehiculeRepository {
                 }
             }
         } catch (SQLException e) {
-            throw new DataAccessException("Erreur lors de la recherche des véhicules par énergie: " + energie.getValeur(), e);
+            throw new DataAccessException(
+                    "Erreur lors de la recherche des véhicules par énergie: " + energie.getValeur(), e);
         }
         return vehicules;
     }

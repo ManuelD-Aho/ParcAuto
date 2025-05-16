@@ -1,28 +1,30 @@
 package main.java.com.miage.parcauto.model.mission;
 
-/**
- * Nature des dépenses liées à une mission.
- */
 public enum NatureDepenseMission {
     CARBURANT("Carburant"),
-    FRAIS_ANNEXES("FraisAnnexes");
+    FRAIS_ANNEXES("FraisAnnexes"); // SQL: FraisAnnexes
 
-    private final String valeur;
+    private final String libelle;
 
-    NatureDepenseMission(String valeur) {
-        this.valeur = valeur;
+    NatureDepenseMission(String libelle) {
+        this.libelle = libelle;
     }
 
-    public String getValeur() {
-        return valeur;
+    public String getLibelle() {
+        return libelle;
     }
 
-    public static NatureDepenseMission fromString(String text) {
+    public static NatureDepenseMission fromLibelle(String libelle) {
         for (NatureDepenseMission nature : NatureDepenseMission.values()) {
-            if (nature.valeur.equalsIgnoreCase(text)) {
+            if (nature.libelle.equalsIgnoreCase(libelle) || nature.name().replace("_", "").equalsIgnoreCase(libelle)) {
                 return nature;
             }
         }
-        throw new IllegalArgumentException("Nature de dépense inconnue: " + text);
+        throw new IllegalArgumentException("Aucune nature de dépense ne correspond au libellé : " + libelle);
+    }
+
+    @Override
+    public String toString() {
+        return this.libelle;
     }
 }
